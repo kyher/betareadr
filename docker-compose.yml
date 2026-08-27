@@ -2,10 +2,8 @@
 services:
     app:
         build:
-            context: ./vendor/laravel/sail/runtimes/8.3
+            context: .
             dockerfile: Dockerfile
-            args:
-                WWWGROUP: '${WWWGROUP:-1000}'
         image: betareadr-app
         extra_hosts:
             - 'host.docker.internal:host-gateway'
@@ -13,14 +11,13 @@ services:
             - '${APP_PORT:-8000}:8000'
             - '${VITE_PORT:-5173}:5173'
         environment:
-            WWWUSER: '${WWWUSER:-1000}'
-            LARAVEL_SAIL: 1
             DB_CONNECTION: pgsql
             DB_HOST: postgres
             DB_PORT: 5432
             DB_DATABASE: '${DB_DATABASE:-betareadr}'
             DB_USERNAME: '${DB_USERNAME:-postgres}'
             DB_PASSWORD: '${DB_PASSWORD:-secret}'
+            VITE_PORT: '${VITE_PORT:-5173}'
         volumes:
             - '.:/var/www/html'
         depends_on:
@@ -30,6 +27,11 @@ services:
             - bash
             - -c
             - |
+                set -e
+                composer install --no-interaction
+                npm install
+                if [ ! -f .env ]; then cp .env.example .env; fi
+                if ! grep -q '^APP_KEY=base64:' .env; then php artisan key:generate; fi
                 php artisan migrate --force
                 exec npx concurrently --kill-others-on-fail \
                     "php artisan serve --host=0.0.0.0 --port=8000 --no-reload" \

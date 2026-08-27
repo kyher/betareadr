@@ -4,53 +4,58 @@ import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
 import laravel from 'laravel-vite-plugin';
 import { bunny } from 'laravel-vite-plugin/fonts';
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 
-export default defineConfig({
-    plugins: [
-        laravel({
-            input: ['resources/css/app.css', 'resources/js/app.ts'],
-            refresh: true,
-            fonts: [
-                bunny('Instrument Sans', {
-                    weights: [400, 500, 600],
-                }),
-            ],
-        }),
-        inertia(),
-        tailwindcss(),
-        vue({
-            template: {
-                transformAssetUrls: {
-                    base: null,
-                    includeAbsolute: false,
+export default defineConfig(({ mode }) => {
+    const env = loadEnv(mode, process.cwd(), '');
+    const browserPort = Number(env.VITE_PORT || 5173);
+
+    return {
+        plugins: [
+            laravel({
+                input: ['resources/css/app.css', 'resources/js/app.ts'],
+                refresh: true,
+                fonts: [
+                    bunny('Instrument Sans', {
+                        weights: [400, 500, 600],
+                    }),
+                ],
+            }),
+            inertia(),
+            tailwindcss(),
+            vue({
+                template: {
+                    transformAssetUrls: {
+                        base: null,
+                        includeAbsolute: false,
+                    },
                 },
-            },
-        }),
-        wayfinder({
-            formVariants: true,
-        }),
-    ],
-    server: {
-        host: '0.0.0.0',
-        port: 5173,
-        strictPort: true,
-        origin: 'http://localhost:5173',
-        hmr: {
-            host: 'localhost',
+            }),
+            wayfinder({
+                formVariants: true,
+            }),
+        ],
+        server: {
+            host: '0.0.0.0',
             port: 5173,
+            strictPort: true,
+            origin: `http://localhost:${browserPort}`,
+            hmr: {
+                host: 'localhost',
+                clientPort: browserPort,
+            },
+            cors: {
+                origin: /^https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/,
+            },
+            watch: {
+                ignored: [
+                    '**/.agents/**',
+                    '**/.claude/**',
+                    '**/.cursor/**',
+                    '**/.junie/**',
+                    '**/vendor/**',
+                ],
+            },
         },
-        cors: {
-            origin: /^https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/,
-        },
-        watch: {
-            ignored: [
-                '**/.agents/**',
-                '**/.claude/**',
-                '**/.cursor/**',
-                '**/.junie/**',
-                '**/vendor/**',
-            ],
-        },
-    },
+    };
 });

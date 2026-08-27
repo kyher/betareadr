@@ -14,25 +14,11 @@ This repository currently contains the application foundation only. The agreed d
 - PostgreSQL
 - Vite
 
-## Requirements
-
-- PHP 8.3 or newer with the `mbstring` and PostgreSQL extensions
-- Composer
-- Node.js and npm
-- PostgreSQL
-
 ## Local setup
 
 ### Docker (recommended)
 
-After installing the PHP dependencies once with `composer install`, create the local environment file and application key if you have not already done so:
-
-```bash
-cp .env.example .env
-php artisan key:generate
-```
-
-Then start Laravel, Vite, the queue worker, logs, and PostgreSQL with one command:
+Docker with Compose is the only prerequisite. Start Laravel, Vite, the queue worker, logs, and PostgreSQL with one command:
 
 ```bash
 docker compose up --build
@@ -50,6 +36,8 @@ docker compose exec app npm run types:check
 ```
 
 ### Native environment
+
+The native setup requires PHP 8.3 or newer with the `mbstring` and PostgreSQL extensions, Composer, Node.js with npm, and PostgreSQL.
 
 Install dependencies and create the local environment file:
 
