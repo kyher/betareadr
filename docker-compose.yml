@@ -1,0 +1,70 @@
+# For more information: https://laravel.com/docs/sail
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: betareadr-app
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        ports:
+            - '${APP_PORT:-8000}:8000'
+            - '${VITE_PORT:-5173}:5173'
+        environment:
+            DB_CONNECTION: pgsql
+            DB_HOST: postgres
+            DB_PORT: 5432
+            DB_DATABASE: '${DB_DATABASE:-betareadr}'
+            DB_USERNAME: '${DB_USERNAME:-postgres}'
+            DB_PASSWORD: '${DB_PASSWORD:-secret}'
+            VITE_PORT: '${VITE_PORT:-5173}'
+        volumes:
+            - '.:/var/www/html'
+        depends_on:
+            postgres:
+                condition: service_healthy
+        command:
+            - bash
+            - -c
+            - |
+                set -e
+                composer install --no-interaction
+                npm install
+                if [ ! -f .env ]; then cp .env.example .env; fi
+                if ! grep -q '^APP_KEY=base64:' .env; then php artisan key:generate; fi
+                php artisan migrate --force
+                exec npx concurrently --kill-others-on-fail \
+                    "php artisan serve --host=0.0.0.0 --port=8000 --no-reload" \
+                    "php artisan queue:listen --tries=1 --timeout=0" \
+                    "php artisan pail --timeout=0" \
+                    "npm run dev"
+        networks:
+            - betareadr
+
+    postgres:
+        image: postgres:18-alpine
+        ports:
+            - '${FORWARD_DB_PORT:-5433}:5432'
+        environment:
+            POSTGRES_DB: '${DB_DATABASE:-betareadr}'
+            POSTGRES_USER: '${DB_USERNAME:-postgres}'
+            POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+        volumes:
+            - betareadr-postgres:/var/lib/postgresql
+        healthcheck:
+            test:
+                - CMD-SHELL
+                - 'pg_isready -q -d "$${POSTGRES_DB}" -U "$${POSTGRES_USER}"'
+            interval: 5s
+            timeout: 5s
+            retries: 10
+        networks:
+            - betareadr
+
+networks:
+    betareadr:
+        driver: bridge
+
+volumes:
+    betareadr-postgres:
+        driver: local
