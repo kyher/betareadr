@@ -4,24 +4,28 @@ BetaReadr connects authors with beta readers who can provide pre-publication fee
 
 ## Language
 
-**Member**:
+**User**:
 A person with a BetaReadr account who privately owns authentication and contact details and may create an Author Profile, a Beta Reader Profile, or both.
-_Avoid_: User, account
+_Avoid_: Member, account
 
 **Author**:
-A Member participating through an Author Profile to seek beta-reader feedback on one or more books.
+A User participating through an Author Profile to seek beta-reader feedback on one or more books.
 _Avoid_: Writer, creator
 
 **Beta Reader**:
-A Member participating through a Beta Reader Profile to find pre-publication books and offer feedback.
+A User participating through a Beta Reader Profile to find pre-publication books and offer feedback.
 _Avoid_: Reviewer, critic, potential beta reader
 
 **Author Profile**:
-The optional public identity through which a Member presents themselves as an Author and manages their Books and Beta Reading Listings. Its display name, avatar, and bio are independent of the Member and Beta Reader Profile.
+The single optional public identity through which a User presents themselves as an Author and manages their Books and Beta Reading Listings. A User may have at most one; it becomes public as soon as the User creates it with a display name and unique Author Handle, while its avatar and bio are optional and independent of the User and Beta Reader Profile.
 _Avoid_: Author account
 
+**Author Handle**:
+The unique, URL-safe name identifying an Author Profile, distinct from the Author's non-unique display name. Handle changes are not currently supported.
+_Avoid_: Username, profile name
+
 **Beta Reader Profile**:
-The optional public identity through which a Member presents their reading interests, boundaries, experience, and availability to Authors. Its display name, avatar, and bio are independent of the Member and Author Profile.
+The optional public identity through which a User presents their reading interests, boundaries, experience, and availability to Authors. Its display name, avatar, and bio are independent of the User and Author Profile.
 _Avoid_: Reader account
 
 **Book**:
@@ -69,5 +73,5 @@ The private communication between the Author and Beta Reader belonging to one Ma
 _Avoid_: Chat room, thread
 
 **Block**:
-A Member-level safety action that prevents two Members from discovering or contacting each other through either profile and ends their existing Matches. Related Conversation history is retained for moderation but hidden from both participants.
+A User-level safety action that prevents two Users from discovering or contacting each other through either profile and ends their existing Matches. Related Conversation history is retained for moderation but hidden from both participants.
 _Avoid_: Mute, profile block
