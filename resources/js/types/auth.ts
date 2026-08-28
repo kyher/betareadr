@@ -14,6 +14,12 @@ export type Auth = {
     user: User;
 };
 
+export type AuthorProfile = {
+    display_name: string;
+    handle: string;
+    bio: string | null;
+};
+
 export type Passkey = {
     id: number;
     name: string;

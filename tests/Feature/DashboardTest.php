@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class DashboardTest extends TestCase
@@ -22,6 +23,25 @@ class DashboardTest extends TestCase
         $this->actingAs($user);
 
         $response = $this->get(route('dashboard'));
-        $response->assertOk();
+        $response->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->component('Dashboard')
+            ->where('authorProfile', null));
+    }
+
+    public function test_dashboard_includes_the_users_author_profile()
+    {
+        $user = User::factory()->create();
+        $user->authorProfile()->create([
+            'display_name' => 'Octavia Butler',
+            'handle' => 'octavia-butler',
+            'bio' => 'Science fiction author.',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('authorProfile.display_name', 'Octavia Butler')
+                ->where('authorProfile.handle', 'octavia-butler'));
     }
 }
