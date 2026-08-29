@@ -35,6 +35,12 @@ class User extends Authenticatable
         return $this->hasOne(AuthorProfile::class);
     }
 
+    /** @return HasOne<BetaReaderProfile, $this> */
+    public function betaReaderProfile(): HasOne
+    {
+        return $this->hasOne(BetaReaderProfile::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *
