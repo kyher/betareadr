@@ -1,0 +1,102 @@
+<script setup lang="ts">
+import { Form, Head, Link } from '@inertiajs/vue3';
+import BetaReaderProfileController from '@/actions/App/Http/Controllers/BetaReaderProfileController';
+import InputError from '@/components/InputError.vue';
+import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { dashboard } from '@/routes';
+import { edit as editBetaReaderProfile } from '@/routes/beta-reader-profile';
+import type { BetaReaderProfile } from '@/types';
+
+defineProps<{ betaReaderProfile: BetaReaderProfile }>();
+defineOptions({
+    layout: {
+        breadcrumbs: [
+            { title: 'Dashboard', href: dashboard() },
+            {
+                title: 'Edit Beta Reader Profile',
+                href: editBetaReaderProfile(),
+            },
+        ],
+    },
+});
+</script>
+
+<template>
+    <Head title="Edit Beta Reader Profile" />
+    <div class="mx-auto w-full max-w-2xl p-4 md:p-8">
+        <Card>
+            <CardHeader>
+                <CardTitle>Edit your Beta Reader Profile</CardTitle>
+                <CardDescription
+                    >Update the public information authors see.</CardDescription
+                >
+            </CardHeader>
+            <CardContent>
+                <Form
+                    v-bind="BetaReaderProfileController.update.form()"
+                    class="space-y-6"
+                    v-slot="{ errors, processing }"
+                >
+                    <div class="grid gap-2">
+                        <Label for="display_name">Display name</Label>
+                        <Input
+                            id="display_name"
+                            name="display_name"
+                            :default-value="betaReaderProfile.display_name"
+                            required
+                            minlength="2"
+                            maxlength="100"
+                            autocomplete="name"
+                        />
+                        <InputError :message="errors.display_name" />
+                    </div>
+                    <div class="grid gap-2">
+                        <Label for="handle">Beta Reader Handle</Label>
+                        <Input
+                            id="handle"
+                            :model-value="`@${betaReaderProfile.handle}`"
+                            disabled
+                        />
+                        <p class="text-sm text-muted-foreground">
+                            Beta Reader Handles cannot be changed.
+                        </p>
+                    </div>
+                    <div class="grid gap-2">
+                        <Label for="bio"
+                            >Bio
+                            <span class="text-muted-foreground"
+                                >(optional)</span
+                            ></Label
+                        >
+                        <textarea
+                            id="bio"
+                            name="bio"
+                            maxlength="1000"
+                            rows="7"
+                            :value="betaReaderProfile.bio ?? ''"
+                            class="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                        />
+                        <InputError :message="errors.bio" />
+                    </div>
+                    <div class="flex items-center justify-end gap-3">
+                        <Button variant="outline" as-child
+                            ><Link :href="dashboard()">Cancel</Link></Button
+                        >
+                        <Button type="submit" :disabled="processing"
+                            >Save changes</Button
+                        >
+                    </div>
+                </Form>
+            </CardContent>
+        </Card>
+    </div>
+</template>

@@ -2,11 +2,14 @@
 
 namespace App\Http\Requests;
 
+use App\Concerns\PublicProfileValidationRules;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateAuthorProfileRequest extends FormRequest
 {
+    use PublicProfileValidationRules;
+
     /** @return array{display_name: string, bio: string|null} */
     public function profileAttributes(): array
     {
@@ -21,9 +24,6 @@ class UpdateAuthorProfileRequest extends FormRequest
     /** @return array<string, ValidationRule|array<mixed>|string> */
     public function rules(): array
     {
-        return [
-            'display_name' => ['required', 'string', 'min:2', 'max:100'],
-            'bio' => ['nullable', 'string', 'max:1000'],
-        ];
+        return $this->publicProfileUpdateRules();
     }
 }

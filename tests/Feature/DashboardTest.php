@@ -25,7 +25,8 @@ class DashboardTest extends TestCase
         $response = $this->get(route('dashboard'));
         $response->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('Dashboard')
-            ->where('authorProfile', null));
+            ->where('authorProfile', null)
+            ->where('betaReaderProfile', null));
     }
 
     public function test_dashboard_includes_the_users_author_profile()
@@ -43,5 +44,22 @@ class DashboardTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->where('authorProfile.display_name', 'Octavia Butler')
                 ->where('authorProfile.handle', 'octavia-butler'));
+    }
+
+    public function test_dashboard_includes_the_users_beta_reader_profile()
+    {
+        $user = User::factory()->create();
+        $user->betaReaderProfile()->create([
+            'display_name' => 'Keen Reader',
+            'handle' => 'keen-reader',
+            'bio' => 'I love speculative fiction.',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('betaReaderProfile.display_name', 'Keen Reader')
+                ->where('betaReaderProfile.handle', 'keen-reader'));
     }
 }
