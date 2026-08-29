@@ -20,6 +20,12 @@ export type AuthorProfile = {
     bio: string | null;
 };
 
+export type BetaReaderProfile = {
+    display_name: string;
+    handle: string;
+    bio: string | null;
+};
+
 export type Passkey = {
     id: number;
     name: string;

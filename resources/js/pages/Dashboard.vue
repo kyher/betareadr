@@ -17,9 +17,17 @@ import {
     edit as editAuthorProfile,
 } from '@/routes/author-profile';
 import { show as showAuthorProfile } from '@/routes/authors';
-import type { AuthorProfile } from '@/types';
+import {
+    create as createBetaReaderProfile,
+    edit as editBetaReaderProfile,
+} from '@/routes/beta-reader-profile';
+import { show as showBetaReaderProfile } from '@/routes/beta-readers';
+import type { AuthorProfile, BetaReaderProfile } from '@/types';
 
-defineProps<{ authorProfile: AuthorProfile | null }>();
+defineProps<{
+    authorProfile: AuthorProfile | null;
+    betaReaderProfile: BetaReaderProfile | null;
+}>();
 
 defineOptions({
     layout: {
@@ -99,6 +107,76 @@ defineOptions({
                 <Button as-child>
                     <Link :href="createAuthorProfile()"
                         >Create Author Profile <ArrowRight
+                    /></Link>
+                </Button>
+            </CardContent>
+        </Card>
+
+        <Card v-if="betaReaderProfile">
+            <CardHeader>
+                <CardTitle>Your Beta Reader Profile</CardTitle>
+                <CardDescription
+                    >This is the public identity authors see on
+                    BetaReadr.</CardDescription
+                >
+            </CardHeader>
+            <CardContent
+                class="flex flex-col gap-6 sm:flex-row sm:items-center"
+            >
+                <Avatar class="size-16">
+                    <AvatarFallback class="text-lg font-semibold">
+                        {{ getInitials(betaReaderProfile.display_name) }}
+                    </AvatarFallback>
+                </Avatar>
+                <div class="min-w-0 flex-1">
+                    <p class="truncate text-lg font-semibold">
+                        {{ betaReaderProfile.display_name }}
+                    </p>
+                    <p class="text-sm text-muted-foreground">
+                        @{{ betaReaderProfile.handle }}
+                    </p>
+                    <p
+                        v-if="betaReaderProfile.bio"
+                        class="mt-2 line-clamp-2 text-sm"
+                    >
+                        {{ betaReaderProfile.bio }}
+                    </p>
+                </div>
+                <div class="flex gap-2">
+                    <Button variant="outline" as-child>
+                        <Link
+                            :href="
+                                showBetaReaderProfile(betaReaderProfile.handle)
+                            "
+                            ><Eye /> View</Link
+                        >
+                    </Button>
+                    <Button as-child>
+                        <Link :href="editBetaReaderProfile()"
+                            ><Pencil /> Edit</Link
+                        >
+                    </Button>
+                </div>
+            </CardContent>
+        </Card>
+
+        <Card v-else class="border-dashed">
+            <CardHeader>
+                <div
+                    class="mb-3 flex size-12 items-center justify-center rounded-full bg-muted"
+                >
+                    <UserRound class="size-6" />
+                </div>
+                <CardTitle>Create your Beta Reader Profile</CardTitle>
+                <CardDescription class="max-w-2xl">
+                    Introduce yourself to authors with a public name, unique
+                    handle, and optional bio.
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Button as-child>
+                    <Link :href="createBetaReaderProfile()"
+                        >Create Beta Reader Profile <ArrowRight
                     /></Link>
                 </Button>
             </CardContent>
