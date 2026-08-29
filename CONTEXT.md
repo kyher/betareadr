@@ -25,8 +25,12 @@ The unique, URL-safe name identifying an Author Profile, distinct from the Autho
 _Avoid_: Username, profile name
 
 **Beta Reader Profile**:
-The optional public identity through which a User presents their reading interests, boundaries, experience, and availability to Authors. Its display name, avatar, and bio are independent of the User and Author Profile.
+The single optional public identity through which a User presents their reading interests, boundaries, experience, and availability to Authors. A User may have at most one; it becomes public as soon as the User creates it with a display name and unique Beta Reader Handle, while its avatar and bio are optional and independent of the User and Author Profile.
 _Avoid_: Reader account
+
+**Beta Reader Handle**:
+The URL-safe name uniquely identifying a Beta Reader Profile among Beta Reader Profiles, distinct from the Beta Reader's non-unique display name and any Author Handle belonging to the same User. Author and Beta Reader Handles occupy separate namespaces, and handle changes are not currently supported.
+_Avoid_: Username, profile name, Author Handle
 
 **Book**:
 An Author's enduring written work for which beta-reader feedback may be sought through one or more recruitment rounds.
