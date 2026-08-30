@@ -83,6 +83,11 @@ class AuthorProfileController extends Controller
     {
         return Inertia::render('author-profiles/Show', [
             'authorProfile' => $authorProfile->only(['display_name', 'handle', 'bio']),
+            'books' => $authorProfile->books()
+                ->latest()
+                ->latest('id')
+                ->paginate(12)
+                ->through(fn ($book): array => $book->only(['id', 'title', 'description'])),
         ]);
     }
 }

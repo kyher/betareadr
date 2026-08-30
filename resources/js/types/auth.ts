@@ -12,6 +12,7 @@ export type User = {
 
 export type Auth = {
     user: User;
+    has_author_profile: boolean;
 };
 
 export type AuthorProfile = {
@@ -24,6 +25,12 @@ export type BetaReaderProfile = {
     display_name: string;
     handle: string;
     bio: string | null;
+};
+
+export type Book = {
+    id: number;
+    title: string;
+    description: string | null;
 };
 
 export type Passkey = {
