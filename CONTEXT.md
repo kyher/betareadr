@@ -33,7 +33,7 @@ The URL-safe name uniquely identifying a Beta Reader Profile among Beta Reader P
 _Avoid_: Username, profile name, Author Handle
 
 **Book**:
-An Author's enduring written work for which beta-reader feedback may be sought through one or more recruitment rounds.
+A publicly visible, enduring written work belonging to an Author Profile, for which beta-reader feedback may be sought through one or more recruitment rounds. A Book is public as soon as it is created.
 _Avoid_: Project, manuscript, listing
 
 **Beta Reading Listing**:
