@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthorProfileController;
 use App\Http\Controllers\BetaReaderProfileController;
+use App\Http\Controllers\BookController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -24,6 +25,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('beta-reader-profile', [BetaReaderProfileController::class, 'store'])->name('beta-reader-profile.store');
     Route::get('beta-reader-profile/edit', [BetaReaderProfileController::class, 'edit'])->name('beta-reader-profile.edit');
     Route::patch('beta-reader-profile', [BetaReaderProfileController::class, 'update'])->name('beta-reader-profile.update');
+
+    Route::resource('books', BookController::class)->except('show');
 });
 
 Route::get('authors/{authorProfile}', [AuthorProfileController::class, 'show'])->name('authors.show');
