@@ -1,12 +1,24 @@
 <script setup lang="ts">
 import { Head, Link, usePage } from '@inertiajs/vue3';
+import PaginationLinks from '@/components/PaginationLinks.vue';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { getInitials } from '@/composables/useInitials';
 import { dashboard, home, login } from '@/routes';
-import type { AuthorProfile } from '@/types';
+import type { AuthorProfile, Book } from '@/types';
 
-defineProps<{ authorProfile: AuthorProfile }>();
+type Paginator<T> = {
+    data: T[];
+    links: Array<{ url: string | null; label: string; active: boolean }>;
+};
+
+defineProps<{ authorProfile: AuthorProfile; books: Paginator<Book> }>();
 const page = usePage();
 </script>
 
@@ -50,6 +62,25 @@ const page = usePage();
                     {{ authorProfile.bio }}
                 </p>
             </div>
+            <section class="mt-16">
+                <h2 class="text-2xl font-semibold tracking-tight">Books</h2>
+                <div v-if="books.data.length" class="mt-6 grid gap-4">
+                    <Card v-for="book in books.data" :key="book.id">
+                        <CardHeader>
+                            <CardTitle>{{ book.title }}</CardTitle>
+                            <CardDescription
+                                v-if="book.description"
+                                class="whitespace-pre-line text-foreground"
+                                >{{ book.description }}</CardDescription
+                            >
+                        </CardHeader>
+                    </Card>
+                </div>
+                <p v-else class="mt-4 text-muted-foreground">
+                    This Author has not added any Books yet.
+                </p>
+                <PaginationLinks class="mt-6" :links="books.links" />
+            </section>
         </main>
     </div>
 </template>
