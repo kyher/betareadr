@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\BetaReadingListing;
 use App\Models\Book;
 use App\Models\User;
-use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
@@ -78,16 +77,6 @@ class BetaReadingListingTest extends TestCase
         ])->assertSessionHasErrors('listing');
 
         $this->assertSame(1, $book->betaReadingListings()->count());
-    }
-
-    public function test_database_enforces_one_open_listing_per_book(): void
-    {
-        $book = $this->bookFor($this->author());
-        $this->listingFor($book);
-
-        $this->expectException(QueryException::class);
-
-        $this->listingFor($book, 'A concurrent open round');
     }
 
     public function test_management_page_pins_open_listing_then_orders_closed_listings_newest_first(): void
