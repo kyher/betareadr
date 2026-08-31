@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
-import { BookOpen, Pencil, Plus, Trash2 } from '@lucide/vue';
+import { BookOpen, List, Pencil, Plus, Trash2 } from '@lucide/vue';
+import BetaReadingListingController from '@/actions/App/Http/Controllers/BetaReadingListingController';
 import BookController from '@/actions/App/Http/Controllers/BookController';
 import PaginationLinks from '@/components/PaginationLinks.vue';
 import { Button } from '@/components/ui/button';
@@ -90,6 +91,15 @@ defineOptions({
                         </CardDescription>
                     </div>
                     <div class="flex shrink-0 gap-2">
+                        <Button variant="outline" size="sm" as-child>
+                            <Link
+                                :href="
+                                    BetaReadingListingController.index(book.id)
+                                "
+                            >
+                                <List /> Listings
+                            </Link>
+                        </Button>
                         <Button variant="outline" size="sm" as-child>
                             <Link :href="BookController.edit(book.id)"
                                 ><Pencil /> Edit</Link

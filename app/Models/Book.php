@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -22,5 +23,11 @@ class Book extends Model
     public function authorProfile(): BelongsTo
     {
         return $this->belongsTo(AuthorProfile::class);
+    }
+
+    /** @return HasMany<BetaReadingListing, $this> */
+    public function betaReadingListings(): HasMany
+    {
+        return $this->hasMany(BetaReadingListing::class);
     }
 }
