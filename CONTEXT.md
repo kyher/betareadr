@@ -37,15 +37,19 @@ A publicly visible, enduring written work belonging to an Author Profile, for wh
 _Avoid_: Project, manuscript, listing
 
 **Beta Reading Listing**:
-A distinct recruitment round through which an Author seeks Beta Readers for a Book. A Book may have multiple listings over time.
+A distinct recruitment round through which an Author seeks Beta Readers for a Book. A Book may have multiple listings over time, but at most one may be open at once; each Listing is open as soon as it is created and remains so until closed.
 _Avoid_: Book, post, campaign, request
 
+**Reading Brief**:
+The Listing-specific description of the draft being offered and the feedback the Author is seeking from Beta Readers.
+_Avoid_: Book description, listing description
+
 **Content Warning**:
-A declared type of potentially distressing or sensitive material present in a Beta Reading Listing.
+A declared type of potentially distressing or sensitive material present in a Book.
 _Avoid_: Trigger, tag
 
 **Content Boundary**:
-A type of material a Beta Reader has chosen not to encounter. Listings with a matching Content Warning are excluded from that reader's feed.
+A type of material a Beta Reader has chosen not to encounter. Listings for a Book with a matching Content Warning are excluded from that reader's feed.
 _Avoid_: Preference, dislike
 
 **Close**:
