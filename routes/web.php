@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthorProfileController;
 use App\Http\Controllers\BetaReaderProfileController;
+use App\Http\Controllers\BetaReadingListingController;
 use App\Http\Controllers\BookController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -27,6 +28,16 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('beta-reader-profile', [BetaReaderProfileController::class, 'update'])->name('beta-reader-profile.update');
 
     Route::resource('books', BookController::class)->except('show');
+
+    Route::prefix('books/{book}/listings')->name('books.listings.')->group(function () {
+        Route::get('/', [BetaReadingListingController::class, 'index'])->name('index');
+        Route::get('create', [BetaReadingListingController::class, 'create'])->name('create');
+        Route::post('/', [BetaReadingListingController::class, 'store'])->name('store');
+        Route::get('{listing}/edit', [BetaReadingListingController::class, 'edit'])->name('edit');
+        Route::patch('{listing}', [BetaReadingListingController::class, 'update'])->name('update');
+        Route::patch('{listing}/close', [BetaReadingListingController::class, 'close'])->name('close');
+        Route::patch('{listing}/reopen', [BetaReadingListingController::class, 'reopen'])->name('reopen');
+    });
 });
 
 Route::get('authors/{authorProfile}', [AuthorProfileController::class, 'show'])->name('authors.show');
