@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -23,6 +24,12 @@ class BetaReadingListing extends Model
     public function book(): BelongsTo
     {
         return $this->belongsTo(Book::class);
+    }
+
+    /** @return HasMany<BetaReadingListingDecision, $this> */
+    public function decisions(): HasMany
+    {
+        return $this->hasMany(BetaReadingListingDecision::class);
     }
 
     protected function casts(): array

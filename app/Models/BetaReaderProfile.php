@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -23,6 +24,12 @@ class BetaReaderProfile extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /** @return HasMany<BetaReadingListingDecision, $this> */
+    public function decisions(): HasMany
+    {
+        return $this->hasMany(BetaReadingListingDecision::class);
     }
 
     public function getRouteKeyName(): string
