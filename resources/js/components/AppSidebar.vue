@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { BookCopy, BookOpen, FolderGit2, LayoutGrid } from '@lucide/vue';
+import { BookCopy, BookOpen, FolderGit2, LayoutGrid, Rows3 } from '@lucide/vue';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
@@ -22,6 +22,9 @@ import type { NavItem } from '@/types';
 const page = usePage();
 const mainNavItems = computed<NavItem[]>(() => [
     { title: 'Dashboard', href: dashboard(), icon: LayoutGrid },
+    ...(page.props.auth.has_beta_reader_profile
+        ? [{ title: 'Feed', href: '/feed', icon: Rows3 }]
+        : []),
     ...(page.props.auth.has_author_profile
         ? [{ title: 'Books', href: books(), icon: BookCopy }]
         : []),
