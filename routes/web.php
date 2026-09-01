@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthorProfileController;
 use App\Http\Controllers\BetaReaderProfileController;
 use App\Http\Controllers\BetaReadingListingController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\FeedController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -26,6 +27,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('beta-reader-profile', [BetaReaderProfileController::class, 'store'])->name('beta-reader-profile.store');
     Route::get('beta-reader-profile/edit', [BetaReaderProfileController::class, 'edit'])->name('beta-reader-profile.edit');
     Route::patch('beta-reader-profile', [BetaReaderProfileController::class, 'update'])->name('beta-reader-profile.update');
+
+    Route::get('feed', [FeedController::class, 'index'])->name('feed.index');
+    Route::post('feed/{listing}/interest', [FeedController::class, 'interest'])->name('feed.interest');
+    Route::post('feed/{listing}/pass', [FeedController::class, 'pass'])->name('feed.pass');
 
     Route::resource('books', BookController::class)->except('show');
 

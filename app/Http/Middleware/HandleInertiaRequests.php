@@ -41,6 +41,7 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
                 'has_author_profile' => $request->user()?->authorProfile()->exists() ?? false,
+                'has_beta_reader_profile' => $request->user()?->betaReaderProfile()->exists() ?? false,
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
