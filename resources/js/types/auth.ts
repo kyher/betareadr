@@ -13,6 +13,7 @@ export type User = {
 export type Auth = {
     user: User;
     has_author_profile: boolean;
+    has_beta_reader_profile: boolean;
 };
 
 export type AuthorProfile = {

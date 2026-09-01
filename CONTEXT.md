@@ -52,6 +52,10 @@ _Avoid_: Trigger, tag
 A type of material a Beta Reader has chosen not to encounter. Listings for a Book with a matching Content Warning are excluded from that reader's feed.
 _Avoid_: Preference, dislike
 
+**Feed**:
+The sequence of open, undecided Beta Reading Listings eligible for a Beta Reader to consider one at a time. It excludes Listings for Books belonging to that Beta Reader's own User.
+_Avoid_: Catalogue, listing index
+
 **Close**:
 An Author's reversible removal of a Beta Reading Listing from Beta Readers' feeds. A closed Listing accepts no new Interest while preserving its existing records.
 _Avoid_: Remove, delete
@@ -65,7 +69,7 @@ A Beta Reader's indication that they want to participate in a Beta Reading Listi
 _Avoid_: Like, swipe, application
 
 **Pass**:
-A Beta Reader's indication that they do not want to participate in a Beta Reading Listing presented in their feed.
+A Beta Reader's private indication that they do not want to participate in a Beta Reading Listing presented in their feed.
 _Avoid_: Dislike, rejection
 
 **Decline**:
