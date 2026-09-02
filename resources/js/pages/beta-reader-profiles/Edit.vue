@@ -22,7 +22,7 @@ defineOptions({
         breadcrumbs: [
             { title: 'Dashboard', href: dashboard() },
             {
-                title: 'Edit Beta Reader Profile',
+                title: 'Edit beta reader profile',
                 href: editBetaReaderProfile(),
             },
         ],
@@ -31,11 +31,11 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Edit Beta Reader Profile" />
+    <Head title="Edit beta reader profile" />
     <div class="mx-auto w-full max-w-2xl p-4 md:p-8">
         <Card>
             <CardHeader>
-                <CardTitle>Edit your Beta Reader Profile</CardTitle>
+                <CardTitle>Edit your beta reader profile</CardTitle>
                 <CardDescription
                     >Update the public information authors see.</CardDescription
                 >
@@ -60,14 +60,14 @@ defineOptions({
                         <InputError :message="errors.display_name" />
                     </div>
                     <div class="grid gap-2">
-                        <Label for="handle">Beta Reader Handle</Label>
+                        <Label for="handle">Beta reader handle</Label>
                         <Input
                             id="handle"
                             :model-value="`@${betaReaderProfile.handle}`"
                             disabled
                         />
                         <p class="text-sm text-muted-foreground">
-                            Beta Reader Handles cannot be changed.
+                            Beta reader handles cannot be changed.
                         </p>
                     </div>
                     <div class="grid gap-2">

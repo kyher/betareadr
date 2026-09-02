@@ -21,18 +21,18 @@ defineOptions({
     layout: {
         breadcrumbs: [
             { title: 'Dashboard', href: dashboard() },
-            { title: 'Edit Author Profile', href: editAuthorProfile() },
+            { title: 'Edit author profile', href: editAuthorProfile() },
         ],
     },
 });
 </script>
 
 <template>
-    <Head title="Edit Author Profile" />
+    <Head title="Edit author profile" />
     <div class="mx-auto w-full max-w-2xl p-4 md:p-8">
         <Card>
             <CardHeader>
-                <CardTitle>Edit your Author Profile</CardTitle>
+                <CardTitle>Edit your author profile</CardTitle>
                 <CardDescription
                     >Update the public information beta readers
                     see.</CardDescription
@@ -58,14 +58,14 @@ defineOptions({
                         <InputError :message="errors.display_name" />
                     </div>
                     <div class="grid gap-2">
-                        <Label for="handle">Author Handle</Label>
+                        <Label for="handle">Author handle</Label>
                         <Input
                             id="handle"
                             :model-value="`@${authorProfile.handle}`"
                             disabled
                         />
                         <p class="text-sm text-muted-foreground">
-                            Author Handles cannot be changed.
+                            Author handles cannot be changed.
                         </p>
                     </div>
                     <div class="grid gap-2">

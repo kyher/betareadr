@@ -18,20 +18,20 @@ defineOptions({
     layout: {
         breadcrumbs: [
             { title: 'Books', href: books() },
-            { title: 'Add Book', href: BookController.create() },
+            { title: 'Add book', href: BookController.create() },
         ],
     },
 });
 </script>
 
 <template>
-    <Head title="Add Book" />
+    <Head title="Add book" />
     <div class="mx-auto w-full max-w-2xl p-4 md:p-8">
         <Card>
             <CardHeader>
-                <CardTitle>Add a Book</CardTitle>
+                <CardTitle>Add a book</CardTitle>
                 <CardDescription>
-                    Add a work to your public Author Profile.
+                    Add a work to your public author profile.
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -64,7 +64,7 @@ defineOptions({
                             name="description"
                             maxlength="2000"
                             rows="8"
-                            placeholder="Tell readers about this Book."
+                            placeholder="Tell readers about this book."
                             class="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
                         />
                         <InputError :message="errors.description" />
@@ -74,7 +74,7 @@ defineOptions({
                             <Link :href="books()">Cancel</Link>
                         </Button>
                         <Button type="submit" :disabled="processing">
-                            Add Book
+                            Add book
                         </Button>
                     </div>
                 </Form>

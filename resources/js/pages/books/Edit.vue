@@ -21,7 +21,7 @@ defineOptions({
     layout: {
         breadcrumbs: [
             { title: 'Books', href: books() },
-            { title: 'Edit Book', href: '#' },
+            { title: 'Edit book', href: '#' },
         ],
     },
 });
@@ -32,9 +32,9 @@ defineOptions({
     <div class="mx-auto w-full max-w-2xl p-4 md:p-8">
         <Card>
             <CardHeader>
-                <CardTitle>Edit Book</CardTitle>
+                <CardTitle>Edit book</CardTitle>
                 <CardDescription>
-                    Changes appear immediately on your public Author Profile.
+                    Changes appear immediately on your public author profile.
                 </CardDescription>
             </CardHeader>
             <CardContent>

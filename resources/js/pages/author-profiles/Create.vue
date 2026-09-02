@@ -19,21 +19,21 @@ defineOptions({
     layout: {
         breadcrumbs: [
             { title: 'Dashboard', href: dashboard() },
-            { title: 'Create Author Profile', href: createAuthorProfile() },
+            { title: 'Create author profile', href: createAuthorProfile() },
         ],
     },
 });
 </script>
 
 <template>
-    <Head title="Create Author Profile" />
+    <Head title="Create author profile" />
     <div class="mx-auto w-full max-w-2xl p-4 md:p-8">
         <Card>
             <CardHeader>
-                <CardTitle>Create your Author Profile</CardTitle>
+                <CardTitle>Create your author profile</CardTitle>
                 <CardDescription
                     >Choose the public identity you will use as an
-                    Author.</CardDescription
+                    author.</CardDescription
                 >
             </CardHeader>
             <CardContent>
@@ -60,7 +60,7 @@ defineOptions({
                         <InputError :message="errors.display_name" />
                     </div>
                     <div class="grid gap-2">
-                        <Label for="handle">Author Handle</Label>
+                        <Label for="handle">Author handle</Label>
                         <div
                             class="flex items-center rounded-md border border-input bg-transparent focus-within:ring-2 focus-within:ring-ring/50"
                         >
@@ -106,7 +106,7 @@ defineOptions({
                             ><Link :href="dashboard()">Cancel</Link></Button
                         >
                         <Button type="submit" :disabled="processing"
-                            >Create Author Profile</Button
+                            >Create author profile</Button
                         >
                     </div>
                 </Form>

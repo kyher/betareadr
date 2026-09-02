@@ -46,11 +46,11 @@ defineOptions({
             <div>
                 <h1 class="text-2xl font-semibold tracking-tight">Books</h1>
                 <p class="mt-1 text-muted-foreground">
-                    Manage the Books shown on your public Author Profile.
+                    Manage the books shown on your public author profile.
                 </p>
             </div>
             <Button as-child>
-                <Link :href="BookController.create()"><Plus /> Add Book</Link>
+                <Link :href="BookController.create()"><Plus /> Add book</Link>
             </Button>
         </div>
 
@@ -61,16 +61,16 @@ defineOptions({
                 >
                     <BookOpen class="size-6" />
                 </div>
-                <CardTitle>Add your first Book</CardTitle>
+                <CardTitle>Add your first book</CardTitle>
                 <CardDescription>
-                    Books you add are immediately visible on your public Author
+                    Books you add are immediately visible on your public author
                     Profile.
                 </CardDescription>
             </CardHeader>
             <CardContent>
                 <Button as-child>
                     <Link :href="BookController.create()"
-                        ><Plus /> Add Book</Link
+                        ><Plus /> Add book</Link
                     >
                 </Button>
             </CardContent>
@@ -126,7 +126,7 @@ defineOptions({
                                             }}”?</DialogTitle
                                         >
                                         <DialogDescription>
-                                            This Book will be permanently
+                                            This book will be permanently
                                             deleted. This cannot be undone.
                                         </DialogDescription>
                                     </DialogHeader>
@@ -143,7 +143,7 @@ defineOptions({
                                             variant="destructive"
                                             :disabled="processing"
                                         >
-                                            Delete Book
+                                            Delete book
                                         </Button>
                                     </DialogFooter>
                                 </Form>
