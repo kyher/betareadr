@@ -89,7 +89,7 @@ class FeedController extends Controller
 
         if ($profile === null) {
             return to_route('beta-reader-profile.create')
-                ->withErrors(['profile' => __('Create a Beta Reader Profile to use the Feed.')]);
+                ->withErrors(['profile' => __('Create a beta reader profile to use the Feed.')]);
         }
 
         return $profile;

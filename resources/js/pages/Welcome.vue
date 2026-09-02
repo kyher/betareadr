@@ -21,7 +21,7 @@ const page = usePage();
         <meta
             head-key="description"
             name="description"
-            content="BetaReadr connects Authors seeking thoughtful pre-publication feedback with Beta Readers who want to help shape a book."
+            content="BetaReadr connects authors seeking thoughtful pre-publication feedback with beta readers who want to help shape a book."
         />
     </Head>
 
@@ -91,7 +91,7 @@ const page = usePage();
                             class="mb-6 inline-flex items-center gap-2 rounded-full border border-amber-300/70 bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-950 dark:border-amber-700/60 dark:bg-amber-950/40 dark:text-amber-200"
                         >
                             <Sparkles class="size-4" aria-hidden="true" />
-                            Better books begin with thoughtful Beta Readers
+                            Better books begin with thoughtful beta readers
                         </p>
                         <h1
                             class="text-4xl leading-[1.08] font-bold tracking-tight text-balance sm:text-6xl lg:text-7xl"
@@ -104,8 +104,8 @@ const page = usePage();
                         <p
                             class="mt-7 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl"
                         >
-                            BetaReadr brings Authors seeking useful,
-                            pre-publication feedback together with Beta Readers
+                            BetaReadr brings authors seeking useful,
+                            pre-publication feedback together with beta readers
                             who want to help shape books they care about.
                         </p>
                         <div
@@ -222,8 +222,8 @@ const page = usePage();
                         </h2>
                         <p class="mt-4 text-lg text-muted-foreground">
                             Create the profile that fits how you want to use
-                            BetaReadr. You can be both an Author and a Beta
-                            Reader.
+                            BetaReadr. You can be both an author and a beta
+                            reader.
                         </p>
                     </div>
 
@@ -236,7 +236,7 @@ const page = usePage();
                             >
                                 <Feather class="size-6" aria-hidden="true" />
                             </div>
-                            <h3 class="mt-6 text-2xl font-bold">For Authors</h3>
+                            <h3 class="mt-6 text-2xl font-bold">For authors</h3>
                             <p class="mt-3 leading-7 text-muted-foreground">
                                 Present your work clearly and explain the
                                 thoughtful pre-publication feedback you need.
@@ -247,8 +247,8 @@ const page = usePage();
                                         class="mt-0.5 size-5 shrink-0 text-emerald-600 dark:text-emerald-400"
                                         aria-hidden="true"
                                     /><span
-                                        >Create your public Author
-                                        Profile.</span
+                                        >Create your public author
+                                        profile.</span
                                     >
                                 </li>
                                 <li class="flex gap-3">
@@ -256,7 +256,7 @@ const page = usePage();
                                         class="mt-0.5 size-5 shrink-0 text-emerald-600 dark:text-emerald-400"
                                         aria-hidden="true"
                                     /><span
-                                        >Add a Book you want feedback on.</span
+                                        >Add a book you want feedback on.</span
                                     >
                                 </li>
                                 <li class="flex gap-3">
@@ -280,7 +280,7 @@ const page = usePage();
                                 <Search class="size-6" aria-hidden="true" />
                             </div>
                             <h3 class="mt-6 text-2xl font-bold">
-                                For Beta Readers
+                                For beta readers
                             </h3>
                             <p class="mt-3 leading-7 text-muted-foreground">
                                 Share what you enjoy reading and prepare to find
@@ -293,8 +293,8 @@ const page = usePage();
                                         class="mt-0.5 size-5 shrink-0 text-emerald-600 dark:text-emerald-400"
                                         aria-hidden="true"
                                     /><span
-                                        >Create your public Beta Reader
-                                        Profile.</span
+                                        >Create your public beta reader
+                                        profile.</span
                                     >
                                 </li>
                                 <li class="flex gap-3">
@@ -311,8 +311,8 @@ const page = usePage();
                                         class="mt-0.5 size-5 shrink-0 text-emerald-600 dark:text-emerald-400"
                                         aria-hidden="true"
                                     /><span
-                                        >Discovery and matching with Authors and
-                                        their Books are still to come.</span
+                                        >Discovery and matching with authors and
+                                        their books are still to come.</span
                                     >
                                 </li>
                             </ol>
@@ -342,7 +342,7 @@ const page = usePage();
                                 Your next chapter starts here.
                             </h2>
                             <p class="mt-4 text-lg leading-8 text-stone-300">
-                                Join BetaReadr as an Author, a Beta Reader, or
+                                Join BetaReadr as an author, a beta reader, or
                                 both—and help make pre-publication feedback more
                                 thoughtful.
                             </p>

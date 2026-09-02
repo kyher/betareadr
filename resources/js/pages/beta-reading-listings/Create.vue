@@ -79,7 +79,7 @@ defineOptions({
                             class="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
                         />
                         <p class="text-sm text-muted-foreground">
-                            Tell Beta Readers about this draft and the feedback
+                            Tell beta readers about this draft and the feedback
                             you want.
                         </p>
                         <InputError :message="errors.reading_brief" />

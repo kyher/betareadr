@@ -82,7 +82,7 @@ defineOptions({
                     {{ book.title }}
                 </h1>
                 <p class="mt-1 text-muted-foreground">
-                    Manage recruitment rounds for this Book.
+                    Manage recruitment rounds for this book.
                 </p>
             </div>
             <div
@@ -121,7 +121,7 @@ defineOptions({
                 <CardTitle>Create the first Listing</CardTitle>
                 <CardDescription>
                     Describe the current draft and the feedback you want from
-                    Beta Readers.
+                    beta readers.
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -197,7 +197,7 @@ defineOptions({
                                             >Close this Listing?</DialogTitle
                                         >
                                         <DialogDescription>
-                                            It will leave Beta Reader feeds and
+                                            It will leave beta reader feeds and
                                             accept no new Interest. Existing
                                             records are preserved, and you can
                                             reopen it later.

@@ -20,7 +20,7 @@ defineOptions({
         breadcrumbs: [
             { title: 'Dashboard', href: dashboard() },
             {
-                title: 'Create Beta Reader Profile',
+                title: 'Create beta reader profile',
                 href: createBetaReaderProfile(),
             },
         ],
@@ -29,11 +29,11 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Create Beta Reader Profile" />
+    <Head title="Create beta reader profile" />
     <div class="mx-auto w-full max-w-2xl p-4 md:p-8">
         <Card>
             <CardHeader>
-                <CardTitle>Create your Beta Reader Profile</CardTitle>
+                <CardTitle>Create your beta reader profile</CardTitle>
                 <CardDescription
                     >Choose the public identity you will use as a Beta
                     Reader.</CardDescription
@@ -62,7 +62,7 @@ defineOptions({
                         <InputError :message="errors.display_name" />
                     </div>
                     <div class="grid gap-2">
-                        <Label for="handle">Beta Reader Handle</Label>
+                        <Label for="handle">Beta reader handle</Label>
                         <div
                             class="flex items-center rounded-md border border-input bg-transparent focus-within:ring-2 focus-within:ring-ring/50"
                         >
@@ -108,7 +108,7 @@ defineOptions({
                             ><Link :href="dashboard()">Cancel</Link></Button
                         >
                         <Button type="submit" :disabled="processing"
-                            >Create Beta Reader Profile</Button
+                            >Create beta reader profile</Button
                         >
                     </div>
                 </Form>

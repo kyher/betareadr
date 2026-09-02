@@ -186,7 +186,7 @@ defineOptions({
         <div class="mb-6">
             <h1 class="text-2xl font-semibold tracking-tight">Feed</h1>
             <p class="mt-1 text-muted-foreground">
-                Find a Book you would love to help shape.
+                Find a book you would love to help shape.
             </p>
         </div>
 
@@ -273,7 +273,7 @@ defineOptions({
                         <h2
                             class="mb-2 text-sm font-semibold tracking-wide text-muted-foreground uppercase"
                         >
-                            About the Book
+                            About the book
                         </h2>
                         <p class="leading-7 whitespace-pre-line">
                             {{ displayedListing.book.description }}
@@ -315,12 +315,12 @@ defineOptions({
             </Card>
 
             <p class="mt-5 text-center text-sm text-muted-foreground">
-                Drag left to Pass or right if you’re Interested.
+                Drag left to pass or right if you’re interested.
             </p>
         </div>
 
         <Card v-else class="mx-auto w-full max-w-xl border-dashed text-center">
-            <CardHeader class="items-center">
+            <CardHeader class="justify-items-center">
                 <div
                     class="mb-2 flex size-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
                 >

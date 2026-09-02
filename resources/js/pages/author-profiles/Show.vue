@@ -77,7 +77,7 @@ const page = usePage();
                     </Card>
                 </div>
                 <p v-else class="mt-4 text-muted-foreground">
-                    This Author has not added any Books yet.
+                    This author has not added any books yet.
                 </p>
                 <PaginationLinks class="mt-6" :links="books.links" />
             </section>

@@ -49,7 +49,7 @@ defineOptions({
 
         <Card v-if="authorProfile">
             <CardHeader>
-                <CardTitle>Your Author Profile</CardTitle>
+                <CardTitle>Your author profile</CardTitle>
                 <CardDescription
                     >This is the public identity readers see on
                     BetaReadr.</CardDescription
@@ -97,7 +97,7 @@ defineOptions({
                 >
                     <UserRound class="size-6" />
                 </div>
-                <CardTitle>Create your Author Profile</CardTitle>
+                <CardTitle>Create your author profile</CardTitle>
                 <CardDescription class="max-w-2xl">
                     Introduce yourself to beta readers with a public name,
                     unique handle, and optional bio.
@@ -106,7 +106,7 @@ defineOptions({
             <CardContent>
                 <Button as-child>
                     <Link :href="createAuthorProfile()"
-                        >Create Author Profile <ArrowRight
+                        >Create author profile <ArrowRight
                     /></Link>
                 </Button>
             </CardContent>
@@ -114,7 +114,7 @@ defineOptions({
 
         <Card v-if="betaReaderProfile">
             <CardHeader>
-                <CardTitle>Your Beta Reader Profile</CardTitle>
+                <CardTitle>Your beta reader profile</CardTitle>
                 <CardDescription
                     >This is the public identity authors see on
                     BetaReadr.</CardDescription
@@ -167,7 +167,7 @@ defineOptions({
                 >
                     <UserRound class="size-6" />
                 </div>
-                <CardTitle>Create your Beta Reader Profile</CardTitle>
+                <CardTitle>Create your beta reader profile</CardTitle>
                 <CardDescription class="max-w-2xl">
                     Introduce yourself to authors with a public name, unique
                     handle, and optional bio.
@@ -176,7 +176,7 @@ defineOptions({
             <CardContent>
                 <Button as-child>
                     <Link :href="createBetaReaderProfile()"
-                        >Create Beta Reader Profile <ArrowRight
+                        >Create beta reader profile <ArrowRight
                     /></Link>
                 </Button>
             </CardContent>
