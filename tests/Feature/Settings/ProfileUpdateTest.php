@@ -59,7 +59,9 @@ class ProfileUpdateTest extends TestCase
 
         $this->withCookie('locale', 'fr')
             ->get(route('home'))
-            ->assertInertia(fn ($page) => $page->where('locale', 'fr'));
+            ->assertInertia(fn ($page) => $page
+                ->where('locale', 'fr')
+                ->where('translations.Profile', 'Profil'));
     }
 
     public function test_user_can_delete_their_account()
