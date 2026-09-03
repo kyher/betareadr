@@ -10,6 +10,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { getInitials } from '@/composables/useInitials';
+import { useTranslation } from '@/composables/useTranslation';
 import { dashboard, home, login } from '@/routes';
 import type { AuthorProfile, Book } from '@/types';
 
@@ -20,6 +21,7 @@ type Paginator<T> = {
 
 defineProps<{ authorProfile: AuthorProfile; books: Paginator<Book> }>();
 const page = usePage();
+const { t } = useTranslation();
 </script>
 
 <template>
@@ -36,7 +38,7 @@ const page = usePage();
                     <Link
                         :href="page.props.auth.user ? dashboard() : login()"
                         >{{
-                            page.props.auth.user ? 'Dashboard' : 'Log in'
+                            t(page.props.auth.user ? 'Dashboard' : 'Log in')
                         }}</Link
                     >
                 </Button>
@@ -63,7 +65,9 @@ const page = usePage();
                 </p>
             </div>
             <section class="mt-16">
-                <h2 class="text-2xl font-semibold tracking-tight">Books</h2>
+                <h2 class="text-2xl font-semibold tracking-tight">
+                    {{ t('Books') }}
+                </h2>
                 <div v-if="books.data.length" class="mt-6 grid gap-4">
                     <Card v-for="book in books.data" :key="book.id">
                         <CardHeader>
@@ -77,7 +81,7 @@ const page = usePage();
                     </Card>
                 </div>
                 <p v-else class="mt-4 text-muted-foreground">
-                    This author has not added any books yet.
+                    {{ t('This author has not added any books yet.') }}
                 </p>
                 <PaginationLinks class="mt-6" :links="books.links" />
             </section>

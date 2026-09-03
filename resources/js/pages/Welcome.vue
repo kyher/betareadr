@@ -11,17 +11,24 @@ import {
     Sparkles,
     Users,
 } from '@lucide/vue';
+import LanguageSelect from '@/components/LanguageSelect.vue';
+import { useTranslation } from '@/composables/useTranslation';
 import { dashboard, home, login, register } from '@/routes';
 
 const page = usePage();
+const { t } = useTranslation();
 </script>
 
 <template>
-    <Head title="Thoughtful feedback before publication">
+    <Head :title="t('Thoughtful feedback before publication')">
         <meta
             head-key="description"
             name="description"
-            content="BetaReadr connects authors seeking thoughtful pre-publication feedback with beta readers who want to help shape a book."
+            :content="
+                t(
+                    'BetaReadr connects authors seeking thoughtful pre-publication feedback with beta readers who want to help shape a book.',
+                )
+            "
         />
     </Head>
 
@@ -31,12 +38,12 @@ const page = usePage();
         <header class="relative z-20 border-b border-border/70">
             <nav
                 class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8 lg:px-10"
-                aria-label="Primary navigation"
+                :aria-label="t('Primary navigation')"
             >
                 <Link
                     :href="home()"
                     class="flex items-center gap-2 rounded-md text-lg font-semibold tracking-tight focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-                    aria-label="BetaReadr home"
+                    :aria-label="t('BetaReadr home')"
                 >
                     <span
                         class="grid size-9 place-items-center rounded-xl bg-amber-400 text-stone-950 shadow-sm"
@@ -48,25 +55,26 @@ const page = usePage();
                 </Link>
 
                 <div class="flex items-center gap-2 sm:gap-3">
+                    <LanguageSelect />
                     <Link
                         v-if="page.props.auth.user"
                         :href="dashboard()"
                         class="inline-flex min-h-10 items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                     >
-                        Dashboard
+                        {{ t('Dashboard') }}
                         <ArrowRight class="size-4" aria-hidden="true" />
                     </Link>
                     <template v-else>
                         <Link
                             :href="login()"
                             class="inline-flex min-h-10 items-center rounded-lg px-3 py-2 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:px-4"
-                            >Log in</Link
+                            >{{ t('Log in') }}</Link
                         >
                         <Link
                             :href="register()"
                             class="inline-flex min-h-10 items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                         >
-                            Register
+                            {{ t('Register') }}
                             <ArrowRight
                                 class="hidden size-4 sm:block"
                                 aria-hidden="true"
@@ -91,22 +99,28 @@ const page = usePage();
                             class="mb-6 inline-flex items-center gap-2 rounded-full border border-amber-300/70 bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-950 dark:border-amber-700/60 dark:bg-amber-950/40 dark:text-amber-200"
                         >
                             <Sparkles class="size-4" aria-hidden="true" />
-                            Better books begin with thoughtful beta readers
+                            {{
+                                t(
+                                    'Better books begin with thoughtful beta readers',
+                                )
+                            }}
                         </p>
                         <h1
                             class="text-4xl leading-[1.08] font-bold tracking-tight text-balance sm:text-6xl lg:text-7xl"
                         >
-                            Find the feedback your book needs
-                            <span class="text-amber-600 dark:text-amber-400"
-                                >before publication.</span
-                            >
+                            {{ t('Find the feedback your book needs') }}
+                            <span class="text-amber-600 dark:text-amber-400">{{
+                                t('before publication.')
+                            }}</span>
                         </h1>
                         <p
                             class="mt-7 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl"
                         >
-                            BetaReadr brings authors seeking useful,
-                            pre-publication feedback together with beta readers
-                            who want to help shape books they care about.
+                            {{
+                                t(
+                                    'BetaReadr brings authors seeking useful, pre-publication feedback together with beta readers who want to help shape books they care about.',
+                                )
+                            }}
                         </p>
                         <div
                             v-if="!page.props.auth.user"
@@ -116,13 +130,13 @@ const page = usePage();
                                 :href="register()"
                                 class="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                             >
-                                Register for BetaReadr
+                                {{ t('Register for BetaReadr') }}
                                 <ArrowRight class="size-4" aria-hidden="true" />
                             </Link>
                             <Link
                                 :href="login()"
                                 class="inline-flex min-h-12 items-center justify-center rounded-lg border border-border bg-background/70 px-6 py-3 font-semibold backdrop-blur transition hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-                                >Log in</Link
+                                >{{ t('Log in') }}</Link
                             >
                         </div>
                         <Link
@@ -130,7 +144,7 @@ const page = usePage();
                             :href="dashboard()"
                             class="mt-9 inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                         >
-                            Go to your Dashboard
+                            {{ t('Go to your Dashboard') }}
                             <ArrowRight class="size-4" aria-hidden="true" />
                         </Link>
                     </div>
@@ -163,7 +177,7 @@ const page = usePage();
                                 </div>
                                 <span
                                     class="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800 dark:bg-amber-950 dark:text-amber-300"
-                                    >In progress</span
+                                    >{{ t('In progress') }}</span
                                 >
                             </div>
                             <div
@@ -183,17 +197,17 @@ const page = usePage();
                                 <div class="rounded-xl bg-muted p-3">
                                     <Heart
                                         class="mx-auto mb-2 size-5 text-rose-500"
-                                    />Interest
+                                    />{{ t('Interest') }}
                                 </div>
                                 <div class="rounded-xl bg-muted p-3">
                                     <Users
                                         class="mx-auto mb-2 size-5 text-emerald-600 dark:text-emerald-400"
-                                    />Match
+                                    />{{ t('Match') }}
                                 </div>
                                 <div class="rounded-xl bg-muted p-3">
                                     <MessageCircle
                                         class="mx-auto mb-2 size-5 text-amber-600 dark:text-amber-400"
-                                    />Feedback
+                                    />{{ t('Feedback') }}
                                 </div>
                             </div>
                         </div>
@@ -212,18 +226,20 @@ const page = usePage();
                         <p
                             class="text-sm font-bold tracking-widest text-amber-700 uppercase dark:text-amber-400"
                         >
-                            Two paths, one community
+                            {{ t('Two paths, one community') }}
                         </p>
                         <h2
                             id="two-paths-heading"
                             class="mt-3 text-3xl font-bold tracking-tight sm:text-4xl"
                         >
-                            Take part in the story
+                            {{ t('Take part in the story') }}
                         </h2>
                         <p class="mt-4 text-lg text-muted-foreground">
-                            Create the profile that fits how you want to use
-                            BetaReadr. You can be both an author and a beta
-                            reader.
+                            {{
+                                t(
+                                    'Create the profile that fits how you want to use BetaReadr. You can be both an author and a beta reader.',
+                                )
+                            }}
                         </p>
                     </div>
 
@@ -236,37 +252,42 @@ const page = usePage();
                             >
                                 <Feather class="size-6" aria-hidden="true" />
                             </div>
-                            <h3 class="mt-6 text-2xl font-bold">For authors</h3>
+                            <h3 class="mt-6 text-2xl font-bold">
+                                {{ t('For authors') }}
+                            </h3>
                             <p class="mt-3 leading-7 text-muted-foreground">
-                                Present your work clearly and explain the
-                                thoughtful pre-publication feedback you need.
+                                {{
+                                    t(
+                                        'Present your work clearly and explain the thoughtful pre-publication feedback you need.',
+                                    )
+                                }}
                             </p>
                             <ol class="mt-7 space-y-4">
                                 <li class="flex gap-3">
                                     <Check
                                         class="mt-0.5 size-5 shrink-0 text-emerald-600 dark:text-emerald-400"
                                         aria-hidden="true"
-                                    /><span
-                                        >Create your public author
-                                        profile.</span
-                                    >
+                                    /><span>{{
+                                        t('Create your public author profile.')
+                                    }}</span>
                                 </li>
                                 <li class="flex gap-3">
                                     <Check
                                         class="mt-0.5 size-5 shrink-0 text-emerald-600 dark:text-emerald-400"
                                         aria-hidden="true"
-                                    /><span
-                                        >Add a book you want feedback on.</span
-                                    >
+                                    /><span>{{
+                                        t('Add a book you want feedback on.')
+                                    }}</span>
                                 </li>
                                 <li class="flex gap-3">
                                     <Check
                                         class="mt-0.5 size-5 shrink-0 text-emerald-600 dark:text-emerald-400"
                                         aria-hidden="true"
-                                    /><span
-                                        >Open a Beta Reading Listing with a
-                                        focused Reading Brief.</span
-                                    >
+                                    /><span>{{
+                                        t(
+                                            'Open a Beta Reading Listing with a focused Reading Brief.',
+                                        )
+                                    }}</span>
                                 </li>
                             </ol>
                         </article>
@@ -280,40 +301,45 @@ const page = usePage();
                                 <Search class="size-6" aria-hidden="true" />
                             </div>
                             <h3 class="mt-6 text-2xl font-bold">
-                                For beta readers
+                                {{ t('For beta readers') }}
                             </h3>
                             <p class="mt-3 leading-7 text-muted-foreground">
-                                Share what you enjoy reading and prepare to find
-                                pre-publication books where your perspective can
-                                help.
+                                {{
+                                    t(
+                                        'Share what you enjoy reading and prepare to find pre-publication books where your perspective can help.',
+                                    )
+                                }}
                             </p>
                             <ol class="mt-7 space-y-4">
                                 <li class="flex gap-3">
                                     <Check
                                         class="mt-0.5 size-5 shrink-0 text-emerald-600 dark:text-emerald-400"
                                         aria-hidden="true"
-                                    /><span
-                                        >Create your public beta reader
-                                        profile.</span
-                                    >
+                                    /><span>{{
+                                        t(
+                                            'Create your public beta reader profile.',
+                                        )
+                                    }}</span>
                                 </li>
                                 <li class="flex gap-3">
                                     <Check
                                         class="mt-0.5 size-5 shrink-0 text-emerald-600 dark:text-emerald-400"
                                         aria-hidden="true"
-                                    /><span
-                                        >Use your bio to share your reading
-                                        interests and experience.</span
-                                    >
+                                    /><span>{{
+                                        t(
+                                            'Use your bio to share your reading interests and experience.',
+                                        )
+                                    }}</span>
                                 </li>
                                 <li class="flex gap-3">
                                     <Check
                                         class="mt-0.5 size-5 shrink-0 text-emerald-600 dark:text-emerald-400"
                                         aria-hidden="true"
-                                    /><span
-                                        >Discovery and matching with authors and
-                                        their books are still to come.</span
-                                    >
+                                    /><span>{{
+                                        t(
+                                            'Discovery and matching with authors and their books are still to come.',
+                                        )
+                                    }}</span>
                                 </li>
                             </ol>
                         </article>
@@ -339,19 +365,21 @@ const page = usePage();
                                 id="cta-heading"
                                 class="text-3xl font-bold tracking-tight sm:text-4xl"
                             >
-                                Your next chapter starts here.
+                                {{ t('Your next chapter starts here.') }}
                             </h2>
                             <p class="mt-4 text-lg leading-8 text-stone-300">
-                                Join BetaReadr as an author, a beta reader, or
-                                both—and help make pre-publication feedback more
-                                thoughtful.
+                                {{
+                                    t(
+                                        'Join BetaReadr as an author, a beta reader, or both—and help make pre-publication feedback more thoughtful.',
+                                    )
+                                }}
                             </p>
                             <Link
                                 v-if="!page.props.auth.user"
                                 :href="register()"
                                 class="mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-amber-400 px-6 py-3 font-semibold text-stone-950 shadow-sm transition hover:bg-amber-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                             >
-                                Register for BetaReadr
+                                {{ t('Register for BetaReadr') }}
                                 <ArrowRight class="size-4" aria-hidden="true" />
                             </Link>
                             <Link
@@ -359,7 +387,7 @@ const page = usePage();
                                 :href="dashboard()"
                                 class="mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-amber-400 px-6 py-3 font-semibold text-stone-950 shadow-sm transition hover:bg-amber-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                             >
-                                Go to your Dashboard
+                                {{ t('Go to your Dashboard') }}
                                 <ArrowRight class="size-4" aria-hidden="true" />
                             </Link>
                         </div>
@@ -373,7 +401,9 @@ const page = usePage();
                 class="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10"
             >
                 <p class="font-semibold text-foreground">BetaReadr</p>
-                <p>Thoughtful feedback for books before publication.</p>
+                <p>
+                    {{ t('Thoughtful feedback for books before publication.') }}
+                </p>
             </div>
         </footer>
     </div>

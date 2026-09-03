@@ -12,7 +12,10 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslation } from '@/composables/useTranslation';
 import { index as books } from '@/routes/books';
+
+const { t } = useTranslation();
 
 defineOptions({
     layout: {
@@ -25,13 +28,13 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Add book" />
+    <Head :title="t('Add book')" />
     <div class="mx-auto w-full max-w-2xl p-4 md:p-8">
         <Card>
             <CardHeader>
-                <CardTitle>Add a book</CardTitle>
+                <CardTitle>{{ t('Add a book') }}</CardTitle>
                 <CardDescription>
-                    Add a work to your public author profile.
+                    {{ t('Add a work to your public author profile.') }}
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -41,40 +44,40 @@ defineOptions({
                     v-slot="{ errors, processing }"
                 >
                     <div class="grid gap-2">
-                        <Label for="title">Title</Label>
+                        <Label for="title">{{ t('Title') }}</Label>
                         <Input
                             id="title"
                             name="title"
                             required
                             maxlength="200"
                             autofocus
-                            placeholder="The Left Hand of Darkness"
+                            :placeholder="t('Book title')"
                         />
                         <InputError :message="errors.title" />
                     </div>
                     <div class="grid gap-2">
                         <Label for="description">
-                            Description
-                            <span class="text-muted-foreground"
-                                >(optional)</span
-                            >
+                            {{ t('Description') }}
+                            <span class="text-muted-foreground">{{
+                                t('(optional)')
+                            }}</span>
                         </Label>
                         <textarea
                             id="description"
                             name="description"
                             maxlength="2000"
                             rows="8"
-                            placeholder="Tell readers about this book."
+                            :placeholder="t('Tell readers about this book.')"
                             class="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
                         />
                         <InputError :message="errors.description" />
                     </div>
                     <div class="flex justify-end gap-3">
                         <Button variant="outline" as-child>
-                            <Link :href="books()">Cancel</Link>
+                            <Link :href="books()">{{ t('Cancel') }}</Link>
                         </Button>
                         <Button type="submit" :disabled="processing">
-                            Add book
+                            {{ t('Add book') }}
                         </Button>
                     </div>
                 </Form>

@@ -5,6 +5,7 @@ namespace Tests\Feature\Auth;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\RateLimiter;
+use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
@@ -16,6 +17,15 @@ class AuthenticationTest extends TestCase
         $response = $this->get(route('login'));
 
         $response->assertOk();
+    }
+
+    public function test_login_screen_uses_the_guest_language()
+    {
+        $this->withCookie('locale', 'fr')
+            ->get(route('login'))
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->where('locale', 'fr')
+                ->where('translations.Log in', 'Se connecter'));
     }
 
     public function test_users_can_authenticate_using_the_login_screen()

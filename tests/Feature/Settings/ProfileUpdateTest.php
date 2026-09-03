@@ -30,16 +30,39 @@ class ProfileUpdateTest extends TestCase
             ->patch(route('profile.update'), [
                 'name' => 'Test User',
                 'email' => 'test@example.com',
+                'locale' => 'es',
             ]);
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirect(route('profile.edit'));
+            ->assertRedirect(route('profile.edit'))
+            ->assertCookie('locale', 'es');
 
         $user->refresh();
 
         $this->assertSame('Test User', $user->name);
         $this->assertSame('test@example.com', $user->email);
+        $this->assertSame('es', $user->locale);
+        $this->assertSame('es', app()->getLocale());
+        $this->assertSame('Perfil actualizado.', __('Profile updated.'));
+
+        $this->actingAs($user)
+            ->get(route('profile.edit'))
+            ->assertInertia(fn ($page) => $page->where('locale', 'es'));
+    }
+
+    public function test_french_can_be_selected_by_a_guest()
+    {
+        $this->from(route('home'))
+            ->post(route('language.update'), ['locale' => 'fr'])
+            ->assertRedirect(route('home'))
+            ->assertCookie('locale', 'fr');
+
+        $this->withCookie('locale', 'fr')
+            ->get(route('home'))
+            ->assertInertia(fn ($page) => $page
+                ->where('locale', 'fr')
+                ->where('translations.Profile', 'Profil'));
     }
 
     public function test_user_can_delete_their_account()

@@ -19,6 +19,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import { useTranslation } from '@/composables/useTranslation';
 
 type FeedListing = {
     id: number;
@@ -36,6 +37,7 @@ type FeedListing = {
 
 const props = defineProps<{ listing: FeedListing | null }>();
 const page = usePage();
+const { t } = useTranslation();
 const displayedListing = ref<FeedListing | null>(props.listing);
 const pendingListing = ref<FeedListing | null>(props.listing);
 const processing = ref(false);
@@ -181,12 +183,14 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Feed" />
+    <Head :title="t('Feed')" />
     <main class="mx-auto flex w-full max-w-3xl flex-1 flex-col p-4 md:p-8">
         <div class="mb-6">
-            <h1 class="text-2xl font-semibold tracking-tight">Feed</h1>
+            <h1 class="text-2xl font-semibold tracking-tight">
+                {{ t('Feed') }}
+            </h1>
             <p class="mt-1 text-muted-foreground">
-                Find a book you would love to help shape.
+                {{ t('Find a book you would love to help shape.') }}
             </p>
         </div>
 
@@ -195,7 +199,7 @@ defineOptions({
             variant="destructive"
             class="mb-5"
         >
-            <AlertTitle>Listing unavailable</AlertTitle>
+            <AlertTitle>{{ t('Listing unavailable') }}</AlertTitle>
             <AlertDescription>{{ page.props.errors.listing }}</AlertDescription>
         </Alert>
 
@@ -224,7 +228,7 @@ defineOptions({
                     <div
                         class="rounded-xl border-2 border-current px-4 py-2 text-xl font-bold tracking-wider uppercase"
                     >
-                        Interested
+                        {{ t('Interested') }}
                     </div>
                 </div>
                 <div
@@ -237,21 +241,26 @@ defineOptions({
                     <div
                         class="rounded-xl border-2 border-current px-4 py-2 text-xl font-bold tracking-wider uppercase"
                     >
-                        Pass
+                        {{ t('Pass') }}
                     </div>
                 </div>
 
                 <CardHeader class="gap-4 border-b">
                     <div class="flex items-center justify-between gap-3">
                         <Badge variant="secondary">
-                            <BookOpen class="mr-1 size-3.5" /> Open Listing
+                            <BookOpen class="mr-1 size-3.5" />
+                            {{ t('Open Listing') }}
                         </Badge>
                         <div
                             class="flex items-center gap-1.5 text-sm text-muted-foreground"
                         >
                             <FileText class="size-4" />
-                            {{ displayedListing.word_count.toLocaleString() }}
-                            words
+                            {{
+                                displayedListing.word_count.toLocaleString(
+                                    page.props.locale,
+                                )
+                            }}
+                            {{ t('words') }}
                         </div>
                     </div>
                     <CardTitle class="text-2xl sm:text-3xl">
@@ -273,7 +282,7 @@ defineOptions({
                         <h2
                             class="mb-2 text-sm font-semibold tracking-wide text-muted-foreground uppercase"
                         >
-                            About the book
+                            {{ t('About the book') }}
                         </h2>
                         <p class="leading-7 whitespace-pre-line">
                             {{ displayedListing.book.description }}
@@ -283,7 +292,7 @@ defineOptions({
                         <h2
                             class="mb-2 text-sm font-semibold tracking-wide text-muted-foreground uppercase"
                         >
-                            Reading Brief
+                            {{ t('Reading Brief') }}
                         </h2>
                         <p class="leading-7 whitespace-pre-line">
                             {{ displayedListing.reading_brief }}
@@ -300,7 +309,7 @@ defineOptions({
                         :disabled="processing"
                         @click="submitDecision('pass')"
                     >
-                        <X /> Pass
+                        <X /> {{ t('Pass') }}
                     </Button>
                     <Button
                         type="button"
@@ -309,13 +318,13 @@ defineOptions({
                         :disabled="processing"
                         @click="submitDecision('interested')"
                     >
-                        <Check /> Interested
+                        <Check /> {{ t('Interested') }}
                     </Button>
                 </CardFooter>
             </Card>
 
             <p class="mt-5 text-center text-sm text-muted-foreground">
-                Drag left to pass or right if you’re interested.
+                {{ t('Drag left to pass or right if you’re interested.') }}
             </p>
         </div>
 
@@ -326,10 +335,10 @@ defineOptions({
                 >
                     <CircleCheck class="size-7" />
                 </div>
-                <CardTitle>You’re all caught up</CardTitle>
+                <CardTitle>{{ t('You’re all caught up') }}</CardTitle>
             </CardHeader>
             <CardContent class="text-muted-foreground">
-                Check back later for new Listings.
+                {{ t('Check back later for new Listings.') }}
             </CardContent>
         </Card>
     </main>

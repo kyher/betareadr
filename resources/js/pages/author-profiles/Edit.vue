@@ -12,11 +12,13 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslation } from '@/composables/useTranslation';
 import { dashboard } from '@/routes';
 import { edit as editAuthorProfile } from '@/routes/author-profile';
 import type { AuthorProfile } from '@/types';
 
 defineProps<{ authorProfile: AuthorProfile }>();
+const { t } = useTranslation();
 defineOptions({
     layout: {
         breadcrumbs: [
@@ -28,15 +30,14 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Edit author profile" />
+    <Head :title="t('Edit author profile')" />
     <div class="mx-auto w-full max-w-2xl p-4 md:p-8">
         <Card>
             <CardHeader>
-                <CardTitle>Edit your author profile</CardTitle>
-                <CardDescription
-                    >Update the public information beta readers
-                    see.</CardDescription
-                >
+                <CardTitle>{{ t('Edit your author profile') }}</CardTitle>
+                <CardDescription>{{
+                    t('Update the public information beta readers see.')
+                }}</CardDescription>
             </CardHeader>
             <CardContent>
                 <Form
@@ -45,7 +46,9 @@ defineOptions({
                     v-slot="{ errors, processing }"
                 >
                     <div class="grid gap-2">
-                        <Label for="display_name">Display name</Label>
+                        <Label for="display_name">{{
+                            t('Display name')
+                        }}</Label>
                         <Input
                             id="display_name"
                             name="display_name"
@@ -58,22 +61,22 @@ defineOptions({
                         <InputError :message="errors.display_name" />
                     </div>
                     <div class="grid gap-2">
-                        <Label for="handle">Author handle</Label>
+                        <Label for="handle">{{ t('Author handle') }}</Label>
                         <Input
                             id="handle"
                             :model-value="`@${authorProfile.handle}`"
                             disabled
                         />
                         <p class="text-sm text-muted-foreground">
-                            Author handles cannot be changed.
+                            {{ t('Author handles cannot be changed.') }}
                         </p>
                     </div>
                     <div class="grid gap-2">
                         <Label for="bio"
-                            >Bio
-                            <span class="text-muted-foreground"
-                                >(optional)</span
-                            ></Label
+                            >{{ t('Bio') }}
+                            <span class="text-muted-foreground">{{
+                                t('(optional)')
+                            }}</span></Label
                         >
                         <textarea
                             id="bio"
@@ -87,11 +90,13 @@ defineOptions({
                     </div>
                     <div class="flex items-center justify-end gap-3">
                         <Button variant="outline" as-child
-                            ><Link :href="dashboard()">Cancel</Link></Button
+                            ><Link :href="dashboard()">{{
+                                t('Cancel')
+                            }}</Link></Button
                         >
-                        <Button type="submit" :disabled="processing"
-                            >Save changes</Button
-                        >
+                        <Button type="submit" :disabled="processing">{{
+                            t('Save changes')
+                        }}</Button>
                     </div>
                 </Form>
             </CardContent>

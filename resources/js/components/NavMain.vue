@@ -8,6 +8,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
+import { useTranslation } from '@/composables/useTranslation';
 import type { NavItem } from '@/types';
 
 defineProps<{
@@ -15,11 +16,12 @@ defineProps<{
 }>();
 
 const { isCurrentUrl } = useCurrentUrl();
+const { t } = useTranslation();
 </script>
 
 <template>
     <SidebarGroup class="px-2 py-0">
-        <SidebarGroupLabel>Platform</SidebarGroupLabel>
+        <SidebarGroupLabel>{{ t('Platform') }}</SidebarGroupLabel>
         <SidebarMenu>
             <SidebarMenuItem v-for="item in items" :key="item.title">
                 <SidebarMenuButton

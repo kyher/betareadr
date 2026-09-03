@@ -22,6 +22,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { useTranslation } from '@/composables/useTranslation';
 import { index as booksIndex } from '@/routes/books';
 import type { Book } from '@/types';
 
@@ -31,6 +32,7 @@ type Paginator<T> = {
 };
 
 defineProps<{ books: Paginator<Book> }>();
+const { t } = useTranslation();
 
 defineOptions({
     layout: {
@@ -40,17 +42,25 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Books" />
+    <Head :title="t('Books')" />
     <div class="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-6 p-4 md:p-8">
         <div class="flex items-start justify-between gap-4">
             <div>
-                <h1 class="text-2xl font-semibold tracking-tight">Books</h1>
+                <h1 class="text-2xl font-semibold tracking-tight">
+                    {{ t('Books') }}
+                </h1>
                 <p class="mt-1 text-muted-foreground">
-                    Manage the books shown on your public author profile.
+                    {{
+                        t(
+                            'Manage the books shown on your public author profile.',
+                        )
+                    }}
                 </p>
             </div>
             <Button as-child>
-                <Link :href="BookController.create()"><Plus /> Add book</Link>
+                <Link :href="BookController.create()"
+                    ><Plus /> {{ t('Add book') }}</Link
+                >
             </Button>
         </div>
 
@@ -61,16 +71,19 @@ defineOptions({
                 >
                     <BookOpen class="size-6" />
                 </div>
-                <CardTitle>Add your first book</CardTitle>
+                <CardTitle>{{ t('Add your first book') }}</CardTitle>
                 <CardDescription>
-                    Books you add are immediately visible on your public author
-                    Profile.
+                    {{
+                        t(
+                            'Books you add are immediately visible on your public author profile.',
+                        )
+                    }}
                 </CardDescription>
             </CardHeader>
             <CardContent>
                 <Button as-child>
                     <Link :href="BookController.create()"
-                        ><Plus /> Add book</Link
+                        ><Plus /> {{ t('Add book') }}</Link
                     >
                 </Button>
             </CardContent>
@@ -87,7 +100,7 @@ defineOptions({
                             >{{ book.description }}</CardDescription
                         >
                         <CardDescription v-else class="mt-2 italic">
-                            No description
+                            {{ t('No description') }}
                         </CardDescription>
                     </div>
                     <div class="flex shrink-0 gap-2">
@@ -97,18 +110,18 @@ defineOptions({
                                     BetaReadingListingController.index(book.id)
                                 "
                             >
-                                <List /> Listings
+                                <List /> {{ t('Listings') }}
                             </Link>
                         </Button>
                         <Button variant="outline" size="sm" as-child>
                             <Link :href="BookController.edit(book.id)"
-                                ><Pencil /> Edit</Link
+                                ><Pencil /> {{ t('Edit') }}</Link
                             >
                         </Button>
                         <Dialog>
                             <DialogTrigger as-child>
                                 <Button variant="destructive" size="sm"
-                                    ><Trash2 /> Delete</Button
+                                    ><Trash2 /> {{ t('Delete') }}</Button
                                 >
                             </DialogTrigger>
                             <DialogContent>
@@ -121,13 +134,16 @@ defineOptions({
                                 >
                                     <DialogHeader>
                                         <DialogTitle
-                                            >Delete “{{
+                                            >{{ t('Delete') }} “{{
                                                 book.title
                                             }}”?</DialogTitle
                                         >
                                         <DialogDescription>
-                                            This book will be permanently
-                                            deleted. This cannot be undone.
+                                            {{
+                                                t(
+                                                    'This book will be permanently deleted. This cannot be undone.',
+                                                )
+                                            }}
                                         </DialogDescription>
                                     </DialogHeader>
                                     <DialogFooter class="mt-6 gap-2">
@@ -135,7 +151,7 @@ defineOptions({
                                             <Button
                                                 type="button"
                                                 variant="secondary"
-                                                >Cancel</Button
+                                                >{{ t('Cancel') }}</Button
                                             >
                                         </DialogClose>
                                         <Button
@@ -143,7 +159,7 @@ defineOptions({
                                             variant="destructive"
                                             :disabled="processing"
                                         >
-                                            Delete book
+                                            {{ t('Delete book') }}
                                         </Button>
                                     </DialogFooter>
                                 </Form>

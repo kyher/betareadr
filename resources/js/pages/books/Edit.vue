@@ -12,10 +12,12 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslation } from '@/composables/useTranslation';
 import { index as books } from '@/routes/books';
 import type { Book } from '@/types';
 
 const props = defineProps<{ book: Book }>();
+const { t } = useTranslation();
 
 defineOptions({
     layout: {
@@ -28,13 +30,17 @@ defineOptions({
 </script>
 
 <template>
-    <Head :title="`Edit ${book.title}`" />
+    <Head :title="`${t('Edit')} ${book.title}`" />
     <div class="mx-auto w-full max-w-2xl p-4 md:p-8">
         <Card>
             <CardHeader>
-                <CardTitle>Edit book</CardTitle>
+                <CardTitle>{{ t('Edit book') }}</CardTitle>
                 <CardDescription>
-                    Changes appear immediately on your public author profile.
+                    {{
+                        t(
+                            'Changes appear immediately on your public author profile.',
+                        )
+                    }}
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -44,7 +50,7 @@ defineOptions({
                     v-slot="{ errors, processing }"
                 >
                     <div class="grid gap-2">
-                        <Label for="title">Title</Label>
+                        <Label for="title">{{ t('Title') }}</Label>
                         <Input
                             id="title"
                             name="title"
@@ -57,10 +63,10 @@ defineOptions({
                     </div>
                     <div class="grid gap-2">
                         <Label for="description">
-                            Description
-                            <span class="text-muted-foreground"
-                                >(optional)</span
-                            >
+                            {{ t('Description') }}
+                            <span class="text-muted-foreground">{{
+                                t('(optional)')
+                            }}</span>
                         </Label>
                         <textarea
                             id="description"
@@ -74,10 +80,10 @@ defineOptions({
                     </div>
                     <div class="flex justify-end gap-3">
                         <Button variant="outline" as-child>
-                            <Link :href="books()">Cancel</Link>
+                            <Link :href="books()">{{ t('Cancel') }}</Link>
                         </Button>
                         <Button type="submit" :disabled="processing">
-                            Save Changes
+                            {{ t('Save changes') }}
                         </Button>
                     </div>
                 </Form>

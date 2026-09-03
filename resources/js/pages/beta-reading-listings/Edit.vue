@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslation } from '@/composables/useTranslation';
 import { index as books } from '@/routes/books';
 
 type BookSummary = { id: number; title: string };
@@ -24,6 +25,7 @@ type Listing = {
 };
 
 const props = defineProps<{ book: BookSummary; listing: Listing }>();
+const { t } = useTranslation();
 
 defineOptions({
     layout: {
@@ -37,16 +39,16 @@ defineOptions({
 </script>
 
 <template>
-    <Head :title="`Edit ${book.title} Listing`" />
+    <Head :title="`${t('Edit Listing')}: ${book.title}`" />
     <div class="mx-auto w-full max-w-2xl p-4 md:p-8">
         <Card>
             <CardHeader>
                 <div class="flex items-center gap-2">
-                    <CardTitle>Edit Beta Reading Listing</CardTitle>
+                    <CardTitle>{{ t('Edit Beta Reading Listing') }}</CardTitle>
                     <Badge
                         :variant="listing.closed_at ? 'secondary' : 'default'"
                     >
-                        {{ listing.closed_at ? 'Closed' : 'Open' }}
+                        {{ t(listing.closed_at ? 'Closed' : 'Open') }}
                     </Badge>
                 </div>
                 <CardDescription>{{ book.title }}</CardDescription>
@@ -63,7 +65,9 @@ defineOptions({
                     v-slot="{ errors, processing }"
                 >
                     <div class="grid gap-2">
-                        <Label for="word_count">Approximate word count</Label>
+                        <Label for="word_count">{{
+                            t('Approximate word count')
+                        }}</Label>
                         <Input
                             id="word_count"
                             name="word_count"
@@ -76,13 +80,15 @@ defineOptions({
                             autofocus
                         />
                         <p class="text-sm text-muted-foreground">
-                            A rounded estimate is fine.
+                            {{ t('A rounded estimate is fine.') }}
                         </p>
                         <InputError :message="errors.word_count" />
                     </div>
 
                     <div class="grid gap-2">
-                        <Label for="reading_brief">Reading Brief</Label>
+                        <Label for="reading_brief">{{
+                            t('Reading Brief')
+                        }}</Label>
                         <textarea
                             id="reading_brief"
                             name="reading_brief"
@@ -102,11 +108,11 @@ defineOptions({
                                     BetaReadingListingController.index(book.id)
                                 "
                             >
-                                Cancel
+                                {{ t('Cancel') }}
                             </Link>
                         </Button>
                         <Button type="submit" :disabled="processing">
-                            Save Changes
+                            {{ t('Save changes') }}
                         </Button>
                     </div>
                 </Form>

@@ -1,4 +1,4 @@
-import type { Auth } from '@/types/auth';
+import type { Auth, Locale } from '@/types/auth';
 
 // Extend ImportMeta interface for Vite...
 declare module 'vite/client' {
@@ -17,6 +17,9 @@ declare module '@inertiajs/core' {
     export interface InertiaConfig {
         sharedPageProps: {
             name: string;
+            locale: Locale;
+            locales: Record<Locale, string>;
+            translations: Record<string, string>;
             auth: Auth;
             sidebarOpen: boolean;
             [key: string]: unknown;
