@@ -255,7 +255,11 @@ defineOptions({
                             class="flex items-center gap-1.5 text-sm text-muted-foreground"
                         >
                             <FileText class="size-4" />
-                            {{ displayedListing.word_count.toLocaleString() }}
+                            {{
+                                displayedListing.word_count.toLocaleString(
+                                    page.props.locale,
+                                )
+                            }}
                             {{ t('words') }}
                         </div>
                     </div>
