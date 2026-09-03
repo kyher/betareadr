@@ -11,6 +11,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { getInitials } from '@/composables/useInitials';
+import { useTranslation } from '@/composables/useTranslation';
 import { dashboard } from '@/routes';
 import {
     create as createAuthorProfile,
@@ -29,6 +30,8 @@ defineProps<{
     betaReaderProfile: BetaReaderProfile | null;
 }>();
 
+const { t } = useTranslation();
+
 defineOptions({
     layout: {
         breadcrumbs: [{ title: 'Dashboard', href: dashboard() }],
@@ -37,23 +40,24 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Dashboard" />
+    <Head :title="t('Dashboard')" />
 
     <div class="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-6 p-4 md:p-8">
         <div>
-            <h1 class="text-2xl font-semibold tracking-tight">Dashboard</h1>
+            <h1 class="text-2xl font-semibold tracking-tight">
+                {{ t('Dashboard') }}
+            </h1>
             <p class="mt-1 text-muted-foreground">
-                Manage how you take part in BetaReadr.
+                {{ t('Manage how you take part in BetaReadr.') }}
             </p>
         </div>
 
         <Card v-if="authorProfile">
             <CardHeader>
-                <CardTitle>Your author profile</CardTitle>
-                <CardDescription
-                    >This is the public identity readers see on
-                    BetaReadr.</CardDescription
-                >
+                <CardTitle>{{ t('Your author profile') }}</CardTitle>
+                <CardDescription>{{
+                    t('This is the public identity readers see on BetaReadr.')
+                }}</CardDescription>
             </CardHeader>
             <CardContent
                 class="flex flex-col gap-6 sm:flex-row sm:items-center"
@@ -80,11 +84,13 @@ defineOptions({
                 <div class="flex gap-2">
                     <Button variant="outline" as-child>
                         <Link :href="showAuthorProfile(authorProfile.handle)"
-                            ><Eye /> View</Link
+                            ><Eye /> {{ t('View') }}</Link
                         >
                     </Button>
                     <Button as-child>
-                        <Link :href="editAuthorProfile()"><Pencil /> Edit</Link>
+                        <Link :href="editAuthorProfile()"
+                            ><Pencil /> {{ t('Edit') }}</Link
+                        >
                     </Button>
                 </div>
             </CardContent>
@@ -97,16 +103,19 @@ defineOptions({
                 >
                     <UserRound class="size-6" />
                 </div>
-                <CardTitle>Create your author profile</CardTitle>
+                <CardTitle>{{ t('Create your author profile') }}</CardTitle>
                 <CardDescription class="max-w-2xl">
-                    Introduce yourself to beta readers with a public name,
-                    unique handle, and optional bio.
+                    {{
+                        t(
+                            'Introduce yourself to beta readers with a public name, unique handle, and optional bio.',
+                        )
+                    }}
                 </CardDescription>
             </CardHeader>
             <CardContent>
                 <Button as-child>
                     <Link :href="createAuthorProfile()"
-                        >Create author profile <ArrowRight
+                        >{{ t('Create author profile') }} <ArrowRight
                     /></Link>
                 </Button>
             </CardContent>
@@ -114,11 +123,10 @@ defineOptions({
 
         <Card v-if="betaReaderProfile">
             <CardHeader>
-                <CardTitle>Your beta reader profile</CardTitle>
-                <CardDescription
-                    >This is the public identity authors see on
-                    BetaReadr.</CardDescription
-                >
+                <CardTitle>{{ t('Your beta reader profile') }}</CardTitle>
+                <CardDescription>{{
+                    t('This is the public identity authors see on BetaReadr.')
+                }}</CardDescription>
             </CardHeader>
             <CardContent
                 class="flex flex-col gap-6 sm:flex-row sm:items-center"
@@ -148,12 +156,12 @@ defineOptions({
                             :href="
                                 showBetaReaderProfile(betaReaderProfile.handle)
                             "
-                            ><Eye /> View</Link
+                            ><Eye /> {{ t('View') }}</Link
                         >
                     </Button>
                     <Button as-child>
                         <Link :href="editBetaReaderProfile()"
-                            ><Pencil /> Edit</Link
+                            ><Pencil /> {{ t('Edit') }}</Link
                         >
                     </Button>
                 </div>
@@ -167,16 +175,21 @@ defineOptions({
                 >
                     <UserRound class="size-6" />
                 </div>
-                <CardTitle>Create your beta reader profile</CardTitle>
+                <CardTitle>{{
+                    t('Create your beta reader profile')
+                }}</CardTitle>
                 <CardDescription class="max-w-2xl">
-                    Introduce yourself to authors with a public name, unique
-                    handle, and optional bio.
+                    {{
+                        t(
+                            'Introduce yourself to authors with a public name, unique handle, and optional bio.',
+                        )
+                    }}
                 </CardDescription>
             </CardHeader>
             <CardContent>
                 <Button as-child>
                     <Link :href="createBetaReaderProfile()"
-                        >Create beta reader profile <ArrowRight
+                        >{{ t('Create beta reader profile') }} <ArrowRight
                     /></Link>
                 </Button>
             </CardContent>
