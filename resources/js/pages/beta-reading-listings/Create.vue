@@ -12,10 +12,12 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslation } from '@/composables/useTranslation';
 import { index as books } from '@/routes/books';
 
 type BookSummary = { id: number; title: string };
 const props = defineProps<{ book: BookSummary }>();
+const { t } = useTranslation();
 
 defineOptions({
     layout: {
@@ -29,13 +31,14 @@ defineOptions({
 </script>
 
 <template>
-    <Head :title="`Create a Listing for ${book.title}`" />
+    <Head :title="`${t('Create Listing')}: ${book.title}`" />
     <div class="mx-auto w-full max-w-2xl p-4 md:p-8">
         <Card>
             <CardHeader>
-                <CardTitle>Create a Beta Reading Listing</CardTitle>
+                <CardTitle>{{ t('Create a Beta Reading Listing') }}</CardTitle>
                 <CardDescription>
-                    {{ book.title }} · This Listing will open immediately.
+                    {{ book.title }} ·
+                    {{ t('This Listing will open immediately.') }}
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -49,7 +52,9 @@ defineOptions({
                     <InputError :message="errors.listing" />
 
                     <div class="grid gap-2">
-                        <Label for="word_count">Approximate word count</Label>
+                        <Label for="word_count">{{
+                            t('Approximate word count')
+                        }}</Label>
                         <Input
                             id="word_count"
                             name="word_count"
@@ -62,25 +67,34 @@ defineOptions({
                             placeholder="80000"
                         />
                         <p class="text-sm text-muted-foreground">
-                            A rounded estimate is fine.
+                            {{ t('A rounded estimate is fine.') }}
                         </p>
                         <InputError :message="errors.word_count" />
                     </div>
 
                     <div class="grid gap-2">
-                        <Label for="reading_brief">Reading Brief</Label>
+                        <Label for="reading_brief">{{
+                            t('Reading Brief')
+                        }}</Label>
                         <textarea
                             id="reading_brief"
                             name="reading_brief"
                             maxlength="2000"
                             rows="10"
                             required
-                            placeholder="Describe this draft, what has changed, and the feedback you are looking for."
+                            :placeholder="
+                                t(
+                                    'Describe this draft, what has changed, and the feedback you are looking for.',
+                                )
+                            "
                             class="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
                         />
                         <p class="text-sm text-muted-foreground">
-                            Tell beta readers about this draft and the feedback
-                            you want.
+                            {{
+                                t(
+                                    'Tell beta readers about this draft and the feedback you want.',
+                                )
+                            }}
                         </p>
                         <InputError :message="errors.reading_brief" />
                     </div>
@@ -92,11 +106,11 @@ defineOptions({
                                     BetaReadingListingController.index(book.id)
                                 "
                             >
-                                Cancel
+                                {{ t('Cancel') }}
                             </Link>
                         </Button>
                         <Button type="submit" :disabled="processing">
-                            Create Listing
+                            {{ t('Create Listing') }}
                         </Button>
                     </div>
                 </Form>

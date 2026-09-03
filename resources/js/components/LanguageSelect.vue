@@ -21,8 +21,12 @@ function change(event: Event) {
         class="h-9 rounded-md border border-input bg-background px-2 text-sm"
         @change="change"
     >
-        <option value="en">English</option>
-        <option value="es">Español</option>
-        <option value="fr">Français</option>
+        <option
+            v-for="(name, locale) in page.props.locales"
+            :key="locale"
+            :value="locale"
+        >
+            {{ name }}
+        </option>
     </select>
 </template>

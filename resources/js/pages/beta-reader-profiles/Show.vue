@@ -3,11 +3,13 @@ import { Head, Link, usePage } from '@inertiajs/vue3';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { getInitials } from '@/composables/useInitials';
+import { useTranslation } from '@/composables/useTranslation';
 import { dashboard, home, login } from '@/routes';
 import type { BetaReaderProfile } from '@/types';
 
 defineProps<{ betaReaderProfile: BetaReaderProfile }>();
 const page = usePage();
+const { t } = useTranslation();
 </script>
 
 <template>
@@ -24,7 +26,7 @@ const page = usePage();
                     <Link
                         :href="page.props.auth.user ? dashboard() : login()"
                         >{{
-                            page.props.auth.user ? 'Dashboard' : 'Log in'
+                            t(page.props.auth.user ? 'Dashboard' : 'Log in')
                         }}</Link
                     >
                 </Button>

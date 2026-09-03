@@ -24,6 +24,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { useTranslation } from '@/composables/useTranslation';
 import { index as books } from '@/routes/books';
 
 type BookSummary = { id: number; title: string };
@@ -46,6 +47,7 @@ defineProps<{
 }>();
 
 const page = usePage();
+const { t } = useTranslation();
 const listingError = computed(() => {
     const errors = page.props.errors as Record<string, string> | undefined;
 
@@ -53,10 +55,10 @@ const listingError = computed(() => {
 });
 
 const formatWords = (wordCount: number): string =>
-    new Intl.NumberFormat().format(wordCount);
+    new Intl.NumberFormat(page.props.locale).format(wordCount);
 
 const formatDate = (date: string): string =>
-    new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(
+    new Intl.DateTimeFormat(page.props.locale, { dateStyle: 'medium' }).format(
         new Date(date),
     );
 
@@ -71,18 +73,18 @@ defineOptions({
 </script>
 
 <template>
-    <Head :title="`${book.title} Listings`" />
+    <Head :title="`${book.title} · ${t('Listings')}`" />
     <div class="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-6 p-4 md:p-8">
         <div class="flex items-start justify-between gap-4">
             <div class="min-w-0">
                 <p class="text-sm text-muted-foreground">
-                    Beta Reading Listings
+                    {{ t('Beta Reading Listings') }}
                 </p>
                 <h1 class="truncate text-2xl font-semibold tracking-tight">
                     {{ book.title }}
                 </h1>
                 <p class="mt-1 text-muted-foreground">
-                    Manage recruitment rounds for this book.
+                    {{ t('Manage recruitment rounds for this book.') }}
                 </p>
             </div>
             <div
@@ -93,18 +95,20 @@ defineOptions({
                     disabled
                     aria-describedby="create-listing-disabled-reason"
                 >
-                    <Plus /> Create Listing
+                    <Plus /> {{ t('Create Listing') }}
                 </Button>
                 <p
                     id="create-listing-disabled-reason"
                     class="text-right text-xs text-muted-foreground"
                 >
-                    Close the open Listing before creating another one.
+                    {{
+                        t('Close the open Listing before creating another one.')
+                    }}
                 </p>
             </div>
             <Button v-else as-child>
                 <Link :href="BetaReadingListingController.create(book.id)">
-                    <Plus /> Create Listing
+                    <Plus /> {{ t('Create Listing') }}
                 </Link>
             </Button>
         </div>
@@ -118,16 +122,19 @@ defineOptions({
                 >
                     <BookOpen class="size-6" />
                 </div>
-                <CardTitle>Create the first Listing</CardTitle>
+                <CardTitle>{{ t('Create the first Listing') }}</CardTitle>
                 <CardDescription>
-                    Describe the current draft and the feedback you want from
-                    beta readers.
+                    {{
+                        t(
+                            'Describe the current draft and the feedback you want from beta readers.',
+                        )
+                    }}
                 </CardDescription>
             </CardHeader>
             <CardContent>
                 <Button as-child>
                     <Link :href="BetaReadingListingController.create(book.id)">
-                        <Plus /> Create Listing
+                        <Plus /> {{ t('Create Listing') }}
                     </Link>
                 </Button>
             </CardContent>
@@ -139,20 +146,23 @@ defineOptions({
                     <div class="min-w-0 flex-1">
                         <div class="flex flex-wrap items-center gap-2">
                             <CardTitle>
-                                {{ formatWords(listing.word_count) }} words
+                                {{ formatWords(listing.word_count) }}
+                                {{ t('words') }}
                             </CardTitle>
                             <Badge
                                 :variant="
                                     listing.closed_at ? 'secondary' : 'default'
                                 "
                             >
-                                {{ listing.closed_at ? 'Closed' : 'Open' }}
+                                {{ t(listing.closed_at ? 'Closed' : 'Open') }}
                             </Badge>
                         </div>
                         <CardDescription class="mt-1">
-                            Created {{ formatDate(listing.created_at) }}
+                            {{ t('Created') }}
+                            {{ formatDate(listing.created_at) }}
                             <template v-if="listing.closed_at">
-                                · Closed {{ formatDate(listing.closed_at) }}
+                                · {{ t('Closed') }}
+                                {{ formatDate(listing.closed_at) }}
                             </template>
                         </CardDescription>
                         <p class="mt-4 text-sm leading-6 whitespace-pre-line">
@@ -169,14 +179,14 @@ defineOptions({
                                     })
                                 "
                             >
-                                <Pencil /> Edit
+                                <Pencil /> {{ t('Edit') }}
                             </Link>
                         </Button>
 
                         <Dialog v-if="!listing.closed_at">
                             <DialogTrigger as-child>
                                 <Button variant="outline" size="sm">
-                                    <XCircle /> Close
+                                    <XCircle /> {{ t('Close') }}
                                 </Button>
                             </DialogTrigger>
                             <DialogContent>
@@ -193,14 +203,15 @@ defineOptions({
                                     v-slot="{ processing }"
                                 >
                                     <DialogHeader>
-                                        <DialogTitle
-                                            >Close this Listing?</DialogTitle
-                                        >
+                                        <DialogTitle>{{
+                                            t('Close this Listing?')
+                                        }}</DialogTitle>
                                         <DialogDescription>
-                                            It will leave beta reader feeds and
-                                            accept no new Interest. Existing
-                                            records are preserved, and you can
-                                            reopen it later.
+                                            {{
+                                                t(
+                                                    'It will leave beta reader feeds and accept no new Interest. Existing records are preserved, and you can reopen it later.',
+                                                )
+                                            }}
                                         </DialogDescription>
                                     </DialogHeader>
                                     <DialogFooter class="mt-6 gap-2">
@@ -209,14 +220,14 @@ defineOptions({
                                                 type="button"
                                                 variant="secondary"
                                             >
-                                                Cancel
+                                                {{ t('Cancel') }}
                                             </Button>
                                         </DialogClose>
                                         <Button
                                             type="submit"
                                             :disabled="processing"
                                         >
-                                            Close Listing
+                                            {{ t('Close Listing') }}
                                         </Button>
                                     </DialogFooter>
                                 </Form>
@@ -246,15 +257,18 @@ defineOptions({
                                         : undefined
                                 "
                             >
-                                <RotateCcw /> Reopen
+                                <RotateCcw /> {{ t('Reopen') }}
                             </Button>
                             <p
                                 v-if="hasOpenListing"
                                 :id="`reopen-listing-${listing.id}-disabled-reason`"
                                 class="max-w-56 text-right text-xs text-muted-foreground"
                             >
-                                Close the open Listing before reopening this
-                                one.
+                                {{
+                                    t(
+                                        'Close the open Listing before reopening this one.',
+                                    )
+                                }}
                             </p>
                         </Form>
                     </div>

@@ -81,9 +81,13 @@ const { t } = useTranslation();
                     :value="user.locale"
                     class="h-9 rounded-md border border-input bg-background px-3 text-sm shadow-xs"
                 >
-                    <option value="en">{{ t('English') }}</option>
-                    <option value="es">{{ t('Spanish') }}</option>
-                    <option value="fr">{{ t('French') }}</option>
+                    <option
+                        v-for="(name, locale) in page.props.locales"
+                        :key="locale"
+                        :value="locale"
+                    >
+                        {{ name }}
+                    </option>
                 </select>
                 <InputError class="mt-2" :message="errors.locale" />
             </div>

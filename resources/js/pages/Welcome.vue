@@ -38,12 +38,12 @@ const { t } = useTranslation();
         <header class="relative z-20 border-b border-border/70">
             <nav
                 class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8 lg:px-10"
-                aria-label="Primary navigation"
+                :aria-label="t('Primary navigation')"
             >
                 <Link
                     :href="home()"
                     class="flex items-center gap-2 rounded-md text-lg font-semibold tracking-tight focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-                    aria-label="BetaReadr home"
+                    :aria-label="t('BetaReadr home')"
                 >
                     <span
                         class="grid size-9 place-items-center rounded-xl bg-amber-400 text-stone-950 shadow-sm"

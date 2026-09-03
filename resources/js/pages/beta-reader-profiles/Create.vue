@@ -12,8 +12,11 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslation } from '@/composables/useTranslation';
 import { dashboard } from '@/routes';
 import { create as createBetaReaderProfile } from '@/routes/beta-reader-profile';
+
+const { t } = useTranslation();
 
 defineOptions({
     layout: {
@@ -29,15 +32,18 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Create beta reader profile" />
+    <Head :title="t('Create beta reader profile')" />
     <div class="mx-auto w-full max-w-2xl p-4 md:p-8">
         <Card>
             <CardHeader>
-                <CardTitle>Create your beta reader profile</CardTitle>
-                <CardDescription
-                    >Choose the public identity you will use as a Beta
-                    Reader.</CardDescription
-                >
+                <CardTitle>{{
+                    t('Create your beta reader profile')
+                }}</CardTitle>
+                <CardDescription>{{
+                    t(
+                        'Choose the public identity you will use as a beta reader.',
+                    )
+                }}</CardDescription>
             </CardHeader>
             <CardContent>
                 <Form
@@ -46,7 +52,9 @@ defineOptions({
                     v-slot="{ errors, processing }"
                 >
                     <div class="grid gap-2">
-                        <Label for="display_name">Display name</Label>
+                        <Label for="display_name">{{
+                            t('Display name')
+                        }}</Label>
                         <Input
                             id="display_name"
                             name="display_name"
@@ -57,12 +65,18 @@ defineOptions({
                             placeholder="Keen Sci-Fi Reader"
                         />
                         <p class="text-sm text-muted-foreground">
-                            Your public name. It does not need to be unique.
+                            {{
+                                t(
+                                    'Your public name. It does not need to be unique.',
+                                )
+                            }}
                         </p>
                         <InputError :message="errors.display_name" />
                     </div>
                     <div class="grid gap-2">
-                        <Label for="handle">Beta reader handle</Label>
+                        <Label for="handle">{{
+                            t('Beta reader handle')
+                        }}</Label>
                         <div
                             class="flex items-center rounded-md border border-input bg-transparent focus-within:ring-2 focus-within:ring-ring/50"
                         >
@@ -80,36 +94,44 @@ defineOptions({
                             />
                         </div>
                         <p class="text-sm text-muted-foreground">
-                            Your unique handle. Handle changes are not currently
-                            supported. Use lowercase letters, numbers, and
-                            single hyphens.
+                            {{
+                                t(
+                                    'Your unique handle. Handle changes are not currently supported. Use lowercase letters, numbers, and single hyphens.',
+                                )
+                            }}
                         </p>
                         <InputError :message="errors.handle" />
                     </div>
                     <div class="grid gap-2">
                         <Label for="bio"
-                            >Bio
-                            <span class="text-muted-foreground"
-                                >(optional)</span
-                            ></Label
+                            >{{ t('Bio') }}
+                            <span class="text-muted-foreground">{{
+                                t('(optional)')
+                            }}</span></Label
                         >
                         <textarea
                             id="bio"
                             name="bio"
                             maxlength="1000"
                             rows="7"
-                            placeholder="Tell authors a little about yourself and your reading experience."
+                            :placeholder="
+                                t(
+                                    'Tell authors a little about yourself and your reading experience.',
+                                )
+                            "
                             class="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
                         />
                         <InputError :message="errors.bio" />
                     </div>
                     <div class="flex items-center justify-end gap-3">
                         <Button variant="outline" as-child
-                            ><Link :href="dashboard()">Cancel</Link></Button
+                            ><Link :href="dashboard()">{{
+                                t('Cancel')
+                            }}</Link></Button
                         >
-                        <Button type="submit" :disabled="processing"
-                            >Create beta reader profile</Button
-                        >
+                        <Button type="submit" :disabled="processing">{{
+                            t('Create beta reader profile')
+                        }}</Button>
                     </div>
                 </Form>
             </CardContent>
