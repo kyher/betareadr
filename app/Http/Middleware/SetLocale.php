@@ -11,11 +11,12 @@ class SetLocale
 {
     public function handle(Request $request, Closure $next): Response
     {
+        $locales = array_map('strval', array_keys(config('app.supported_locales')));
         $locale = $request->user()->locale
             ?? $request->cookie('locale')
-            ?? $request->getPreferredLanguage(['en', 'es', 'fr']);
+            ?? $request->getPreferredLanguage($locales);
 
-        App::setLocale(in_array($locale, ['en', 'es', 'fr'], true) ? $locale : config('app.locale'));
+        App::setLocale(in_array($locale, $locales, true) ? $locale : config('app.locale'));
 
         return $next($request);
     }

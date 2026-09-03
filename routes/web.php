@@ -7,12 +7,15 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\FeedController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 Route::inertia('/', 'Welcome')->name('home');
 
 Route::post('language', function (Request $request) {
-    $locale = $request->validate(['locale' => ['required', 'in:en,es,fr']])['locale'];
+    $locale = $request->validate([
+        'locale' => ['required', Rule::in(array_map('strval', array_keys(config('app.supported_locales'))))],
+    ])['locale'];
 
     $request->user()?->update(['locale' => $locale]);
 
