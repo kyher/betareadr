@@ -3,8 +3,9 @@ import { ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from '@/composables/useTranslation';
+import type { ReadingLanguage } from '@/types';
 
-const props = defineProps<{ languages?: string[]; error?: string }>();
+const props = defineProps<{ languages?: ReadingLanguage[]; error?: string }>();
 const selected = ref(props.languages ?? []);
 const { t } = useTranslation();
 </script>
