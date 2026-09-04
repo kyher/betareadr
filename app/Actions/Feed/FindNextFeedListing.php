@@ -15,6 +15,8 @@ class FindNextFeedListing
                 ->where('beta_reader_profile_id', $profile->id))
             ->whereHas('book.authorProfile', fn ($query) => $query
                 ->where('user_id', '!=', $profile->user_id))
+            ->when(! in_array(BetaReaderProfile::ANY_LANGUAGE, $profile->reading_languages, true), fn ($query) => $query
+                ->whereHas('book', fn ($query) => $query->whereIn('language', $profile->reading_languages)))
             ->with('book.authorProfile')
             ->oldest()
             ->oldest('id')

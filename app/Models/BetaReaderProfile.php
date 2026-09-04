@@ -14,12 +14,15 @@ use Illuminate\Support\Carbon;
  * @property string $display_name
  * @property string $handle
  * @property string|null $bio
+ * @property list<string> $reading_languages
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['display_name', 'handle', 'bio'])]
+#[Fillable(['display_name', 'handle', 'bio', 'reading_languages'])]
 class BetaReaderProfile extends Model
 {
+    public const ANY_LANGUAGE = '*';
+
     /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
@@ -35,5 +38,16 @@ class BetaReaderProfile extends Model
     public function getRouteKeyName(): string
     {
         return 'handle';
+    }
+
+    public function acceptsLanguage(string $language): bool
+    {
+        return in_array(self::ANY_LANGUAGE, $this->reading_languages, true)
+            || in_array($language, $this->reading_languages, true);
+    }
+
+    protected function casts(): array
+    {
+        return ['reading_languages' => 'array'];
     }
 }

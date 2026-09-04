@@ -4,6 +4,7 @@ namespace App\Actions\Feed;
 
 use App\Models\BetaReaderProfile;
 use App\Models\BetaReadingListing;
+use App\Models\BetaReadingListingDecision;
 use Illuminate\Support\Facades\DB;
 
 class RecordFeedDecision
@@ -13,6 +14,8 @@ class RecordFeedDecision
     public const CREATED = 'created';
 
     public const EXISTING = 'existing';
+
+    public const INELIGIBLE = 'ineligible';
 
     public function handle(
         BetaReaderProfile $profile,
@@ -31,6 +34,11 @@ class RecordFeedDecision
             }
 
             abort_if($listing->book->authorProfile->user_id === $profile->user_id, 403);
+
+            if ($decision === BetaReadingListingDecision::INTERESTED
+                && ! $profile->acceptsLanguage($listing->book->language)) {
+                return self::INELIGIBLE;
+            }
 
             $existing = $profile->decisions()
                 ->where('beta_reading_listing_id', $listing->id)

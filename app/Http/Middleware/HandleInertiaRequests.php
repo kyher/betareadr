@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\ContentLanguage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Inertia\Middleware;
@@ -43,6 +44,8 @@ class HandleInertiaRequests extends Middleware
             'name' => config('app.name'),
             'locale' => app()->getLocale(),
             'locales' => config('app.supported_locales'),
+            'contentLanguages' => collect(ContentLanguage::cases())
+                ->mapWithKeys(fn (ContentLanguage $language) => [$language->value => $language->label()]),
             'translations' => is_file($translations)
                 ? File::json($translations)
                 : [],

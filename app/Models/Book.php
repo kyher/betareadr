@@ -13,10 +13,11 @@ use Illuminate\Support\Carbon;
  * @property int $author_profile_id
  * @property string $title
  * @property string|null $description
+ * @property string $language
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['title', 'description'])]
+#[Fillable(['title', 'description', 'language'])]
 class Book extends Model
 {
     /** @return BelongsTo<AuthorProfile, $this> */

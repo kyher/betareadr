@@ -6,7 +6,7 @@ use App\Models\BetaReaderProfile;
 
 class UpdateBetaReaderProfile
 {
-    /** @param array{display_name: string, bio?: string|null} $attributes */
+    /** @param array{display_name: string, bio?: string|null, reading_languages: list<string>} $attributes */
     public function handle(BetaReaderProfile $betaReaderProfile, array $attributes): BetaReaderProfile
     {
         $betaReaderProfile->update($attributes);
