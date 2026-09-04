@@ -195,5 +195,12 @@
     "Update the public information beta readers see.": "Modifiez les informations publiques visibles par les bêta-lecteurs.",
     "Your public name or pen name. It does not need to be unique.": "Votre nom public ou nom de plume. Il n’a pas besoin d’être unique.",
     "Your public name. It does not need to be unique.": "Votre nom public. Il n’a pas besoin d’être unique.",
-    "Your unique handle. Handle changes are not currently supported. Use lowercase letters, numbers, and single hyphens.": "Votre identifiant unique. Il ne peut pas encore être modifié. Utilisez des lettres minuscules, des chiffres et des traits d’union simples."
+    "Your unique handle. Handle changes are not currently supported. Use lowercase letters, numbers, and single hyphens.": "Votre identifiant unique. Il ne peut pas encore être modifié. Utilisez des lettres minuscules, des chiffres et des traits d’union simples.",
+    "Any language": "Toutes les langues",
+    "Any language cannot be combined with individual languages.": "L’option Toutes les langues ne peut pas être combinée avec des langues individuelles.",
+    "Book language": "Langue du livre",
+    "Choose a language": "Choisissez une langue",
+    "Choose every language in which you can comfortably beta-read.": "Choisissez toutes les langues dans lesquelles vous pouvez effectuer une bêta-lecture aisément.",
+    "Reading languages": "Langues de lecture",
+    "This Listing no longer matches your reading languages.": "Cette annonce ne correspond plus à vos langues de lecture."
 }
