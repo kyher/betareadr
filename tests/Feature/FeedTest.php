@@ -147,6 +147,7 @@ class FeedTest extends TestCase
 
         $this->actingAs($reader)->post(route('feed.pass', $listing));
         $this->actingAs($reader)->post(route('feed.pass', $listing))->assertSessionHasNoErrors();
+        $profile->update(['reading_languages' => ['fr']]);
         $this->actingAs($reader)->post(route('feed.interest', $listing))->assertSessionHasNoErrors();
 
         $this->assertSame(1, $profile->decisions()->count());
@@ -192,6 +193,7 @@ class FeedTest extends TestCase
         $profile = $user->betaReaderProfile()->create([
             'display_name' => 'Keen Reader',
             'handle' => 'keen-reader',
+            'reading_languages' => ['*'],
         ]);
 
         if ($withAuthorProfile) {

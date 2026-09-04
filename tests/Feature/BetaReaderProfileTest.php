@@ -48,6 +48,7 @@ class BetaReaderProfileTest extends TestCase
         $existingUser->betaReaderProfile()->create([
             'display_name' => 'Existing Reader',
             'handle' => 'existing-reader',
+            'reading_languages' => ['*'],
         ]);
         $user = User::factory()->create();
 
@@ -106,6 +107,7 @@ class BetaReaderProfileTest extends TestCase
         $profile = $user->betaReaderProfile()->create([
             'display_name' => 'First Reader',
             'handle' => 'first-reader',
+            'reading_languages' => ['*'],
         ]);
 
         $this->actingAs($user)
@@ -161,6 +163,7 @@ class BetaReaderProfileTest extends TestCase
                 $user->betaReaderProfile()->create([
                     'display_name' => 'Created Elsewhere',
                     'handle' => 'created-elsewhere',
+                    'reading_languages' => ['*'],
                 ]);
 
                 throw $exception;
@@ -185,6 +188,7 @@ class BetaReaderProfileTest extends TestCase
         $user->betaReaderProfile()->create([
             'display_name' => 'A Reader',
             'handle' => 'a-reader',
+            'reading_languages' => ['*'],
         ]);
 
         $this->actingAs($user)->get(route('beta-reader-profile.create'))
@@ -197,6 +201,7 @@ class BetaReaderProfileTest extends TestCase
         $profile = $user->betaReaderProfile()->create([
             'display_name' => 'Old Name',
             'handle' => 'fixed-handle',
+            'reading_languages' => ['*'],
         ]);
 
         $this->actingAs($user)
@@ -227,6 +232,7 @@ class BetaReaderProfileTest extends TestCase
             'display_name' => 'Public Reader',
             'handle' => 'public-reader',
             'bio' => 'Public bio.',
+            'reading_languages' => ['*'],
         ]);
 
         $this->get(route('beta-readers.show', $profile))
@@ -248,6 +254,7 @@ class BetaReaderProfileTest extends TestCase
         $profile = $user->betaReaderProfile()->create([
             'display_name' => 'Deleted Reader',
             'handle' => 'deleted-reader',
+            'reading_languages' => ['*'],
         ]);
 
         $user->delete();

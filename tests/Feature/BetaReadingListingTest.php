@@ -236,7 +236,7 @@ class BetaReadingListingTest extends TestCase
 
     private function bookFor(User $user, string $title = 'A Book'): Book
     {
-        return $user->authorProfile->books()->create(['title' => $title]);
+        return $user->authorProfile->books()->create(['title' => $title, 'language' => 'en']);
     }
 
     private function listingFor(
