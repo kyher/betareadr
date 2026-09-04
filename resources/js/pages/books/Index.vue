@@ -94,6 +94,9 @@ defineOptions({
                 <CardHeader class="gap-4 sm:flex-row sm:items-start">
                     <div class="min-w-0 flex-1">
                         <CardTitle>{{ book.title }}</CardTitle>
+                        <p class="mt-1 text-sm text-muted-foreground">
+                            {{ $page.props.contentLanguages[book.language] }}
+                        </p>
                         <CardDescription
                             v-if="book.description"
                             class="mt-3 whitespace-pre-line text-foreground"

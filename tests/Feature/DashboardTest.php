@@ -53,6 +53,7 @@ class DashboardTest extends TestCase
             'display_name' => 'Keen Reader',
             'handle' => 'keen-reader',
             'bio' => 'I love speculative fiction.',
+            'reading_languages' => ['en'],
         ]);
 
         $this->actingAs($user)

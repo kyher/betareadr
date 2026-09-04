@@ -32,6 +32,7 @@ class FeedController extends Controller
                 'book' => [
                     'title' => $listing->book->title,
                     'description' => $listing->book->description,
+                    'language' => $listing->book->language->value,
                 ],
                 'author' => [
                     'display_name' => $listing->book->authorProfile->display_name,
@@ -74,6 +75,11 @@ class FeedController extends Controller
         if ($result === RecordFeedDecision::CLOSED) {
             return to_route('feed.index')
                 ->withErrors(['listing' => __('This Listing is no longer open.')]);
+        }
+
+        if ($result === RecordFeedDecision::INELIGIBLE) {
+            return to_route('feed.index')
+                ->withErrors(['listing' => __('This Listing no longer matches your reading languages.')]);
         }
 
         if ($result === RecordFeedDecision::CREATED && $decision === BetaReadingListingDecision::INTERESTED) {

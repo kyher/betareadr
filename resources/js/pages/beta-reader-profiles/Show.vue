@@ -5,11 +5,15 @@ import { Button } from '@/components/ui/button';
 import { getInitials } from '@/composables/useInitials';
 import { useTranslation } from '@/composables/useTranslation';
 import { dashboard, home, login } from '@/routes';
-import type { BetaReaderProfile } from '@/types';
+import type { BetaReaderProfile, ReadingLanguage } from '@/types';
 
 defineProps<{ betaReaderProfile: BetaReaderProfile }>();
 const page = usePage();
 const { t } = useTranslation();
+const languageName = (language: ReadingLanguage) =>
+    language === '*'
+        ? t('Any language')
+        : page.props.contentLanguages[language];
 </script>
 
 <template>
@@ -44,6 +48,14 @@ const { t } = useTranslation();
                 </h1>
                 <p class="mt-1 text-muted-foreground">
                     @{{ betaReaderProfile.handle }}
+                </p>
+                <p class="mt-4 text-sm text-muted-foreground">
+                    {{ t('Reading languages') }}:
+                    {{
+                        betaReaderProfile.reading_languages
+                            .map(languageName)
+                            .join(', ')
+                    }}
                 </p>
                 <p
                     v-if="betaReaderProfile.bio"

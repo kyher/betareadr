@@ -72,6 +72,11 @@ const { t } = useTranslation();
                     <Card v-for="book in books.data" :key="book.id">
                         <CardHeader>
                             <CardTitle>{{ book.title }}</CardTitle>
+                            <p class="text-sm text-muted-foreground">
+                                {{
+                                    $page.props.contentLanguages[book.language]
+                                }}
+                            </p>
                             <CardDescription
                                 v-if="book.description"
                                 class="whitespace-pre-line text-foreground"

@@ -27,7 +27,7 @@ class BookController extends Controller
                 ->latest()
                 ->latest('id')
                 ->paginate(12)
-                ->through(fn (Book $book): array => $book->only(['id', 'title', 'description'])),
+                ->through(fn (Book $book): array => $book->only(['id', 'title', 'description', 'language'])),
         ]);
     }
 
@@ -60,7 +60,7 @@ class BookController extends Controller
         $this->authorizeOwner($book);
 
         return Inertia::render('books/Edit', [
-            'book' => $book->only(['id', 'title', 'description']),
+            'book' => $book->only(['id', 'title', 'description', 'language']),
         ]);
     }
 

@@ -31,6 +31,7 @@ class BetaReaderProfileTest extends TestCase
             'display_name' => 'Keen Reader',
             'handle' => 'keen-reader',
             'bio' => "Science fiction fan.\nThoughtful critic.",
+            'reading_languages' => ['en', 'fr'],
         ])->assertSessionHasNoErrors()->assertRedirect(route('dashboard'));
 
         $this->assertDatabaseHas('beta_reader_profiles', [
@@ -38,6 +39,7 @@ class BetaReaderProfileTest extends TestCase
             'display_name' => 'Keen Reader',
             'handle' => 'keen-reader',
         ]);
+        $this->assertSame(['en', 'fr'], $user->betaReaderProfile->reading_languages);
     }
 
     public function test_profile_fields_are_validated(): void
@@ -46,6 +48,7 @@ class BetaReaderProfileTest extends TestCase
         $existingUser->betaReaderProfile()->create([
             'display_name' => 'Existing Reader',
             'handle' => 'existing-reader',
+            'reading_languages' => ['*'],
         ]);
         $user = User::factory()->create();
 
@@ -54,6 +57,7 @@ class BetaReaderProfileTest extends TestCase
                 ->post(route('beta-reader-profile.store'), [
                     'display_name' => 'New Reader',
                     'handle' => $handle,
+                    'reading_languages' => ['en'],
                 ])
                 ->assertSessionHasErrors('handle');
         }
@@ -63,8 +67,17 @@ class BetaReaderProfileTest extends TestCase
                 'display_name' => 'A',
                 'handle' => 'valid-handle',
                 'bio' => str_repeat('a', 1001),
+                'reading_languages' => ['en'],
             ])
             ->assertSessionHasErrors(['display_name', 'bio']);
+
+        $this->actingAs($user)
+            ->post(route('beta-reader-profile.store'), [
+                'display_name' => 'New Reader',
+                'handle' => 'valid-handle',
+                'reading_languages' => ['*', 'en'],
+            ])
+            ->assertSessionHasErrors('reading_languages');
         $this->assertNull($user->betaReaderProfile);
     }
 
@@ -81,6 +94,7 @@ class BetaReaderProfileTest extends TestCase
             ->post(route('beta-reader-profile.store'), [
                 'display_name' => 'A Reader',
                 'handle' => 'shared-handle',
+                'reading_languages' => ['en'],
             ])
             ->assertSessionHasNoErrors();
 
@@ -93,12 +107,14 @@ class BetaReaderProfileTest extends TestCase
         $profile = $user->betaReaderProfile()->create([
             'display_name' => 'First Reader',
             'handle' => 'first-reader',
+            'reading_languages' => ['*'],
         ]);
 
         $this->actingAs($user)
             ->post(route('beta-reader-profile.store'), [
                 'display_name' => 'Second Reader',
                 'handle' => 'second-reader',
+                'reading_languages' => ['en'],
             ])
             ->assertRedirect(route('beta-reader-profile.edit'));
 
@@ -124,6 +140,7 @@ class BetaReaderProfileTest extends TestCase
             ->post(route('beta-reader-profile.store'), [
                 'display_name' => 'New Reader',
                 'handle' => 'claimed-handle',
+                'reading_languages' => ['en'],
             ])
             ->assertSessionHasErrors('handle');
     }
@@ -146,6 +163,7 @@ class BetaReaderProfileTest extends TestCase
                 $user->betaReaderProfile()->create([
                     'display_name' => 'Created Elsewhere',
                     'handle' => 'created-elsewhere',
+                    'reading_languages' => ['*'],
                 ]);
 
                 throw $exception;
@@ -155,6 +173,7 @@ class BetaReaderProfileTest extends TestCase
             ->post(route('beta-reader-profile.store'), [
                 'display_name' => 'New Reader',
                 'handle' => 'new-reader',
+                'reading_languages' => ['en'],
             ])
             ->assertRedirect(route('beta-reader-profile.edit'));
     }
@@ -169,6 +188,7 @@ class BetaReaderProfileTest extends TestCase
         $user->betaReaderProfile()->create([
             'display_name' => 'A Reader',
             'handle' => 'a-reader',
+            'reading_languages' => ['*'],
         ]);
 
         $this->actingAs($user)->get(route('beta-reader-profile.create'))
@@ -181,6 +201,7 @@ class BetaReaderProfileTest extends TestCase
         $profile = $user->betaReaderProfile()->create([
             'display_name' => 'Old Name',
             'handle' => 'fixed-handle',
+            'reading_languages' => ['*'],
         ]);
 
         $this->actingAs($user)
@@ -188,6 +209,7 @@ class BetaReaderProfileTest extends TestCase
                 'display_name' => 'New Name',
                 'handle' => 'changed-handle',
                 'bio' => 'A new bio.',
+                'reading_languages' => ['es'],
             ])
             ->assertSessionHasNoErrors()
             ->assertRedirect(route('dashboard'));
@@ -196,6 +218,7 @@ class BetaReaderProfileTest extends TestCase
         $this->assertSame('New Name', $profile->display_name);
         $this->assertSame('fixed-handle', $profile->handle);
         $this->assertSame('A new bio.', $profile->bio);
+        $this->assertSame(['es'], $profile->reading_languages);
     }
 
     public function test_profile_is_public_without_user_or_author_details(): void
@@ -209,6 +232,7 @@ class BetaReaderProfileTest extends TestCase
             'display_name' => 'Public Reader',
             'handle' => 'public-reader',
             'bio' => 'Public bio.',
+            'reading_languages' => ['*'],
         ]);
 
         $this->get(route('beta-readers.show', $profile))
@@ -218,6 +242,7 @@ class BetaReaderProfileTest extends TestCase
                 ->where('betaReaderProfile.display_name', 'Public Reader')
                 ->where('betaReaderProfile.handle', 'public-reader')
                 ->where('betaReaderProfile.bio', 'Public bio.')
+                ->where('betaReaderProfile.reading_languages', ['*'])
                 ->missing('betaReaderProfile.user')
                 ->missing('betaReaderProfile.email')
                 ->missing('authorProfile'));
@@ -229,6 +254,7 @@ class BetaReaderProfileTest extends TestCase
         $profile = $user->betaReaderProfile()->create([
             'display_name' => 'Deleted Reader',
             'handle' => 'deleted-reader',
+            'reading_languages' => ['*'],
         ]);
 
         $user->delete();

@@ -82,6 +82,28 @@ class FeedTest extends TestCase
         $this->assertNotSame($closed->id, $eligible->id);
     }
 
+    public function test_language_compatibility_controls_feed_and_interest(): void
+    {
+        [$reader, $profile] = $this->reader();
+        $profile->update(['reading_languages' => ['fr']]);
+        $english = $this->listingFor($this->author('english-author'), bookTitle: 'English Book', language: 'en');
+        $french = $this->listingFor($this->author('french-author'), bookTitle: 'French Book', language: 'fr');
+
+        $this->actingAs($reader)->get(route('feed.index'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('listing.id', $french->id)
+                ->where('listing.book.language', 'fr'));
+
+        $this->actingAs($reader)->post(route('feed.interest', $english))
+            ->assertSessionHasErrors('listing');
+        $this->assertSame(0, $profile->decisions()->count());
+
+        $profile->update(['reading_languages' => ['*']]);
+        $reader->unsetRelation('betaReaderProfile');
+        $this->actingAs($reader)->get(route('feed.index'))
+            ->assertInertia(fn (Assert $page) => $page->where('listing.id', $english->id));
+    }
+
     public function test_interest_is_recorded_and_next_listing_is_shown(): void
     {
         [$reader, $profile] = $this->reader();
@@ -125,6 +147,7 @@ class FeedTest extends TestCase
 
         $this->actingAs($reader)->post(route('feed.pass', $listing));
         $this->actingAs($reader)->post(route('feed.pass', $listing))->assertSessionHasNoErrors();
+        $profile->update(['reading_languages' => ['fr']]);
         $this->actingAs($reader)->post(route('feed.interest', $listing))->assertSessionHasNoErrors();
 
         $this->assertSame(1, $profile->decisions()->count());
@@ -170,6 +193,7 @@ class FeedTest extends TestCase
         $profile = $user->betaReaderProfile()->create([
             'display_name' => 'Keen Reader',
             'handle' => 'keen-reader',
+            'reading_languages' => ['*'],
         ]);
 
         if ($withAuthorProfile) {
@@ -198,10 +222,12 @@ class FeedTest extends TestCase
         string $brief = 'A draft ready for feedback.',
         bool $closed = false,
         string $bookTitle = 'A Book',
+        string $language = 'en',
     ): BetaReadingListing {
         $book = $author->authorProfile->books()->create([
             'title' => $bookTitle,
             'description' => 'A Book description.',
+            'language' => $language,
         ]);
 
         return $book->betaReadingListings()->create([

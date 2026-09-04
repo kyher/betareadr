@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
 import BookController from '@/actions/App/Http/Controllers/BookController';
+import BookLanguageField from '@/components/BookLanguageField.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -78,6 +79,10 @@ defineOptions({
                         />
                         <InputError :message="errors.description" />
                     </div>
+                    <BookLanguageField
+                        :language="book.language"
+                        :error="errors.language"
+                    />
                     <div class="flex justify-end gap-3">
                         <Button variant="outline" as-child>
                             <Link :href="books()">{{ t('Cancel') }}</Link>

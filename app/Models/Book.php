@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ContentLanguage;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,10 +14,11 @@ use Illuminate\Support\Carbon;
  * @property int $author_profile_id
  * @property string $title
  * @property string|null $description
+ * @property ContentLanguage $language
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['title', 'description'])]
+#[Fillable(['title', 'description', 'language'])]
 class Book extends Model
 {
     /** @return BelongsTo<AuthorProfile, $this> */
@@ -29,5 +31,10 @@ class Book extends Model
     public function betaReadingListings(): HasMany
     {
         return $this->hasMany(BetaReadingListing::class);
+    }
+
+    protected function casts(): array
+    {
+        return ['language' => ContentLanguage::class];
     }
 }

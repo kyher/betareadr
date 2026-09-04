@@ -2,6 +2,7 @@
 import { Form, Head, Link } from '@inertiajs/vue3';
 import BetaReaderProfileController from '@/actions/App/Http/Controllers/BetaReaderProfileController';
 import InputError from '@/components/InputError.vue';
+import ReadingLanguagesField from '@/components/ReadingLanguagesField.vue';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -123,6 +124,7 @@ defineOptions({
                         />
                         <InputError :message="errors.bio" />
                     </div>
+                    <ReadingLanguagesField :error="errors.reading_languages" />
                     <div class="flex items-center justify-end gap-3">
                         <Button variant="outline" as-child
                             ><Link :href="dashboard()">{{

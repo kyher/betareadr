@@ -58,7 +58,7 @@ class BetaReaderProfileController extends Controller
         }
 
         return Inertia::render('beta-reader-profiles/Edit', [
-            'betaReaderProfile' => $profile->only(['display_name', 'handle', 'bio']),
+            'betaReaderProfile' => $profile->only(['display_name', 'handle', 'bio', 'reading_languages']),
         ]);
     }
 
@@ -82,7 +82,7 @@ class BetaReaderProfileController extends Controller
     public function show(BetaReaderProfile $betaReaderProfile): Response
     {
         return Inertia::render('beta-reader-profiles/Show', [
-            'betaReaderProfile' => $betaReaderProfile->only(['display_name', 'handle', 'bio']),
+            'betaReaderProfile' => $betaReaderProfile->only(['display_name', 'handle', 'bio', 'reading_languages']),
         ]);
     }
 }

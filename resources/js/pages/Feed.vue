@@ -20,6 +20,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { useTranslation } from '@/composables/useTranslation';
+import type { ContentLanguage } from '@/types';
 
 type FeedListing = {
     id: number;
@@ -28,6 +29,7 @@ type FeedListing = {
     book: {
         title: string;
         description: string | null;
+        language: ContentLanguage;
     };
     author: {
         display_name: string;
@@ -266,6 +268,13 @@ defineOptions({
                     <CardTitle class="text-2xl sm:text-3xl">
                         {{ displayedListing.book.title }}
                     </CardTitle>
+                    <p class="text-sm text-muted-foreground">
+                        {{
+                            page.props.contentLanguages[
+                                displayedListing.book.language
+                            ]
+                        }}
+                    </p>
                     <Link
                         :href="`/authors/${displayedListing.author.handle}`"
                         class="flex w-fit items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:underline"
