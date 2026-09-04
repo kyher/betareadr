@@ -36,12 +36,16 @@ _Avoid_: Username, profile name, Author Handle
 A publicly visible, enduring written work belonging to an Author Profile, for which beta-reader feedback may be sought through one or more recruitment rounds. A Book is public as soon as it is created.
 _Avoid_: Project, manuscript, listing
 
+**Content Language**:
+A supported base language used as either a Book Language or Reading Language.
+_Avoid_: Locale, interface language
+
 **Book Language**:
-The single base language in which a Book is written.
+The single Content Language in which a Book is written.
 _Avoid_: Locale, interface language
 
 **Reading Language**:
-A base language in which a Beta Reader can comfortably beta-read a Book. A Beta Reader may accept any language instead of naming individual Reading Languages.
+A Content Language in which a Beta Reader can comfortably beta-read a Book. A Beta Reader may accept any language instead of naming individual Reading Languages.
 _Avoid_: Preferred Language, locale, interface language
 
 **Beta Reading Listing**:
