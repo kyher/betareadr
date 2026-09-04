@@ -1,4 +1,6 @@
 export type Locale = 'en' | 'es' | 'fr';
+export type ContentLanguage = 'en' | 'es' | 'fr';
+export type ReadingLanguage = ContentLanguage | '*';
 
 export type User = {
     id: number;
@@ -29,14 +31,14 @@ export type BetaReaderProfile = {
     display_name: string;
     handle: string;
     bio: string | null;
-    reading_languages: string[];
+    reading_languages: ReadingLanguage[];
 };
 
 export type Book = {
     id: number;
     title: string;
     description: string | null;
-    language: string;
+    language: ContentLanguage;
 };
 
 export type Passkey = {

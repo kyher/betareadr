@@ -20,6 +20,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { useTranslation } from '@/composables/useTranslation';
+import type { ContentLanguage } from '@/types';
 
 type FeedListing = {
     id: number;
@@ -28,7 +29,7 @@ type FeedListing = {
     book: {
         title: string;
         description: string | null;
-        language: string;
+        language: ContentLanguage;
     };
     author: {
         display_name: string;

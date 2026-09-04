@@ -1,4 +1,4 @@
-import type { Auth, Locale } from '@/types/auth';
+import type { Auth, ContentLanguage, Locale } from '@/types/auth';
 
 // Extend ImportMeta interface for Vite...
 declare module 'vite/client' {
@@ -19,7 +19,7 @@ declare module '@inertiajs/core' {
             name: string;
             locale: Locale;
             locales: Record<Locale, string>;
-            contentLanguages: Record<string, string>;
+            contentLanguages: Record<ContentLanguage, string>;
             translations: Record<string, string>;
             auth: Auth;
             sidebarOpen: boolean;

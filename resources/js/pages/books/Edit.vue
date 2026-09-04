@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
 import BookController from '@/actions/App/Http/Controllers/BookController';
+import BookLanguageField from '@/components/BookLanguageField.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -78,26 +79,10 @@ defineOptions({
                         />
                         <InputError :message="errors.description" />
                     </div>
-                    <div class="grid gap-2">
-                        <Label for="language">{{ t('Book language') }}</Label>
-                        <select
-                            id="language"
-                            name="language"
-                            required
-                            :value="book.language"
-                            class="h-9 rounded-md border border-input bg-transparent px-3 text-sm shadow-xs"
-                        >
-                            <option
-                                v-for="(name, code) in $page.props
-                                    .contentLanguages"
-                                :key="code"
-                                :value="code"
-                            >
-                                {{ name }}
-                            </option>
-                        </select>
-                        <InputError :message="errors.language" />
-                    </div>
+                    <BookLanguageField
+                        :language="book.language"
+                        :error="errors.language"
+                    />
                     <div class="flex justify-end gap-3">
                         <Button variant="outline" as-child>
                             <Link :href="books()">{{ t('Cancel') }}</Link>
