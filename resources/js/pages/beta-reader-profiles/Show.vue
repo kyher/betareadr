@@ -45,6 +45,19 @@ const { t } = useTranslation();
                 <p class="mt-1 text-muted-foreground">
                     @{{ betaReaderProfile.handle }}
                 </p>
+                <p class="mt-4 text-sm text-muted-foreground">
+                    {{ t('Reading languages') }}:
+                    {{
+                        betaReaderProfile.reading_languages.includes('*')
+                            ? t('Any language')
+                            : betaReaderProfile.reading_languages
+                                  .map(
+                                      (language) =>
+                                          page.props.contentLanguages[language],
+                                  )
+                                  .join(', ')
+                    }}
+                </p>
                 <p
                     v-if="betaReaderProfile.bio"
                     class="mt-8 max-w-2xl text-left leading-7 whitespace-pre-line"

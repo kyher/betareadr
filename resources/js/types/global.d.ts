@@ -19,6 +19,7 @@ declare module '@inertiajs/core' {
             name: string;
             locale: Locale;
             locales: Record<Locale, string>;
+            contentLanguages: Record<string, string>;
             translations: Record<string, string>;
             auth: Auth;
             sidebarOpen: boolean;

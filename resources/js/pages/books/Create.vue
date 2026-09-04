@@ -72,6 +72,28 @@ defineOptions({
                         />
                         <InputError :message="errors.description" />
                     </div>
+                    <div class="grid gap-2">
+                        <Label for="language">{{ t('Book language') }}</Label>
+                        <select
+                            id="language"
+                            name="language"
+                            required
+                            class="h-9 rounded-md border border-input bg-transparent px-3 text-sm shadow-xs"
+                        >
+                            <option value="" disabled selected>
+                                {{ t('Choose a language') }}
+                            </option>
+                            <option
+                                v-for="(name, code) in $page.props
+                                    .contentLanguages"
+                                :key="code"
+                                :value="code"
+                            >
+                                {{ name }}
+                            </option>
+                        </select>
+                        <InputError :message="errors.language" />
+                    </div>
                     <div class="flex justify-end gap-3">
                         <Button variant="outline" as-child>
                             <Link :href="books()">{{ t('Cancel') }}</Link>

@@ -29,12 +29,14 @@ export type BetaReaderProfile = {
     display_name: string;
     handle: string;
     bio: string | null;
+    reading_languages: string[];
 };
 
 export type Book = {
     id: number;
     title: string;
     description: string | null;
+    language: string;
 };
 
 export type Passkey = {
