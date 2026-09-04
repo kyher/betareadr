@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
                 'display_name' => fake()->name(),
                 'handle' => 'test-reader',
                 'bio' => fake()->paragraph(),
+                'reading_languages' => ['*'],
             ],
         );
 
@@ -46,6 +47,7 @@ class DatabaseSeeder extends Seeder
                 $book = $author->books()->create([
                     'title' => fake()->sentence(3),
                     'description' => fake()->paragraphs(2, true),
+                    'language' => 'en',
                 ]);
 
                 $book->betaReadingListings()->create([

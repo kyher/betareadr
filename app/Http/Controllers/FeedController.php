@@ -32,7 +32,7 @@ class FeedController extends Controller
                 'book' => [
                     'title' => $listing->book->title,
                     'description' => $listing->book->description,
-                    'language' => $listing->book->language,
+                    'language' => $listing->book->language->value,
                 ],
                 'author' => [
                     'display_name' => $listing->book->authorProfile->display_name,

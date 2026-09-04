@@ -35,17 +35,17 @@ class RecordFeedDecision
 
             abort_if($listing->book->authorProfile->user_id === $profile->user_id, 403);
 
-            if ($decision === BetaReadingListingDecision::INTERESTED
-                && ! $profile->acceptsLanguage($listing->book->language)) {
-                return self::INELIGIBLE;
-            }
-
             $existing = $profile->decisions()
                 ->where('beta_reading_listing_id', $listing->id)
                 ->first();
 
             if ($existing !== null) {
                 return self::EXISTING;
+            }
+
+            if ($decision === BetaReadingListingDecision::INTERESTED
+                && ! $profile->acceptsLanguage($listing->book->language)) {
+                return self::INELIGIBLE;
             }
 
             $profile->decisions()->create([

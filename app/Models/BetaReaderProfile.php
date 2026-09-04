@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ContentLanguage;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -40,10 +41,10 @@ class BetaReaderProfile extends Model
         return 'handle';
     }
 
-    public function acceptsLanguage(string $language): bool
+    public function acceptsLanguage(ContentLanguage $language): bool
     {
         return in_array(self::ANY_LANGUAGE, $this->reading_languages, true)
-            || in_array($language, $this->reading_languages, true);
+            || in_array($language->value, $this->reading_languages, true);
     }
 
     protected function casts(): array
