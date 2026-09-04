@@ -30,7 +30,7 @@ class BookTest extends TestCase
 
         $this->actingAs($user)->get(route('books.index'))->assertRedirect(route('author-profile.create'));
         $this->actingAs($user)->get(route('books.create'))->assertRedirect(route('author-profile.create'));
-        $this->actingAs($user)->post(route('books.store'), ['title' => 'A Book'])
+        $this->actingAs($user)->post(route('books.store'), ['title' => 'A Book', 'language' => 'en'])
             ->assertRedirect(route('author-profile.create'));
     }
 
@@ -41,21 +41,25 @@ class BookTest extends TestCase
         $this->actingAs($user)->post(route('books.store'), [
             'title' => '  The Dispossessed  ',
             'description' => '  An ambiguous utopia.  ',
+            'language' => 'en',
         ])->assertSessionHasNoErrors()->assertRedirect(route('books.index'));
 
         $this->actingAs($user)->post(route('books.store'), [
             'title' => 'The Lathe of Heaven',
             'description' => '',
+            'language' => 'fr',
         ])->assertSessionHasNoErrors();
 
         $this->assertDatabaseHas('books', [
             'author_profile_id' => $user->authorProfile->id,
             'title' => 'The Dispossessed',
             'description' => 'An ambiguous utopia.',
+            'language' => 'en',
         ]);
         $this->assertDatabaseHas('books', [
             'title' => 'The Lathe of Heaven',
             'description' => null,
+            'language' => 'fr',
         ]);
     }
 
@@ -64,7 +68,7 @@ class BookTest extends TestCase
         $user = $this->author();
 
         $user->authorProfile->books()->create(['title' => 'Working Title']);
-        $this->actingAs($user)->post(route('books.store'), ['title' => 'Working Title'])
+        $this->actingAs($user)->post(route('books.store'), ['title' => 'Working Title', 'language' => 'en'])
             ->assertSessionHasNoErrors();
 
         $this->assertSame(2, Book::query()->where('title', 'Working Title')->count());
@@ -77,10 +81,13 @@ class BookTest extends TestCase
         $this->actingAs($user)->post(route('books.store'), [
             'title' => str_repeat('a', 201),
             'description' => str_repeat('b', 2001),
-        ])->assertSessionHasErrors(['title', 'description']);
+            'language' => 'xx',
+        ])->assertSessionHasErrors(['title', 'description', 'language']);
 
         $this->actingAs($user)->post(route('books.store'), ['title' => ''])
             ->assertSessionHasErrors('title');
+        $this->actingAs($user)->post(route('books.store'), ['title' => 'A Book'])
+            ->assertSessionHasErrors('language');
     }
 
     public function test_author_sees_only_their_books_on_the_management_page_newest_first(): void
@@ -110,9 +117,10 @@ class BookTest extends TestCase
         $this->actingAs($user)->patch(route('books.update', $book), [
             'title' => 'Changed Title',
             'description' => 'Changed description.',
+            'language' => 'es',
         ])->assertSessionHasNoErrors()->assertRedirect(route('books.index'));
 
-        $this->assertDatabaseHas('books', ['id' => $book->id, 'title' => 'Changed Title']);
+        $this->assertDatabaseHas('books', ['id' => $book->id, 'title' => 'Changed Title', 'language' => 'es']);
 
         $this->actingAs($user)->delete(route('books.destroy', $book))
             ->assertRedirect(route('books.index'));
@@ -179,6 +187,7 @@ class BookTest extends TestCase
                 ->has('books.data', 2)
                 ->where('books.data.0.id', $newer->id)
                 ->where('books.data.0.description', "A public\ndescription.")
+                ->where('books.data.0.language', 'en')
                 ->where('books.data.1.id', $older->id)
                 ->where('books.per_page', 12)
                 ->missing('books.data.0.author_profile_id'));
