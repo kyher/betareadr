@@ -38,8 +38,8 @@ class BetaReaderProfileTest extends TestCase
             'user_id' => $user->id,
             'display_name' => 'Keen Reader',
             'handle' => 'keen-reader',
-            'reading_languages' => json_encode(['en', 'fr']),
         ]);
+        $this->assertSame(['en', 'fr'], $user->betaReaderProfile->reading_languages);
     }
 
     public function test_profile_fields_are_validated(): void
