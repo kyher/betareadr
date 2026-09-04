@@ -36,6 +36,14 @@ _Avoid_: Username, profile name, Author Handle
 A publicly visible, enduring written work belonging to an Author Profile, for which beta-reader feedback may be sought through one or more recruitment rounds. A Book is public as soon as it is created.
 _Avoid_: Project, manuscript, listing
 
+**Book Language**:
+The single base language in which a Book is written.
+_Avoid_: Locale, interface language
+
+**Reading Language**:
+A base language in which a Beta Reader can comfortably beta-read a Book. A Beta Reader may accept any language instead of naming individual Reading Languages.
+_Avoid_: Preferred Language, locale, interface language
+
 **Beta Reading Listing**:
 A distinct recruitment round through which an Author seeks Beta Readers for a Book. A Book may have multiple listings over time, but at most one may be open at once; each Listing is open as soon as it is created and remains so until closed.
 _Avoid_: Book, post, campaign, request
@@ -53,7 +61,7 @@ A type of material a Beta Reader has chosen not to encounter. Listings for a Boo
 _Avoid_: Preference, dislike
 
 **Feed**:
-The sequence of open, undecided Beta Reading Listings eligible for a Beta Reader to consider one at a time. It excludes Listings for Books belonging to that Beta Reader's own User.
+The sequence of open, undecided Beta Reading Listings eligible for a Beta Reader to consider one at a time. It excludes Listings for Books belonging to that Beta Reader's own User and Listings whose Book Language does not match the Beta Reader's Reading Languages, unless they accept any language.
 _Avoid_: Catalogue, listing index
 
 **Close**:
