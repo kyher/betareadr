@@ -73,7 +73,7 @@ An Author's reversible removal of a Beta Reading Listing from Beta Readers' feed
 _Avoid_: Remove, delete
 
 **Delete Book**:
-An Author's permanent removal of a Book, its Listings, and unresolved Interests. Deletion is unavailable while the Book has an active Match; ended Matches do not prevent deletion.
+An Author's permanent removal of a Book, its Listings, their Interests, and any ended Matches. Deletion is unavailable while the Book has an active Match.
 _Avoid_: Close, archive
 
 **Interest**:
