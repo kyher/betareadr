@@ -11,6 +11,7 @@ use App\Models\BetaReadingListing;
 use App\Models\BetaReadingListingDecision;
 use App\Models\Book;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -114,6 +115,12 @@ class BetaReadingListingController extends Controller
     private function authorizeBook(Book $book): void
     {
         abort_unless($book->authorProfile->user_id === request()->user()->id, 403);
+    }
+
+    private function authorizeListing(Book $book, BetaReadingListing $listing): void
+    {
+        Gate::authorize('manage', $listing);
+        abort_unless($listing->book_id === $book->id, 404);
     }
 
     /** @return array{id: int, reading_brief: string, word_count: int, closed_at: string|null, created_at: string|null, interested_count: int, approved_count: int} */

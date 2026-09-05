@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('beta_reading_listing_decisions', function (Blueprint $table) {
-            $table->string('author_decision', 16)->nullable();
+            $table->enum('author_decision', ['approved', 'declined'])->nullable();
         });
 
         Schema::create('beta_reading_matches', function (Blueprint $table) {

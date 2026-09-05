@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\BetaReadingListingAuthorDecision;
 use App\Models\BetaReadingListing;
 use App\Models\BetaReadingListingDecision;
 use App\Models\BetaReadingMatch;
 use App\Models\Book;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -45,7 +47,7 @@ class BetaReadingListingReviewController extends Controller
 
     public function approve(Book $book, BetaReadingListing $listing, BetaReadingListingDecision $interest): RedirectResponse
     {
-        if ($this->decide($book, $listing, $interest, BetaReadingListingDecision::APPROVED)) {
+        if ($this->decide($book, $listing, $interest, BetaReadingListingAuthorDecision::Approved)) {
             Inertia::flash('toast', ['type' => 'success', 'message' => __('Beta reader approved.')]);
         }
 
@@ -54,7 +56,7 @@ class BetaReadingListingReviewController extends Controller
 
     public function decline(Book $book, BetaReadingListing $listing, BetaReadingListingDecision $interest): RedirectResponse
     {
-        $this->decide($book, $listing, $interest, BetaReadingListingDecision::DECLINED);
+        $this->decide($book, $listing, $interest, BetaReadingListingAuthorDecision::Declined);
 
         return back();
     }
@@ -84,8 +86,12 @@ class BetaReadingListingReviewController extends Controller
         return back();
     }
 
-    private function decide(Book $book, BetaReadingListing $listing, BetaReadingListingDecision $interest, string $decision): bool
-    {
+    private function decide(
+        Book $book,
+        BetaReadingListing $listing,
+        BetaReadingListingDecision $interest,
+        BetaReadingListingAuthorDecision $decision,
+    ): bool {
         $this->authorizeInterest($book, $listing, $interest);
 
         return DB::transaction(function () use ($interest, $decision): bool {
@@ -97,7 +103,7 @@ class BetaReadingListingReviewController extends Controller
 
             $interest->update(['author_decision' => $decision]);
 
-            if ($decision === BetaReadingListingDecision::APPROVED) {
+            if ($decision === BetaReadingListingAuthorDecision::Approved) {
                 $interest->match()->create();
             }
 
@@ -113,6 +119,12 @@ class BetaReadingListingReviewController extends Controller
             && $interest->decision === BetaReadingListingDecision::INTERESTED,
             404,
         );
+    }
+
+    private function authorizeListing(Book $book, BetaReadingListing $listing): void
+    {
+        Gate::authorize('manage', $listing);
+        abort_unless($listing->book_id === $book->id, 404);
     }
 
     /** @return array{id: int, match_id: int|null, created_at: string|null, profile: array<string, mixed>} */

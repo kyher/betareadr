@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\BetaReadingListingAuthorDecision;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,7 +14,7 @@ use Illuminate\Support\Carbon;
  * @property int $beta_reader_profile_id
  * @property int $beta_reading_listing_id
  * @property string $decision
- * @property string|null $author_decision
+ * @property BetaReadingListingAuthorDecision|null $author_decision
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property BetaReaderProfile $betaReaderProfile
@@ -25,10 +26,6 @@ class BetaReadingListingDecision extends Model
     public const INTERESTED = 'interested';
 
     public const PASSED = 'passed';
-
-    public const APPROVED = 'approved';
-
-    public const DECLINED = 'declined';
 
     /** @return BelongsTo<BetaReaderProfile, $this> */
     public function betaReaderProfile(): BelongsTo
@@ -46,5 +43,10 @@ class BetaReadingListingDecision extends Model
     public function match(): HasOne
     {
         return $this->hasOne(BetaReadingMatch::class);
+    }
+
+    protected function casts(): array
+    {
+        return ['author_decision' => BetaReadingListingAuthorDecision::class];
     }
 }
