@@ -39,13 +39,21 @@ class BetaReadingListingReviewTest extends TestCase
         $this->assertSame(BetaReadingListingDecision::APPROVED, $oldest->refresh()->author_decision);
         $this->assertSame(1, $oldest->match()->count());
         $this->assertSame(BetaReadingListingDecision::DECLINED, $newest->refresh()->author_decision);
+        $match = $oldest->match;
+
+        $this->actingAs($author)->get(route('books.listings.readers.index', [$book, $listing]))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('approved.0.match_id', $match->id)
+                ->where('approved.0.created_at', $oldest->created_at?->toISOString())
+                ->where('approved.0.profile.bio', 'Current profile bio.')
+                ->where('approved.0.profile.reading_languages', ['*']));
 
         $this->actingAs($author)->delete(route('books.destroy', $book))
             ->assertSessionHasErrors('book');
         $this->assertDatabaseHas('books', ['id' => $book->id]);
 
-        $this->actingAs($author)->delete(route('books.listings.readers.end', [$book, $listing, $oldest]));
-        $this->assertSame(0, $oldest->match()->count());
+        $this->actingAs($author)->delete(route('books.listings.readers.end', [$book, $listing, $match]));
+        $this->assertNotNull($match->refresh()->ended_at);
 
         $this->actingAs($author)->get(route('books.listings.readers.index', [$book, $listing]))
             ->assertInertia(fn (Assert $page) => $page
