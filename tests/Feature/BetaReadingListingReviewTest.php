@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\BetaReadingListingAuthorDecision;
 use App\Models\BetaReadingListing;
 use App\Models\BetaReadingListingDecision;
 use App\Models\Book;
@@ -36,9 +37,9 @@ class BetaReadingListingReviewTest extends TestCase
         $this->actingAs($author)->post(route('books.listings.readers.approve', [$book, $listing, $oldest]));
         $this->actingAs($author)->post(route('books.listings.readers.decline', [$book, $listing, $newest]));
 
-        $this->assertSame(BetaReadingListingDecision::APPROVED, $oldest->refresh()->author_decision);
+        $this->assertSame(BetaReadingListingAuthorDecision::Approved, $oldest->refresh()->author_decision);
         $this->assertSame(1, $oldest->match()->count());
-        $this->assertSame(BetaReadingListingDecision::DECLINED, $newest->refresh()->author_decision);
+        $this->assertSame(BetaReadingListingAuthorDecision::Declined, $newest->refresh()->author_decision);
         $match = $oldest->match;
 
         $this->actingAs($author)->get(route('books.listings.readers.index', [$book, $listing]))
@@ -62,6 +63,7 @@ class BetaReadingListingReviewTest extends TestCase
 
         $this->actingAs($author)->delete(route('books.destroy', $book))->assertSessionHasNoErrors();
         $this->assertDatabaseMissing('books', ['id' => $book->id]);
+        $this->assertDatabaseMissing('beta_reading_matches', ['id' => $match->id]);
     }
 
     public function test_only_owner_can_review_and_interest_must_belong_to_listing(): void
