@@ -79,6 +79,31 @@ class BetaReadingListingReviewTest extends TestCase
         $this->actingAs($owner)->post(route('books.listings.readers.approve', [$otherBook, $otherListing, $interest]))->assertNotFound();
     }
 
+    public function test_interest_and_match_order_uses_id_to_break_timestamp_ties(): void
+    {
+        $author = $this->author();
+        $book = $this->bookFor($author);
+        $listing = $this->listingFor($book);
+        $createdAt = now();
+        $first = $this->interestFor($listing, 'first-reader', $createdAt);
+        $second = $this->interestFor($listing, 'second-reader', $createdAt);
+
+        $this->actingAs($author)->get(route('books.listings.readers.index', [$book, $listing]))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('interested.0.id', $first->id)
+                ->where('interested.1.id', $second->id));
+
+        $this->actingAs($author)->post(route('books.listings.readers.approve', [$book, $listing, $first]));
+        $this->actingAs($author)->post(route('books.listings.readers.approve', [$book, $listing, $second]));
+        $first->match()->update(['created_at' => $createdAt]);
+        $second->match()->update(['created_at' => $createdAt]);
+
+        $this->actingAs($author)->get(route('books.listings.readers.index', [$book, $listing]))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('approved.0.id', $second->id)
+                ->where('approved.1.id', $first->id));
+    }
+
     private function author(string $handle = 'author'): User
     {
         $user = User::factory()->create();
