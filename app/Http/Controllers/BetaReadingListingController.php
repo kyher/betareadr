@@ -28,7 +28,8 @@ class BetaReadingListingController extends Controller
                     'decisions as interested_count' => fn ($query) => $query
                         ->where('decision', BetaReadingListingDecision::INTERESTED)
                         ->whereNull('author_decision'),
-                    'decisions as approved_count' => fn ($query) => $query->whereHas('match'),
+                    'decisions as approved_count' => fn ($query) => $query
+                        ->whereHas('match', fn ($match) => $match->whereNull('ended_at')),
                 ])
                 ->orderByRaw('closed_at IS NULL DESC')
                 ->latest('created_at')

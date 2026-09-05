@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BetaReadingListing;
 use App\Models\BetaReadingListingDecision;
+use App\Models\BetaReadingMatch;
 use App\Models\Book;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -24,13 +25,13 @@ class BetaReadingListingReviewController extends Controller
             ->get()
             ->map(fn (BetaReadingListingDecision $interest): array => $this->readerData($interest));
 
-        $approved = $listing->decisions()
-            ->whereHas('match')
-            ->with(['betaReaderProfile', 'match'])
+        $approved = BetaReadingMatch::query()
+            ->whereNull('ended_at')
+            ->whereHas('decision', fn ($query) => $query->where('beta_reading_listing_id', $listing->id))
+            ->with('decision.betaReaderProfile')
+            ->latest()
             ->get()
-            ->sortByDesc(fn (BetaReadingListingDecision $interest) => $interest->match->created_at)
-            ->values()
-            ->map(fn (BetaReadingListingDecision $interest): array => $this->readerData($interest));
+            ->map(fn (BetaReadingMatch $match): array => $this->readerData($match->decision, $match->id));
 
         return Inertia::render('beta-reading-listings/Review', [
             'book' => $book->only(['id', 'title']),
@@ -42,9 +43,9 @@ class BetaReadingListingReviewController extends Controller
 
     public function approve(Book $book, BetaReadingListing $listing, BetaReadingListingDecision $interest): RedirectResponse
     {
-        $this->decide($book, $listing, $interest, BetaReadingListingDecision::APPROVED);
-
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Beta reader approved.')]);
+        if ($this->decide($book, $listing, $interest, BetaReadingListingDecision::APPROVED)) {
+            Inertia::flash('toast', ['type' => 'success', 'message' => __('Beta reader approved.')]);
+        }
 
         return back();
     }
@@ -56,25 +57,40 @@ class BetaReadingListingReviewController extends Controller
         return back();
     }
 
-    public function end(Book $book, BetaReadingListing $listing, BetaReadingListingDecision $interest): RedirectResponse
+    public function end(Book $book, BetaReadingListing $listing, BetaReadingMatch $match): RedirectResponse
     {
-        $this->authorizeInterest($book, $listing, $interest);
-        $interest->match()->delete();
+        $this->authorizeListing($book, $listing);
+        $match->load('decision');
+        abort_unless($match->decision->beta_reading_listing_id === $listing->id, 404);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Match ended.')]);
+        $ended = DB::transaction(function () use ($match): bool {
+            $match = BetaReadingMatch::query()->lockForUpdate()->findOrFail($match->id);
+
+            if ($match->ended_at !== null) {
+                return false;
+            }
+
+            $match->update(['ended_at' => now()]);
+
+            return true;
+        });
+
+        if ($ended) {
+            Inertia::flash('toast', ['type' => 'success', 'message' => __('Match ended.')]);
+        }
 
         return back();
     }
 
-    private function decide(Book $book, BetaReadingListing $listing, BetaReadingListingDecision $interest, string $decision): void
+    private function decide(Book $book, BetaReadingListing $listing, BetaReadingListingDecision $interest, string $decision): bool
     {
         $this->authorizeInterest($book, $listing, $interest);
 
-        DB::transaction(function () use ($interest, $decision): void {
+        return DB::transaction(function () use ($interest, $decision): bool {
             $interest = BetaReadingListingDecision::query()->lockForUpdate()->findOrFail($interest->id);
 
             if ($interest->author_decision !== null) {
-                return;
+                return false;
             }
 
             $interest->update(['author_decision' => $decision]);
@@ -82,6 +98,8 @@ class BetaReadingListingReviewController extends Controller
             if ($decision === BetaReadingListingDecision::APPROVED) {
                 $interest->match()->create();
             }
+
+            return true;
         });
     }
 
@@ -101,11 +119,12 @@ class BetaReadingListingReviewController extends Controller
         abort_unless($listing->book_id === $book->id, 404);
     }
 
-    /** @return array{id: int, created_at: string|null, profile: array<string, mixed>} */
-    private function readerData(BetaReadingListingDecision $interest): array
+    /** @return array{id: int, match_id: int|null, created_at: string|null, profile: array<string, mixed>} */
+    private function readerData(BetaReadingListingDecision $interest, ?int $matchId = null): array
     {
         return [
             'id' => $interest->id,
+            'match_id' => $matchId,
             'created_at' => $interest->created_at?->toISOString(),
             'profile' => $interest->betaReaderProfile->only([
                 'display_name',

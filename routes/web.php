@@ -58,7 +58,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('{listing}/readers', [BetaReadingListingReviewController::class, 'index'])->name('readers.index');
         Route::post('{listing}/interests/{interest}/approve', [BetaReadingListingReviewController::class, 'approve'])->name('readers.approve');
         Route::post('{listing}/interests/{interest}/decline', [BetaReadingListingReviewController::class, 'decline'])->name('readers.decline');
-        Route::delete('{listing}/matches/{interest}', [BetaReadingListingReviewController::class, 'end'])->name('readers.end');
+        Route::delete('{listing}/matches/{match}', [BetaReadingListingReviewController::class, 'end'])->name('readers.end');
     });
 });
 

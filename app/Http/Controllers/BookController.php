@@ -78,7 +78,9 @@ class BookController extends Controller
     {
         $this->authorizeOwner($book);
 
-        if ($book->betaReadingListings()->whereHas('decisions.match')->exists()) {
+        if ($book->betaReadingListings()
+            ->whereHas('decisions.match', fn ($match) => $match->whereNull('ended_at'))
+            ->exists()) {
             return back()->withErrors(['book' => __('End active matches before deleting this book.')]);
         }
 
