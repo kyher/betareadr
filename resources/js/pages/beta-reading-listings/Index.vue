@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { Form, Head, Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, Pencil, Plus, RotateCcw, XCircle } from '@lucide/vue';
+import { BookOpen, Pencil, Plus, RotateCcw, Users, XCircle } from '@lucide/vue';
 import { computed } from 'vue';
 import BetaReadingListingController from '@/actions/App/Http/Controllers/BetaReadingListingController';
+import BetaReadingListingReviewController from '@/actions/App/Http/Controllers/BetaReadingListingReviewController';
 import InputError from '@/components/InputError.vue';
 import PaginationLinks from '@/components/PaginationLinks.vue';
 import { Badge } from '@/components/ui/badge';
@@ -34,6 +35,8 @@ type Listing = {
     word_count: number;
     closed_at: string | null;
     created_at: string;
+    interested_count: number;
+    approved_count: number;
 };
 type Paginator<T> = {
     data: T[];
@@ -170,6 +173,22 @@ defineOptions({
                         </p>
                     </div>
                     <div class="flex shrink-0 flex-wrap gap-2">
+                        <Button variant="outline" size="sm" as-child>
+                            <Link
+                                :href="
+                                    BetaReadingListingReviewController.index({
+                                        book: book.id,
+                                        listing: listing.id,
+                                    })
+                                "
+                            >
+                                <Users />
+                                {{ t('Review beta readers') }}
+                                · {{ listing.interested_count }}
+                                {{ t('pending') }} ·
+                                {{ listing.approved_count }} {{ t('approved') }}
+                            </Link>
+                        </Button>
                         <Button variant="outline" size="sm" as-child>
                             <Link
                                 :href="

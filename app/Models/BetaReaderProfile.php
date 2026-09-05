@@ -30,10 +30,10 @@ class BetaReaderProfile extends Model
         return $this->belongsTo(User::class);
     }
 
-    /** @return HasMany<BetaReadingListingDecision, $this> */
-    public function decisions(): HasMany
+    /** @return HasMany<BetaReadingListingReaderDecision, $this> */
+    public function readerDecisions(): HasMany
     {
-        return $this->hasMany(BetaReadingListingDecision::class);
+        return $this->hasMany(BetaReadingListingReaderDecision::class);
     }
 
     public function getRouteKeyName(): string

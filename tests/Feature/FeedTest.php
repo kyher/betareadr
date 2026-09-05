@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Enums\BetaReadingListingReaderDecisionType;
 use App\Models\BetaReaderProfile;
 use App\Models\BetaReadingListing;
-use App\Models\BetaReadingListingDecision;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -69,9 +69,9 @@ class FeedTest extends TestCase
         $closed = $this->listingFor($this->author('closed-author'), closed: true, bookTitle: 'Closed Book');
         $passed = $this->listingFor($this->author('passed-author'), bookTitle: 'Passed Book');
         $eligible = $this->listingFor($this->author('eligible-author'), bookTitle: 'Eligible Book');
-        $profile->decisions()->create([
+        $profile->readerDecisions()->create([
             'beta_reading_listing_id' => $passed->id,
-            'decision' => BetaReadingListingDecision::PASSED,
+            'reader_decision' => BetaReadingListingReaderDecisionType::Pass,
         ]);
 
         $this->actingAs($reader)->get(route('feed.index'))
@@ -96,7 +96,7 @@ class FeedTest extends TestCase
 
         $this->actingAs($reader)->post(route('feed.interest', $english))
             ->assertSessionHasErrors('listing');
-        $this->assertSame(0, $profile->decisions()->count());
+        $this->assertSame(0, $profile->readerDecisions()->count());
 
         $profile->update(['reading_languages' => ['*']]);
         $reader->unsetRelation('betaReaderProfile');
@@ -117,7 +117,7 @@ class FeedTest extends TestCase
         $this->assertDatabaseHas('beta_reading_listing_decisions', [
             'beta_reader_profile_id' => $profile->id,
             'beta_reading_listing_id' => $first->id,
-            'decision' => BetaReadingListingDecision::INTERESTED,
+            'reader_decision' => BetaReadingListingReaderDecisionType::Interested->value,
         ]);
         $this->actingAs($reader)->get(route('feed.index'))
             ->assertInertia(fn (Assert $page) => $page->where('listing.id', $next->id));
@@ -134,7 +134,7 @@ class FeedTest extends TestCase
         $this->assertDatabaseHas('beta_reading_listing_decisions', [
             'beta_reader_profile_id' => $profile->id,
             'beta_reading_listing_id' => $listing->id,
-            'decision' => BetaReadingListingDecision::PASSED,
+            'reader_decision' => BetaReadingListingReaderDecisionType::Pass->value,
         ]);
         $this->actingAs($reader)->get(route('feed.index'))
             ->assertInertia(fn (Assert $page) => $page->where('listing', null));
@@ -150,8 +150,8 @@ class FeedTest extends TestCase
         $profile->update(['reading_languages' => ['fr']]);
         $this->actingAs($reader)->post(route('feed.interest', $listing))->assertSessionHasNoErrors();
 
-        $this->assertSame(1, $profile->decisions()->count());
-        $this->assertSame(BetaReadingListingDecision::PASSED, $profile->decisions()->first()->decision);
+        $this->assertSame(1, $profile->readerDecisions()->count());
+        $this->assertSame(BetaReadingListingReaderDecisionType::Pass, $profile->readerDecisions()->first()->reader_decision);
     }
 
     public function test_closed_listing_rejects_a_stale_decision(): void
@@ -163,7 +163,7 @@ class FeedTest extends TestCase
             ->assertRedirect(route('feed.index'))
             ->assertSessionHasErrors('listing');
 
-        $this->assertSame(0, $profile->decisions()->count());
+        $this->assertSame(0, $profile->readerDecisions()->count());
     }
 
     public function test_undecided_reopened_listing_returns_but_decided_listing_does_not(): void
@@ -175,9 +175,9 @@ class FeedTest extends TestCase
         $this->actingAs($reader)->get(route('feed.index'))
             ->assertInertia(fn (Assert $page) => $page->where('listing.id', $listing->id));
 
-        $profile->decisions()->create([
+        $profile->readerDecisions()->create([
             'beta_reading_listing_id' => $listing->id,
-            'decision' => BetaReadingListingDecision::INTERESTED,
+            'reader_decision' => BetaReadingListingReaderDecisionType::Interested,
         ]);
         $listing->update(['closed_at' => now()]);
         $listing->update(['closed_at' => null]);

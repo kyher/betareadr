@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthorProfileController;
 use App\Http\Controllers\BetaReaderProfileController;
 use App\Http\Controllers\BetaReadingListingController;
+use App\Http\Controllers\BetaReadingListingReviewController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\FeedController;
 use Illuminate\Http\Request;
@@ -54,6 +55,10 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('{listing}', [BetaReadingListingController::class, 'update'])->name('update');
         Route::patch('{listing}/close', [BetaReadingListingController::class, 'close'])->name('close');
         Route::patch('{listing}/reopen', [BetaReadingListingController::class, 'reopen'])->name('reopen');
+        Route::get('{listing}/readers', [BetaReadingListingReviewController::class, 'index'])->name('readers.index');
+        Route::post('{listing}/interests/{interest}/approve', [BetaReadingListingReviewController::class, 'approve'])->name('readers.approve');
+        Route::post('{listing}/interests/{interest}/decline', [BetaReadingListingReviewController::class, 'decline'])->name('readers.decline');
+        Route::delete('{listing}/matches/{match}', [BetaReadingListingReviewController::class, 'end'])->name('readers.end');
     });
 });
 

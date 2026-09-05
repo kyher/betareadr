@@ -2,9 +2,9 @@
 
 namespace App\Actions\Feed;
 
+use App\Enums\BetaReadingListingReaderDecisionType;
 use App\Models\BetaReaderProfile;
 use App\Models\BetaReadingListing;
-use App\Models\BetaReadingListingDecision;
 use Illuminate\Support\Facades\DB;
 
 class RecordFeedDecision
@@ -20,7 +20,7 @@ class RecordFeedDecision
     public function handle(
         BetaReaderProfile $profile,
         BetaReadingListing $listing,
-        string $decision,
+        BetaReadingListingReaderDecisionType $decision,
     ): string {
         return DB::transaction(function () use ($profile, $listing, $decision): string {
             $profile = BetaReaderProfile::query()->lockForUpdate()->findOrFail($profile->id);
@@ -35,7 +35,7 @@ class RecordFeedDecision
 
             abort_if($listing->book->authorProfile->user_id === $profile->user_id, 403);
 
-            $existing = $profile->decisions()
+            $existing = $profile->readerDecisions()
                 ->where('beta_reading_listing_id', $listing->id)
                 ->first();
 
@@ -43,14 +43,14 @@ class RecordFeedDecision
                 return self::EXISTING;
             }
 
-            if ($decision === BetaReadingListingDecision::INTERESTED
+            if ($decision === BetaReadingListingReaderDecisionType::Interested
                 && ! $profile->acceptsLanguage($listing->book->language)) {
                 return self::INELIGIBLE;
             }
 
-            $profile->decisions()->create([
+            $profile->readerDecisions()->create([
                 'beta_reading_listing_id' => $listing->id,
-                'decision' => $decision,
+                'reader_decision' => $decision,
             ]);
 
             return self::CREATED;

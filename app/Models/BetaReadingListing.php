@@ -26,10 +26,10 @@ class BetaReadingListing extends Model
         return $this->belongsTo(Book::class);
     }
 
-    /** @return HasMany<BetaReadingListingDecision, $this> */
-    public function decisions(): HasMany
+    /** @return HasMany<BetaReadingListingReaderDecision, $this> */
+    public function readerDecisions(): HasMany
     {
-        return $this->hasMany(BetaReadingListingDecision::class);
+        return $this->hasMany(BetaReadingListingReaderDecision::class);
     }
 
     protected function casts(): array

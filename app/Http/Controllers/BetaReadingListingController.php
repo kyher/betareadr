@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Actions\BetaReadingListings\CreateBetaReadingListing;
 use App\Actions\BetaReadingListings\ReopenBetaReadingListing;
 use App\Actions\BetaReadingListings\UpdateBetaReadingListing;
+use App\Enums\BetaReadingListingReaderDecisionType;
 use App\Http\Requests\StoreBetaReadingListingRequest;
 use App\Http\Requests\UpdateBetaReadingListingRequest;
 use App\Models\BetaReadingListing;
 use App\Models\Book;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -23,6 +25,13 @@ class BetaReadingListingController extends Controller
             'book' => $book->only(['id', 'title']),
             'hasOpenListing' => $book->betaReadingListings()->whereNull('closed_at')->exists(),
             'listings' => $book->betaReadingListings()
+                ->withCount([
+                    'readerDecisions as interested_count' => fn ($query) => $query
+                        ->where('reader_decision', BetaReadingListingReaderDecisionType::Interested)
+                        ->whereNull('author_decision'),
+                    'readerDecisions as approved_count' => fn ($query) => $query
+                        ->whereHas('match', fn ($match) => $match->whereNull('ended_at')),
+                ])
                 ->orderByRaw('closed_at IS NULL DESC')
                 ->latest('created_at')
                 ->latest('id')
@@ -110,11 +119,10 @@ class BetaReadingListingController extends Controller
 
     private function authorizeListing(Book $book, BetaReadingListing $listing): void
     {
-        $this->authorizeBook($book);
-        abort_unless($listing->book_id === $book->id, 404);
+        Gate::authorize('manage', [$listing, $book]);
     }
 
-    /** @return array{id: int, reading_brief: string, word_count: int, closed_at: string|null, created_at: string|null} */
+    /** @return array{id: int, reading_brief: string, word_count: int, closed_at: string|null, created_at: string|null, interested_count: int, approved_count: int} */
     private function listingData(BetaReadingListing $listing): array
     {
         return [
@@ -123,6 +131,8 @@ class BetaReadingListingController extends Controller
             'word_count' => $listing->word_count,
             'closed_at' => $listing->closed_at?->toISOString(),
             'created_at' => $listing->created_at?->toISOString(),
+            'interested_count' => (int) $listing->getAttribute('interested_count'),
+            'approved_count' => (int) $listing->getAttribute('approved_count'),
         ];
     }
 }

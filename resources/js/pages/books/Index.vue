@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { Form, Head, Link } from '@inertiajs/vue3';
+import { Form, Head, Link, usePage } from '@inertiajs/vue3';
 import { BookOpen, List, Pencil, Plus, Trash2 } from '@lucide/vue';
+import { computed } from 'vue';
 import BetaReadingListingController from '@/actions/App/Http/Controllers/BetaReadingListingController';
 import BookController from '@/actions/App/Http/Controllers/BookController';
+import InputError from '@/components/InputError.vue';
 import PaginationLinks from '@/components/PaginationLinks.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -33,6 +35,10 @@ type Paginator<T> = {
 
 defineProps<{ books: Paginator<Book> }>();
 const { t } = useTranslation();
+const page = usePage();
+const bookError = computed(
+    () => (page.props.errors as Record<string, string> | undefined)?.book,
+);
 
 defineOptions({
     layout: {
@@ -63,6 +69,8 @@ defineOptions({
                 >
             </Button>
         </div>
+
+        <InputError v-if="bookError" :message="bookError" />
 
         <Card v-if="books.data.length === 0" class="border-dashed">
             <CardHeader>

@@ -77,6 +77,13 @@ class BookController extends Controller
     public function destroy(Book $book): RedirectResponse
     {
         $this->authorizeOwner($book);
+
+        if ($book->betaReadingListings()
+            ->whereHas('readerDecisions.match', fn ($match) => $match->whereNull('ended_at'))
+            ->exists()) {
+            return back()->withErrors(['book' => __('End active matches before deleting this book.')]);
+        }
+
         $book->delete();
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Book deleted.')]);
