@@ -28,6 +28,7 @@ type Book = { id: number; title: string };
 type Listing = { id: number; closed_at: string | null };
 type Reader = {
     id: number;
+    match_id: number | null;
     created_at: string;
     profile: {
         display_name: string;
@@ -210,67 +211,81 @@ defineOptions({
             <Card v-for="reader in approved" v-else :key="reader.id">
                 <CardHeader>
                     <CardTitle>{{ reader.profile.display_name }}</CardTitle>
-                    <CardDescription
-                        >@{{ reader.profile.handle }}</CardDescription
-                    >
+                    <CardDescription>
+                        @{{ reader.profile.handle }} · {{ t('Interested') }}
+                        {{ formatDate(reader.created_at) }}
+                    </CardDescription>
                 </CardHeader>
-                <CardContent class="flex flex-wrap gap-2">
-                    <Button variant="outline" size="sm" as-child>
-                        <Link
-                            :href="showBetaReader(reader.profile.handle)"
-                            target="_blank"
-                        >
-                            <ExternalLink /> {{ t('View profile') }}
-                        </Link>
-                    </Button>
-                    <Dialog>
-                        <DialogTrigger as-child>
-                            <Button variant="destructive" size="sm">
-                                <UserRoundCheck /> {{ t('End match') }}
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                            <Form
-                                v-bind="
-                                    BetaReadingListingReviewController.end.form(
-                                        {
-                                            book: book.id,
-                                            listing: listing.id,
-                                            interest: reader.id,
-                                        },
-                                    )
-                                "
-                                :options="{ preserveScroll: true }"
-                                v-slot="{ processing }"
+                <CardContent class="grid gap-4">
+                    <p class="text-sm text-muted-foreground">
+                        {{ t('Reading languages') }}:
+                        {{
+                            reader.profile.reading_languages
+                                .map(languageName)
+                                .join(', ')
+                        }}
+                    </p>
+                    <p v-if="reader.profile.bio" class="line-clamp-3 text-sm">
+                        {{ reader.profile.bio }}
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <Button variant="outline" size="sm" as-child>
+                            <Link
+                                :href="showBetaReader(reader.profile.handle)"
+                                target="_blank"
                             >
-                                <DialogHeader>
-                                    <DialogTitle>{{
-                                        t('End this match?')
-                                    }}</DialogTitle>
-                                    <DialogDescription>{{
-                                        t(
-                                            'This is permanent. The original interest cannot be reconsidered.',
+                                <ExternalLink /> {{ t('View profile') }}
+                            </Link>
+                        </Button>
+                        <Dialog>
+                            <DialogTrigger as-child>
+                                <Button variant="destructive" size="sm">
+                                    <UserRoundCheck /> {{ t('End match') }}
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <Form
+                                    v-bind="
+                                        BetaReadingListingReviewController.end.form(
+                                            {
+                                                book: book.id,
+                                                listing: listing.id,
+                                                match: reader.match_id!,
+                                            },
                                         )
-                                    }}</DialogDescription>
-                                </DialogHeader>
-                                <DialogFooter class="mt-6 gap-2">
-                                    <DialogClose as-child
-                                        ><Button
-                                            type="button"
-                                            variant="secondary"
-                                            >{{ t('Cancel') }}</Button
-                                        ></DialogClose
-                                    >
-                                    <Button
-                                        type="submit"
-                                        variant="destructive"
-                                        :disabled="processing"
-                                        >{{ t('End match') }}</Button
-                                    >
-                                </DialogFooter>
-                            </Form>
-                        </DialogContent>
-                    </Dialog>
+                                    "
+                                    :options="{ preserveScroll: true }"
+                                    v-slot="{ processing }"
+                                >
+                                    <DialogHeader>
+                                        <DialogTitle>{{
+                                            t('End this match?')
+                                        }}</DialogTitle>
+                                        <DialogDescription>{{
+                                            t(
+                                                'This is permanent. The original interest cannot be reconsidered.',
+                                            )
+                                        }}</DialogDescription>
+                                    </DialogHeader>
+                                    <DialogFooter class="mt-6 gap-2">
+                                        <DialogClose as-child
+                                            ><Button
+                                                type="button"
+                                                variant="secondary"
+                                                >{{ t('Cancel') }}</Button
+                                            ></DialogClose
+                                        >
+                                        <Button
+                                            type="submit"
+                                            variant="destructive"
+                                            :disabled="processing"
+                                            >{{ t('End match') }}</Button
+                                        >
+                                    </DialogFooter>
+                                </Form>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
                 </CardContent>
             </Card>
         </section>
