@@ -22,6 +22,7 @@ class BetaReadingListingReviewController extends Controller
             ->whereNull('author_decision')
             ->with('betaReaderProfile')
             ->oldest()
+            ->oldest('id')
             ->get()
             ->map(fn (BetaReadingListingDecision $interest): array => $this->readerData($interest));
 
@@ -30,6 +31,7 @@ class BetaReadingListingReviewController extends Controller
             ->whereHas('decision', fn ($query) => $query->where('beta_reading_listing_id', $listing->id))
             ->with('decision.betaReaderProfile')
             ->latest()
+            ->latest('id')
             ->get()
             ->map(fn (BetaReadingMatch $match): array => $this->readerData($match->decision, $match->id));
 
@@ -111,12 +113,6 @@ class BetaReadingListingReviewController extends Controller
             && $interest->decision === BetaReadingListingDecision::INTERESTED,
             404,
         );
-    }
-
-    private function authorizeListing(Book $book, BetaReadingListing $listing): void
-    {
-        abort_unless($book->authorProfile->user_id === request()->user()->id, 403);
-        abort_unless($listing->book_id === $book->id, 404);
     }
 
     /** @return array{id: int, match_id: int|null, created_at: string|null, profile: array<string, mixed>} */

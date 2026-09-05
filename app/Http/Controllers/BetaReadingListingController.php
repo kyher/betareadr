@@ -116,12 +116,6 @@ class BetaReadingListingController extends Controller
         abort_unless($book->authorProfile->user_id === request()->user()->id, 403);
     }
 
-    private function authorizeListing(Book $book, BetaReadingListing $listing): void
-    {
-        $this->authorizeBook($book);
-        abort_unless($listing->book_id === $book->id, 404);
-    }
-
     /** @return array{id: int, reading_brief: string, word_count: int, closed_at: string|null, created_at: string|null, interested_count: int, approved_count: int} */
     private function listingData(BetaReadingListing $listing): array
     {
