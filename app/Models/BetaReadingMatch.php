@@ -13,15 +13,15 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $ended_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property BetaReadingListingDecision $decision
+ * @property BetaReadingListingReaderDecision $readerDecision
  */
 #[Fillable(['ended_at'])]
 class BetaReadingMatch extends Model
 {
-    /** @return BelongsTo<BetaReadingListingDecision, $this> */
-    public function decision(): BelongsTo
+    /** @return BelongsTo<BetaReadingListingReaderDecision, $this> */
+    public function readerDecision(): BelongsTo
     {
-        return $this->belongsTo(BetaReadingListingDecision::class, 'beta_reading_listing_decision_id');
+        return $this->belongsTo(BetaReadingListingReaderDecision::class, 'beta_reading_listing_decision_id');
     }
 
     protected function casts(): array

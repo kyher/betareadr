@@ -11,7 +11,7 @@ class FindNextFeedListing
     {
         return BetaReadingListing::query()
             ->whereNull('closed_at')
-            ->whereDoesntHave('decisions', fn ($query) => $query
+            ->whereDoesntHave('readerDecisions', fn ($query) => $query
                 ->where('beta_reader_profile_id', $profile->id))
             ->whereHas('book.authorProfile', fn ($query) => $query
                 ->where('user_id', '!=', $profile->user_id))

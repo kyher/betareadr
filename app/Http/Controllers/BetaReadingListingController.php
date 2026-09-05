@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use App\Actions\BetaReadingListings\CreateBetaReadingListing;
 use App\Actions\BetaReadingListings\ReopenBetaReadingListing;
 use App\Actions\BetaReadingListings\UpdateBetaReadingListing;
+use App\Enums\BetaReadingListingReaderDecisionType;
 use App\Http\Requests\StoreBetaReadingListingRequest;
 use App\Http\Requests\UpdateBetaReadingListingRequest;
 use App\Models\BetaReadingListing;
-use App\Models\BetaReadingListingDecision;
 use App\Models\Book;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
@@ -26,10 +26,10 @@ class BetaReadingListingController extends Controller
             'hasOpenListing' => $book->betaReadingListings()->whereNull('closed_at')->exists(),
             'listings' => $book->betaReadingListings()
                 ->withCount([
-                    'decisions as interested_count' => fn ($query) => $query
-                        ->where('decision', BetaReadingListingDecision::INTERESTED)
+                    'readerDecisions as interested_count' => fn ($query) => $query
+                        ->where('reader_decision', BetaReadingListingReaderDecisionType::Interested)
                         ->whereNull('author_decision'),
-                    'decisions as approved_count' => fn ($query) => $query
+                    'readerDecisions as approved_count' => fn ($query) => $query
                         ->whereHas('match', fn ($match) => $match->whereNull('ended_at')),
                 ])
                 ->orderByRaw('closed_at IS NULL DESC')
@@ -119,8 +119,7 @@ class BetaReadingListingController extends Controller
 
     private function authorizeListing(Book $book, BetaReadingListing $listing): void
     {
-        Gate::authorize('manage', $listing);
-        abort_unless($listing->book_id === $book->id, 404);
+        Gate::authorize('manage', [$listing, $book]);
     }
 
     /** @return array{id: int, reading_brief: string, word_count: int, closed_at: string|null, created_at: string|null, interested_count: int, approved_count: int} */

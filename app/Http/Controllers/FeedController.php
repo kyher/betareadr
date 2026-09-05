@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Actions\Feed\FindNextFeedListing;
 use App\Actions\Feed\RecordFeedDecision;
+use App\Enums\BetaReadingListingReaderDecisionType;
 use App\Models\BetaReaderProfile;
 use App\Models\BetaReadingListing;
-use App\Models\BetaReadingListingDecision;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -47,7 +47,7 @@ class FeedController extends Controller
         BetaReadingListing $listing,
         RecordFeedDecision $recordDecision,
     ): RedirectResponse {
-        return $this->decide($request, $listing, BetaReadingListingDecision::INTERESTED, $recordDecision);
+        return $this->decide($request, $listing, BetaReadingListingReaderDecisionType::Interested, $recordDecision);
     }
 
     public function pass(
@@ -55,13 +55,13 @@ class FeedController extends Controller
         BetaReadingListing $listing,
         RecordFeedDecision $recordDecision,
     ): RedirectResponse {
-        return $this->decide($request, $listing, BetaReadingListingDecision::PASSED, $recordDecision);
+        return $this->decide($request, $listing, BetaReadingListingReaderDecisionType::Pass, $recordDecision);
     }
 
     private function decide(
         Request $request,
         BetaReadingListing $listing,
-        string $decision,
+        BetaReadingListingReaderDecisionType $decision,
         RecordFeedDecision $recordDecision,
     ): RedirectResponse {
         $profile = $this->profileOrRedirect($request);
@@ -82,7 +82,7 @@ class FeedController extends Controller
                 ->withErrors(['listing' => __('This Listing no longer matches your reading languages.')]);
         }
 
-        if ($result === RecordFeedDecision::CREATED && $decision === BetaReadingListingDecision::INTERESTED) {
+        if ($result === RecordFeedDecision::CREATED && $decision === BetaReadingListingReaderDecisionType::Interested) {
             Inertia::flash('toast', ['type' => 'success', 'message' => __('Interest sent.')]);
         }
 

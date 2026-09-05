@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\BetaReadingListings\EndBetaReadingMatch;
+use App\Actions\BetaReadingListings\ReviewInterest;
 use App\Enums\BetaReadingListingAuthorDecision;
+use App\Enums\BetaReadingListingReaderDecisionType;
 use App\Models\BetaReadingListing;
-use App\Models\BetaReadingListingDecision;
+use App\Models\BetaReadingListingReaderDecision;
 use App\Models\BetaReadingMatch;
 use App\Models\Book;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -17,25 +19,25 @@ class BetaReadingListingReviewController extends Controller
 {
     public function index(Book $book, BetaReadingListing $listing): Response
     {
-        $this->authorizeListing($book, $listing);
+        Gate::authorize('manage', [$listing, $book]);
 
-        $interested = $listing->decisions()
-            ->where('decision', BetaReadingListingDecision::INTERESTED)
+        $interested = $listing->readerDecisions()
+            ->where('reader_decision', BetaReadingListingReaderDecisionType::Interested)
             ->whereNull('author_decision')
             ->with('betaReaderProfile')
             ->oldest()
             ->oldest('id')
             ->get()
-            ->map(fn (BetaReadingListingDecision $interest): array => $this->readerData($interest));
+            ->map(fn (BetaReadingListingReaderDecision $interest): array => $this->readerData($interest));
 
         $approved = BetaReadingMatch::query()
             ->whereNull('ended_at')
-            ->whereHas('decision', fn ($query) => $query->where('beta_reading_listing_id', $listing->id))
-            ->with('decision.betaReaderProfile')
+            ->whereHas('readerDecision', fn ($query) => $query->where('beta_reading_listing_id', $listing->id))
+            ->with('readerDecision.betaReaderProfile')
             ->latest()
             ->latest('id')
             ->get()
-            ->map(fn (BetaReadingMatch $match): array => $this->readerData($match->decision, $match->id));
+            ->map(fn (BetaReadingMatch $match): array => $this->readerData($match->readerDecision, $match->id));
 
         return Inertia::render('beta-reading-listings/Review', [
             'book' => $book->only(['id', 'title']),
@@ -45,90 +47,50 @@ class BetaReadingListingReviewController extends Controller
         ]);
     }
 
-    public function approve(Book $book, BetaReadingListing $listing, BetaReadingListingDecision $interest): RedirectResponse
-    {
-        if ($this->decide($book, $listing, $interest, BetaReadingListingAuthorDecision::Approved)) {
+    public function approve(
+        Book $book,
+        BetaReadingListing $listing,
+        BetaReadingListingReaderDecision $interest,
+        ReviewInterest $reviewInterest,
+    ): RedirectResponse {
+        Gate::authorize('reviewInterest', [$listing, $book, $interest]);
+
+        if ($reviewInterest->handle($interest, BetaReadingListingAuthorDecision::Approved)) {
             Inertia::flash('toast', ['type' => 'success', 'message' => __('Beta reader approved.')]);
         }
 
         return back();
     }
 
-    public function decline(Book $book, BetaReadingListing $listing, BetaReadingListingDecision $interest): RedirectResponse
-    {
-        $this->decide($book, $listing, $interest, BetaReadingListingAuthorDecision::Declined);
+    public function decline(
+        Book $book,
+        BetaReadingListing $listing,
+        BetaReadingListingReaderDecision $interest,
+        ReviewInterest $reviewInterest,
+    ): RedirectResponse {
+        Gate::authorize('reviewInterest', [$listing, $book, $interest]);
+        $reviewInterest->handle($interest, BetaReadingListingAuthorDecision::Declined);
 
         return back();
     }
 
-    public function end(Book $book, BetaReadingListing $listing, BetaReadingMatch $match): RedirectResponse
-    {
-        $this->authorizeListing($book, $listing);
-        $match->load('decision');
-        abort_unless($match->decision->beta_reading_listing_id === $listing->id, 404);
+    public function end(
+        Book $book,
+        BetaReadingListing $listing,
+        BetaReadingMatch $match,
+        EndBetaReadingMatch $endMatch,
+    ): RedirectResponse {
+        Gate::authorize('endMatch', [$listing, $book, $match]);
 
-        $ended = DB::transaction(function () use ($match): bool {
-            $match = BetaReadingMatch::query()->lockForUpdate()->findOrFail($match->id);
-
-            if ($match->ended_at !== null) {
-                return false;
-            }
-
-            $match->update(['ended_at' => now()]);
-
-            return true;
-        });
-
-        if ($ended) {
+        if ($endMatch->handle($match)) {
             Inertia::flash('toast', ['type' => 'success', 'message' => __('Match ended.')]);
         }
 
         return back();
     }
 
-    private function decide(
-        Book $book,
-        BetaReadingListing $listing,
-        BetaReadingListingDecision $interest,
-        BetaReadingListingAuthorDecision $decision,
-    ): bool {
-        $this->authorizeInterest($book, $listing, $interest);
-
-        return DB::transaction(function () use ($interest, $decision): bool {
-            $interest = BetaReadingListingDecision::query()->lockForUpdate()->findOrFail($interest->id);
-
-            if ($interest->author_decision !== null) {
-                return false;
-            }
-
-            $interest->update(['author_decision' => $decision]);
-
-            if ($decision === BetaReadingListingAuthorDecision::Approved) {
-                $interest->match()->create();
-            }
-
-            return true;
-        });
-    }
-
-    private function authorizeInterest(Book $book, BetaReadingListing $listing, BetaReadingListingDecision $interest): void
-    {
-        $this->authorizeListing($book, $listing);
-        abort_unless(
-            $interest->beta_reading_listing_id === $listing->id
-            && $interest->decision === BetaReadingListingDecision::INTERESTED,
-            404,
-        );
-    }
-
-    private function authorizeListing(Book $book, BetaReadingListing $listing): void
-    {
-        Gate::authorize('manage', $listing);
-        abort_unless($listing->book_id === $book->id, 404);
-    }
-
     /** @return array{id: int, match_id: int|null, created_at: string|null, profile: array<string, mixed>} */
-    private function readerData(BetaReadingListingDecision $interest, ?int $matchId = null): array
+    private function readerData(BetaReadingListingReaderDecision $interest, ?int $matchId = null): array
     {
         return [
             'id' => $interest->id,
