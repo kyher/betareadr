@@ -8,6 +8,7 @@ use App\Actions\BetaReadingListings\UpdateBetaReadingListing;
 use App\Http\Requests\StoreBetaReadingListingRequest;
 use App\Http\Requests\UpdateBetaReadingListingRequest;
 use App\Models\BetaReadingListing;
+use App\Models\BetaReadingListingDecision;
 use App\Models\Book;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
@@ -23,6 +24,12 @@ class BetaReadingListingController extends Controller
             'book' => $book->only(['id', 'title']),
             'hasOpenListing' => $book->betaReadingListings()->whereNull('closed_at')->exists(),
             'listings' => $book->betaReadingListings()
+                ->withCount([
+                    'decisions as interested_count' => fn ($query) => $query
+                        ->where('decision', BetaReadingListingDecision::INTERESTED)
+                        ->whereNull('author_decision'),
+                    'decisions as approved_count' => fn ($query) => $query->whereHas('match'),
+                ])
                 ->orderByRaw('closed_at IS NULL DESC')
                 ->latest('created_at')
                 ->latest('id')
@@ -114,7 +121,7 @@ class BetaReadingListingController extends Controller
         abort_unless($listing->book_id === $book->id, 404);
     }
 
-    /** @return array{id: int, reading_brief: string, word_count: int, closed_at: string|null, created_at: string|null} */
+    /** @return array{id: int, reading_brief: string, word_count: int, closed_at: string|null, created_at: string|null, interested_count: int, approved_count: int} */
     private function listingData(BetaReadingListing $listing): array
     {
         return [
@@ -123,6 +130,8 @@ class BetaReadingListingController extends Controller
             'word_count' => $listing->word_count,
             'closed_at' => $listing->closed_at?->toISOString(),
             'created_at' => $listing->created_at?->toISOString(),
+            'interested_count' => (int) $listing->getAttribute('interested_count'),
+            'approved_count' => (int) $listing->getAttribute('approved_count'),
         ];
     }
 }
