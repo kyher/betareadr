@@ -2,13 +2,16 @@
 
 namespace Tests\Feature;
 
+use App\Actions\BetaReadingListings\ReviewInterest;
 use App\Enums\BetaReadingListingAuthorDecision;
+use App\Enums\BetaReadingListingReaderDecisionType;
 use App\Models\BetaReadingListing;
-use App\Models\BetaReadingListingDecision;
+use App\Models\BetaReadingListingReaderDecision;
 use App\Models\Book;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
+use LogicException;
 use Tests\TestCase;
 
 class BetaReadingListingReviewTest extends TestCase
@@ -79,6 +82,18 @@ class BetaReadingListingReviewTest extends TestCase
         $this->actingAs($other)->get(route('books.listings.readers.index', [$book, $listing]))->assertForbidden();
         $this->actingAs($other)->post(route('books.listings.readers.approve', [$book, $listing, $interest]))->assertForbidden();
         $this->actingAs($owner)->post(route('books.listings.readers.approve', [$otherBook, $otherListing, $interest]))->assertNotFound();
+        $otherOwnedBook = $this->bookFor($other, 'Other owner book');
+        $this->actingAs($other)->get(route('books.listings.readers.index', [$otherOwnedBook, $listing]))->assertNotFound();
+    }
+
+    public function test_pass_cannot_be_reviewed_as_interest(): void
+    {
+        $listing = $this->listingFor($this->bookFor($this->author()));
+        $pass = $this->interestFor($listing, 'passing-reader');
+        $pass->update(['reader_decision' => BetaReadingListingReaderDecisionType::Pass]);
+
+        $this->expectException(LogicException::class);
+        app(ReviewInterest::class)->handle($pass, BetaReadingListingAuthorDecision::Approved);
     }
 
     public function test_interest_and_match_order_uses_id_to_break_timestamp_ties(): void
@@ -128,7 +143,7 @@ class BetaReadingListingReviewTest extends TestCase
         ]);
     }
 
-    private function interestFor(BetaReadingListing $listing, string $handle, mixed $createdAt = null): BetaReadingListingDecision
+    private function interestFor(BetaReadingListing $listing, string $handle, mixed $createdAt = null): BetaReadingListingReaderDecision
     {
         $reader = User::factory()->create();
         $profile = $reader->betaReaderProfile()->create([
@@ -138,9 +153,9 @@ class BetaReadingListingReviewTest extends TestCase
             'reading_languages' => ['*'],
         ]);
 
-        $interest = $profile->decisions()->create([
+        $interest = $profile->readerDecisions()->create([
             'beta_reading_listing_id' => $listing->id,
-            'decision' => BetaReadingListingDecision::INTERESTED,
+            'reader_decision' => BetaReadingListingReaderDecisionType::Interested,
         ]);
 
         if ($createdAt !== null) {
