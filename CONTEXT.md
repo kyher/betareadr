@@ -73,7 +73,7 @@ An Author's reversible removal of a Beta Reading Listing from Beta Readers' feed
 _Avoid_: Remove, delete
 
 **Delete Book**:
-An Author's permanent removal of a Book, its Listings, and unresolved Interests. Existing Matches and Conversations survive with only a minimal deleted-book reference.
+An Author's permanent removal of a Book, its Listings, and unresolved Interests. Deletion is unavailable while the Book has an active Match; ended Matches do not prevent deletion.
 _Avoid_: Close, archive
 
 **Interest**:
@@ -91,6 +91,10 @@ _Avoid_: Denial, rejection
 **Match**:
 A connection created when an Author approves a Beta Reader's Interest in a specific Beta Reading Listing.
 _Avoid_: Friendship, pairing
+
+**End Match**:
+An Author's irreversible termination of a Match. The original Interest remains resolved and cannot be reconsidered.
+_Avoid_: Remove Match, unmatch
 
 **Conversation**:
 The private communication between the Author and Beta Reader belonging to one Match. Participants may use it to arrange external manuscript delivery without automatically exposing contact details.
