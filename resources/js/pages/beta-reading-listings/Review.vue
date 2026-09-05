@@ -1,15 +1,10 @@
 <script setup lang="ts">
-import { Form, Head, Link, usePage } from '@inertiajs/vue3';
-import { Check, ExternalLink, UserRoundCheck, UserRoundX } from '@lucide/vue';
+import { Form, Head } from '@inertiajs/vue3';
+import { Check, UserRoundCheck, UserRoundX } from '@lucide/vue';
 import BetaReadingListingReviewController from '@/actions/App/Http/Controllers/BetaReadingListingReviewController';
+import BetaReaderReviewCard from '@/components/BetaReaderReviewCard.vue';
 import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import {
     Dialog,
     DialogClose,
@@ -21,8 +16,7 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { useTranslation } from '@/composables/useTranslation';
-import { show as showBetaReader } from '@/routes/beta-readers';
-import type { ReadingLanguage } from '@/types';
+import type { BetaReaderProfile } from '@/types';
 
 type Book = { id: number; title: string };
 type Listing = { id: number; closed_at: string | null };
@@ -30,12 +24,7 @@ type Reader = {
     id: number;
     match_id: number | null;
     created_at: string;
-    profile: {
-        display_name: string;
-        handle: string;
-        bio: string | null;
-        reading_languages: ReadingLanguage[];
-    };
+    profile: BetaReaderProfile;
 };
 
 defineProps<{
@@ -45,16 +34,7 @@ defineProps<{
     approved: Reader[];
 }>();
 
-const page = usePage();
 const { t } = useTranslation();
-const languageName = (language: ReadingLanguage) =>
-    language === '*'
-        ? t('Any language')
-        : page.props.contentLanguages[language];
-const formatDate = (date: string) =>
-    new Intl.DateTimeFormat(page.props.locale, { dateStyle: 'medium' }).format(
-        new Date(date),
-    );
 
 defineOptions({
     layout: {
@@ -97,38 +77,37 @@ defineOptions({
                     {{ t('No beta readers are waiting for review.') }}
                 </CardContent>
             </Card>
-            <Card v-for="reader in interested" v-else :key="reader.id">
-                <CardHeader>
-                    <CardTitle>{{ reader.profile.display_name }}</CardTitle>
-                    <CardDescription>
-                        @{{ reader.profile.handle }} · {{ t('Interested') }}
-                        {{ formatDate(reader.created_at) }}
-                    </CardDescription>
-                </CardHeader>
-                <CardContent class="grid gap-4">
-                    <p class="text-sm text-muted-foreground">
-                        {{ t('Reading languages') }}:
-                        {{
-                            reader.profile.reading_languages
-                                .map(languageName)
-                                .join(', ')
-                        }}
-                    </p>
-                    <p v-if="reader.profile.bio" class="line-clamp-3 text-sm">
-                        {{ reader.profile.bio }}
-                    </p>
-                    <div class="flex flex-wrap gap-2">
-                        <Button variant="outline" size="sm" as-child>
-                            <Link
-                                :href="showBetaReader(reader.profile.handle)"
-                                target="_blank"
-                            >
-                                <ExternalLink /> {{ t('View profile') }}
-                            </Link>
+            <BetaReaderReviewCard
+                v-for="reader in interested"
+                v-else
+                :key="reader.id"
+                :reader="reader"
+            >
+                <Form
+                    v-bind="
+                        BetaReadingListingReviewController.approve.form({
+                            book: book.id,
+                            listing: listing.id,
+                            interest: reader.id,
+                        })
+                    "
+                    :options="{ preserveScroll: true }"
+                    v-slot="{ processing }"
+                >
+                    <Button size="sm" :disabled="processing">
+                        <Check /> {{ t('Approve') }}
+                    </Button>
+                </Form>
+                <Dialog>
+                    <DialogTrigger as-child>
+                        <Button variant="destructive" size="sm">
+                            <UserRoundX /> {{ t('Decline') }}
                         </Button>
+                    </DialogTrigger>
+                    <DialogContent>
                         <Form
                             v-bind="
-                                BetaReadingListingReviewController.approve.form(
+                                BetaReadingListingReviewController.decline.form(
                                     {
                                         book: book.id,
                                         listing: listing.id,
@@ -139,61 +118,35 @@ defineOptions({
                             :options="{ preserveScroll: true }"
                             v-slot="{ processing }"
                         >
-                            <Button size="sm" :disabled="processing">
-                                <Check /> {{ t('Approve') }}
-                            </Button>
-                        </Form>
-                        <Dialog>
-                            <DialogTrigger as-child>
-                                <Button variant="destructive" size="sm">
-                                    <UserRoundX /> {{ t('Decline') }}
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                                <Form
-                                    v-bind="
-                                        BetaReadingListingReviewController.decline.form(
-                                            {
-                                                book: book.id,
-                                                listing: listing.id,
-                                                interest: reader.id,
-                                            },
-                                        )
-                                    "
-                                    :options="{ preserveScroll: true }"
-                                    v-slot="{ processing }"
+                            <DialogHeader>
+                                <DialogTitle>{{
+                                    t('Decline this interest?')
+                                }}</DialogTitle>
+                                <DialogDescription>{{
+                                    t(
+                                        'This is permanent and the beta reader will not be notified.',
+                                    )
+                                }}</DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter class="mt-6 gap-2">
+                                <DialogClose as-child
+                                    ><Button
+                                        type="button"
+                                        variant="secondary"
+                                        >{{ t('Cancel') }}</Button
+                                    ></DialogClose
                                 >
-                                    <DialogHeader>
-                                        <DialogTitle>{{
-                                            t('Decline this interest?')
-                                        }}</DialogTitle>
-                                        <DialogDescription>{{
-                                            t(
-                                                'This is permanent and the beta reader will not be notified.',
-                                            )
-                                        }}</DialogDescription>
-                                    </DialogHeader>
-                                    <DialogFooter class="mt-6 gap-2">
-                                        <DialogClose as-child
-                                            ><Button
-                                                type="button"
-                                                variant="secondary"
-                                                >{{ t('Cancel') }}</Button
-                                            ></DialogClose
-                                        >
-                                        <Button
-                                            type="submit"
-                                            variant="destructive"
-                                            :disabled="processing"
-                                            >{{ t('Decline') }}</Button
-                                        >
-                                    </DialogFooter>
-                                </Form>
-                            </DialogContent>
-                        </Dialog>
-                    </div>
-                </CardContent>
-            </Card>
+                                <Button
+                                    type="submit"
+                                    variant="destructive"
+                                    :disabled="processing"
+                                    >{{ t('Decline') }}</Button
+                                >
+                            </DialogFooter>
+                        </Form>
+                    </DialogContent>
+                </Dialog>
+            </BetaReaderReviewCard>
         </section>
 
         <section class="grid gap-4">
@@ -208,86 +161,59 @@ defineOptions({
                     {{ t('No approved beta readers yet.') }}
                 </CardContent>
             </Card>
-            <Card v-for="reader in approved" v-else :key="reader.id">
-                <CardHeader>
-                    <CardTitle>{{ reader.profile.display_name }}</CardTitle>
-                    <CardDescription>
-                        @{{ reader.profile.handle }} · {{ t('Interested') }}
-                        {{ formatDate(reader.created_at) }}
-                    </CardDescription>
-                </CardHeader>
-                <CardContent class="grid gap-4">
-                    <p class="text-sm text-muted-foreground">
-                        {{ t('Reading languages') }}:
-                        {{
-                            reader.profile.reading_languages
-                                .map(languageName)
-                                .join(', ')
-                        }}
-                    </p>
-                    <p v-if="reader.profile.bio" class="line-clamp-3 text-sm">
-                        {{ reader.profile.bio }}
-                    </p>
-                    <div class="flex flex-wrap gap-2">
-                        <Button variant="outline" size="sm" as-child>
-                            <Link
-                                :href="showBetaReader(reader.profile.handle)"
-                                target="_blank"
-                            >
-                                <ExternalLink /> {{ t('View profile') }}
-                            </Link>
+            <BetaReaderReviewCard
+                v-for="reader in approved"
+                v-else
+                :key="reader.id"
+                :reader="reader"
+            >
+                <Dialog>
+                    <DialogTrigger as-child>
+                        <Button variant="destructive" size="sm">
+                            <UserRoundCheck /> {{ t('End match') }}
                         </Button>
-                        <Dialog>
-                            <DialogTrigger as-child>
-                                <Button variant="destructive" size="sm">
-                                    <UserRoundCheck /> {{ t('End match') }}
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                                <Form
-                                    v-bind="
-                                        BetaReadingListingReviewController.end.form(
-                                            {
-                                                book: book.id,
-                                                listing: listing.id,
-                                                match: reader.match_id!,
-                                            },
-                                        )
-                                    "
-                                    :options="{ preserveScroll: true }"
-                                    v-slot="{ processing }"
+                    </DialogTrigger>
+                    <DialogContent>
+                        <Form
+                            v-bind="
+                                BetaReadingListingReviewController.end.form({
+                                    book: book.id,
+                                    listing: listing.id,
+                                    match: reader.match_id!,
+                                })
+                            "
+                            :options="{ preserveScroll: true }"
+                            v-slot="{ processing }"
+                        >
+                            <DialogHeader>
+                                <DialogTitle>{{
+                                    t('End this match?')
+                                }}</DialogTitle>
+                                <DialogDescription>{{
+                                    t(
+                                        'This is permanent. The original interest cannot be reconsidered.',
+                                    )
+                                }}</DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter class="mt-6 gap-2">
+                                <DialogClose as-child
+                                    ><Button
+                                        type="button"
+                                        variant="secondary"
+                                        >{{ t('Cancel') }}</Button
+                                    ></DialogClose
                                 >
-                                    <DialogHeader>
-                                        <DialogTitle>{{
-                                            t('End this match?')
-                                        }}</DialogTitle>
-                                        <DialogDescription>{{
-                                            t(
-                                                'This is permanent. The original interest cannot be reconsidered.',
-                                            )
-                                        }}</DialogDescription>
-                                    </DialogHeader>
-                                    <DialogFooter class="mt-6 gap-2">
-                                        <DialogClose as-child
-                                            ><Button
-                                                type="button"
-                                                variant="secondary"
-                                                >{{ t('Cancel') }}</Button
-                                            ></DialogClose
-                                        >
-                                        <Button
-                                            type="submit"
-                                            variant="destructive"
-                                            :disabled="processing"
-                                            >{{ t('End match') }}</Button
-                                        >
-                                    </DialogFooter>
-                                </Form>
-                            </DialogContent>
-                        </Dialog>
-                    </div>
-                </CardContent>
-            </Card>
+                                <Button
+                                    type="submit"
+                                    variant="destructive"
+                                    :disabled="processing"
+                                    >{{ t('End match') }}</Button
+                                >
+                            </DialogFooter>
+                        </Form>
+                    </DialogContent>
+                </Dialog>
+            </BetaReaderReviewCard>
         </section>
     </div>
 </template>

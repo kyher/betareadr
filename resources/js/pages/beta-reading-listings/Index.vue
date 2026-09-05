@@ -184,8 +184,9 @@ defineOptions({
                             >
                                 <Users />
                                 {{ t('Review beta readers') }}
-                                ({{ listing.interested_count }} /
-                                {{ listing.approved_count }})
+                                · {{ listing.interested_count }}
+                                {{ t('pending') }} ·
+                                {{ listing.approved_count }} {{ t('approved') }}
                             </Link>
                         </Button>
                         <Button variant="outline" size="sm" as-child>
