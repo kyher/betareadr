@@ -68,6 +68,15 @@ class AdminTest extends TestCase
         $this->assertDatabaseHas('administrators', ['id' => $administrator->id]);
     }
 
+    public function test_admin_uses_a_separate_scoped_session_cookie(): void
+    {
+        $cookie = collect($this->get('/admin/login')->headers->getCookies())
+            ->first(fn ($cookie) => $cookie->getName() === config('session.cookie').'_admin');
+
+        $this->assertNotNull($cookie);
+        $this->assertSame('/admin', $cookie->getPath());
+    }
+
     public function test_administrator_commands_manage_credentials(): void
     {
         $this->artisan('admin:create ADMIN@example.com')
