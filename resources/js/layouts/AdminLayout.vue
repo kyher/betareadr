@@ -13,6 +13,11 @@ const administrator = usePage<{ administrator: { name: string } }>().props
                 class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4"
             >
                 <Link href="/admin" class="font-semibold">BetaReadr Admin</Link>
+                <nav aria-label="Admin navigation">
+                    <Link href="/admin" class="text-sm font-medium">
+                        Dashboard
+                    </Link>
+                </nav>
                 <div class="flex items-center gap-3">
                     <span class="text-sm text-muted-foreground">
                         {{ administrator.name }}
