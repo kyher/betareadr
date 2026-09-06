@@ -9,7 +9,6 @@ use App\Models\BetaReaderProfile;
 use App\Models\BetaReadingListing;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -92,7 +91,7 @@ class FeedController extends Controller
 
     private function profileOrRedirect(Request $request): BetaReaderProfile|RedirectResponse
     {
-        $profile = Auth::guard('web')->user()->betaReaderProfile;
+        $profile = $this->user()->betaReaderProfile;
 
         if ($profile === null) {
             return to_route('beta-reader-profile.create')

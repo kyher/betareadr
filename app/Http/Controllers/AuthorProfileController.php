@@ -9,7 +9,6 @@ use App\Http\Requests\UpdateAuthorProfileRequest;
 use App\Models\AuthorProfile;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -18,7 +17,7 @@ class AuthorProfileController extends Controller
 {
     public function create(): Response|RedirectResponse
     {
-        if (Auth::guard('web')->user()->authorProfile()->exists()) {
+        if ($this->user()->authorProfile()->exists()) {
             return to_route('author-profile.edit');
         }
 
@@ -29,12 +28,12 @@ class AuthorProfileController extends Controller
         StoreAuthorProfileRequest $request,
         CreateAuthorProfile $createAuthorProfile,
     ): RedirectResponse {
-        if (Auth::guard('web')->user()->authorProfile()->exists()) {
+        if ($this->user()->authorProfile()->exists()) {
             return to_route('author-profile.edit');
         }
 
         try {
-            $createAuthorProfile->handle(Auth::guard('web')->user(), $request->profileAttributes());
+            $createAuthorProfile->handle($this->user(), $request->profileAttributes());
         } catch (UniqueConstraintViolationException $exception) {
             if (in_array('user_id', $exception->columns, true)) {
                 return to_route('author-profile.edit');
@@ -52,7 +51,7 @@ class AuthorProfileController extends Controller
 
     public function edit(): Response|RedirectResponse
     {
-        $profile = Auth::guard('web')->user()->authorProfile;
+        $profile = $this->user()->authorProfile;
 
         if ($profile === null) {
             return to_route('author-profile.create');
@@ -67,7 +66,7 @@ class AuthorProfileController extends Controller
         UpdateAuthorProfileRequest $request,
         UpdateAuthorProfile $updateAuthorProfile,
     ): RedirectResponse {
-        $profile = Auth::guard('web')->user()->authorProfile;
+        $profile = $this->user()->authorProfile;
 
         if ($profile === null) {
             return to_route('author-profile.create');

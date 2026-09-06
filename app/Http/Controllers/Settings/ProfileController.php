@@ -26,7 +26,7 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $user = Auth::guard('web')->user();
+        $user = $this->user();
         $user->fill($request->validated());
 
         $user->save();
@@ -44,7 +44,7 @@ class ProfileController extends Controller
      */
     public function destroy(ProfileDeleteRequest $request): RedirectResponse
     {
-        $user = Auth::guard('web')->user();
+        $user = $this->user();
 
         Auth::guard('web')->logout();
 

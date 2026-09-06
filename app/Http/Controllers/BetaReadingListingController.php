@@ -11,7 +11,6 @@ use App\Http\Requests\UpdateBetaReadingListingRequest;
 use App\Models\BetaReadingListing;
 use App\Models\Book;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -115,7 +114,7 @@ class BetaReadingListingController extends Controller
 
     private function authorizeBook(Book $book): void
     {
-        abort_unless($book->authorProfile->user_id === Auth::guard('web')->id(), 403);
+        abort_unless($book->authorProfile->user_id === $this->user()->id, 403);
     }
 
     private function authorizeListing(Book $book, BetaReadingListing $listing): void
