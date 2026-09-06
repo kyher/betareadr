@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateBetaReaderProfileRequest;
 use App\Models\BetaReaderProfile;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -17,7 +18,7 @@ class BetaReaderProfileController extends Controller
 {
     public function create(): Response|RedirectResponse
     {
-        if (request()->user()->betaReaderProfile()->exists()) {
+        if (Auth::guard('web')->user()->betaReaderProfile()->exists()) {
             return to_route('beta-reader-profile.edit');
         }
 
@@ -28,12 +29,12 @@ class BetaReaderProfileController extends Controller
         StoreBetaReaderProfileRequest $request,
         CreateBetaReaderProfile $createBetaReaderProfile,
     ): RedirectResponse {
-        if ($request->user()->betaReaderProfile()->exists()) {
+        if (Auth::guard('web')->user()->betaReaderProfile()->exists()) {
             return to_route('beta-reader-profile.edit');
         }
 
         try {
-            $createBetaReaderProfile->handle($request->user(), $request->profileAttributes());
+            $createBetaReaderProfile->handle(Auth::guard('web')->user(), $request->profileAttributes());
         } catch (UniqueConstraintViolationException $exception) {
             if (in_array('user_id', $exception->columns, true)) {
                 return to_route('beta-reader-profile.edit');
@@ -51,7 +52,7 @@ class BetaReaderProfileController extends Controller
 
     public function edit(): Response|RedirectResponse
     {
-        $profile = request()->user()->betaReaderProfile;
+        $profile = Auth::guard('web')->user()->betaReaderProfile;
 
         if ($profile === null) {
             return to_route('beta-reader-profile.create');
@@ -66,7 +67,7 @@ class BetaReaderProfileController extends Controller
         UpdateBetaReaderProfileRequest $request,
         UpdateBetaReaderProfile $updateBetaReaderProfile,
     ): RedirectResponse {
-        $profile = $request->user()->betaReaderProfile;
+        $profile = Auth::guard('web')->user()->betaReaderProfile;
 
         if ($profile === null) {
             return to_route('beta-reader-profile.create');

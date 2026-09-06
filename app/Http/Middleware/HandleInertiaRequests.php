@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Enums\ContentLanguage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Inertia\Middleware;
 
@@ -38,6 +39,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $translations = lang_path(app()->getLocale().'.json');
+        $user = Auth::guard('web')->user();
 
         return [
             ...parent::share($request),
@@ -50,9 +52,9 @@ class HandleInertiaRequests extends Middleware
                 ? File::json($translations)
                 : [],
             'auth' => [
-                'user' => $request->user(),
-                'has_author_profile' => $request->user()?->authorProfile()->exists() ?? false,
-                'has_beta_reader_profile' => $request->user()?->betaReaderProfile()->exists() ?? false,
+                'user' => $user,
+                'has_author_profile' => $user?->authorProfile()->exists() ?? false,
+                'has_beta_reader_profile' => $user?->betaReaderProfile()->exists() ?? false,
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];

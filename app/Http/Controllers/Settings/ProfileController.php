@@ -26,16 +26,17 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = Auth::guard('web')->user();
+        $user->fill($request->validated());
 
-        $request->user()->save();
+        $user->save();
 
-        App::setLocale($request->user()->locale);
+        App::setLocale($user->locale);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Profile updated.')]);
 
         return to_route('profile.edit')
-            ->withCookie(cookie()->forever('locale', $request->user()->locale));
+            ->withCookie(cookie()->forever('locale', $user->locale));
     }
 
     /**
@@ -43,9 +44,9 @@ class ProfileController extends Controller
      */
     public function destroy(ProfileDeleteRequest $request): RedirectResponse
     {
-        $user = $request->user();
+        $user = Auth::guard('web')->user();
 
-        Auth::logout();
+        Auth::guard('web')->logout();
 
         $user->delete();
 

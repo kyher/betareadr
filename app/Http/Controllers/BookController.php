@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateBookRequest;
 use App\Models\AuthorProfile;
 use App\Models\Book;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -42,7 +43,7 @@ class BookController extends Controller
 
     public function store(StoreBookRequest $request, CreateBook $createBook): RedirectResponse
     {
-        $profile = $request->user()->authorProfile;
+        $profile = Auth::guard('web')->user()->authorProfile;
 
         if ($profile === null) {
             return to_route('author-profile.create');
@@ -93,11 +94,11 @@ class BookController extends Controller
 
     private function authorProfile(): ?AuthorProfile
     {
-        return request()->user()->authorProfile;
+        return Auth::guard('web')->user()->authorProfile;
     }
 
     private function authorizeOwner(Book $book): void
     {
-        abort_unless($book->authorProfile->user_id === request()->user()->id, 403);
+        abort_unless($book->authorProfile->user_id === Auth::guard('web')->id(), 403);
     }
 }
