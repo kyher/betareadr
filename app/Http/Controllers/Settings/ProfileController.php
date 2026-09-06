@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Settings;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileDeleteRequest;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
@@ -46,7 +47,7 @@ class ProfileController extends Controller
     {
         $user = $this->user();
 
-        Auth::guard('web')->logout();
+        Auth::guard(User::AUTH_GUARD)->logout();
 
         $user->delete();
 

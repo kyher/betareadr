@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Enums\ContentLanguage;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -39,7 +40,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $translations = lang_path(app()->getLocale().'.json');
-        $user = Auth::guard('web')->user();
+        $user = Auth::guard(User::AUTH_GUARD)->user();
 
         return [
             ...parent::share($request),

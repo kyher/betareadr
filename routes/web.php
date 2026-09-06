@@ -52,7 +52,7 @@ Route::post('language', function (Request $request) {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', function () {
-        $user = request()->user('web');
+        $user = request()->user(User::AUTH_GUARD);
 
         return Inertia::render('Dashboard', [
             'authorProfile' => $user->authorProfile?->only(['display_name', 'handle', 'bio']),

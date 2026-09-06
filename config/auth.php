@@ -39,7 +39,7 @@ return [
     */
 
     'guards' => [
-        'web' => [
+        User::AUTH_GUARD => [
             'driver' => 'session',
             'provider' => 'users',
         ],
