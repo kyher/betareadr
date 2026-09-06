@@ -1,17 +1,45 @@
 <?php
 
+use App\Http\Controllers\AdminAuthenticationController;
 use App\Http\Controllers\AuthorProfileController;
 use App\Http\Controllers\BetaReaderProfileController;
 use App\Http\Controllers\BetaReadingListingController;
 use App\Http\Controllers\BetaReadingListingReviewController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\FeedController;
+use App\Models\Administrator;
+use App\Models\AuthorProfile;
+use App\Models\BetaReaderProfile;
+use App\Models\BetaReadingListing;
+use App\Models\Book;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 Route::inertia('/', 'Welcome')->name('home');
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('login', [AdminAuthenticationController::class, 'create'])->name('login');
+    Route::post('login', [AdminAuthenticationController::class, 'store'])->name('login.store');
+
+    Route::middleware('auth:'.Administrator::AUTH_GUARD)->group(function () {
+        Route::get('/', fn () => Inertia::render('admin/Dashboard', [
+            'administrator' => Auth::guard(Administrator::AUTH_GUARD)->user()->only('name'),
+            'counts' => [
+                'users' => User::count(),
+                'authorProfiles' => AuthorProfile::count(),
+                'betaReaderProfiles' => BetaReaderProfile::count(),
+                'books' => Book::count(),
+                'openListings' => BetaReadingListing::whereNull('closed_at')->count(),
+                'listings' => BetaReadingListing::count(),
+            ],
+        ]))->name('dashboard');
+        Route::post('logout', [AdminAuthenticationController::class, 'destroy'])->name('logout');
+    });
+});
 
 Route::post('language', function (Request $request) {
     $locale = $request->validate([
@@ -25,9 +53,11 @@ Route::post('language', function (Request $request) {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', function () {
+        $user = request()->user(User::AUTH_GUARD);
+
         return Inertia::render('Dashboard', [
-            'authorProfile' => request()->user()->authorProfile?->only(['display_name', 'handle', 'bio']),
-            'betaReaderProfile' => request()->user()->betaReaderProfile?->only(['display_name', 'handle', 'bio']),
+            'authorProfile' => $user->authorProfile?->only(['display_name', 'handle', 'bio']),
+            'betaReaderProfile' => $user->betaReaderProfile?->only(['display_name', 'handle', 'bio']),
         ]);
     })->name('dashboard');
 

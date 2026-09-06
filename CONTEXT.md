@@ -8,6 +8,10 @@ BetaReadr connects authors with beta readers who can provide pre-publication fee
 A person with a BetaReadr account who privately owns authentication and contact details and may create an Author Profile, a Beta Reader Profile, or both.
 _Avoid_: Member, account
 
+**Administrator**:
+A trusted BetaReadr operator with an identity separate from every User and access to administrative functions.
+_Avoid_: Admin User, User role
+
 **Author**:
 A User participating through an Author Profile to seek beta-reader feedback on one or more books.
 _Avoid_: Writer, creator

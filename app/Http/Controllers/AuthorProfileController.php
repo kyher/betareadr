@@ -13,11 +13,11 @@ use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class AuthorProfileController extends Controller
+class AuthorProfileController extends AuthenticatedUserController
 {
     public function create(): Response|RedirectResponse
     {
-        if (request()->user()->authorProfile()->exists()) {
+        if ($this->user()->authorProfile()->exists()) {
             return to_route('author-profile.edit');
         }
 
@@ -28,12 +28,12 @@ class AuthorProfileController extends Controller
         StoreAuthorProfileRequest $request,
         CreateAuthorProfile $createAuthorProfile,
     ): RedirectResponse {
-        if ($request->user()->authorProfile()->exists()) {
+        if ($this->user()->authorProfile()->exists()) {
             return to_route('author-profile.edit');
         }
 
         try {
-            $createAuthorProfile->handle($request->user(), $request->profileAttributes());
+            $createAuthorProfile->handle($this->user(), $request->profileAttributes());
         } catch (UniqueConstraintViolationException $exception) {
             if (in_array('user_id', $exception->columns, true)) {
                 return to_route('author-profile.edit');
@@ -51,7 +51,7 @@ class AuthorProfileController extends Controller
 
     public function edit(): Response|RedirectResponse
     {
-        $profile = request()->user()->authorProfile;
+        $profile = $this->user()->authorProfile;
 
         if ($profile === null) {
             return to_route('author-profile.create');
@@ -66,7 +66,7 @@ class AuthorProfileController extends Controller
         UpdateAuthorProfileRequest $request,
         UpdateAuthorProfile $updateAuthorProfile,
     ): RedirectResponse {
-        $profile = $request->user()->authorProfile;
+        $profile = $this->user()->authorProfile;
 
         if ($profile === null) {
             return to_route('author-profile.create');

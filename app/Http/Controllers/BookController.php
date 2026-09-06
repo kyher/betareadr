@@ -12,7 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class BookController extends Controller
+class BookController extends AuthenticatedUserController
 {
     public function index(): Response|RedirectResponse
     {
@@ -42,7 +42,7 @@ class BookController extends Controller
 
     public function store(StoreBookRequest $request, CreateBook $createBook): RedirectResponse
     {
-        $profile = $request->user()->authorProfile;
+        $profile = $this->user()->authorProfile;
 
         if ($profile === null) {
             return to_route('author-profile.create');
@@ -93,11 +93,11 @@ class BookController extends Controller
 
     private function authorProfile(): ?AuthorProfile
     {
-        return request()->user()->authorProfile;
+        return $this->user()->authorProfile;
     }
 
     private function authorizeOwner(Book $book): void
     {
-        abort_unless($book->authorProfile->user_id === request()->user()->id, 403);
+        abort_unless($book->authorProfile->user_id === $this->user()->id, 403);
     }
 }

@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class BetaReadingListingController extends Controller
+class BetaReadingListingController extends AuthenticatedUserController
 {
     public function index(Book $book): Response
     {
@@ -114,7 +114,7 @@ class BetaReadingListingController extends Controller
 
     private function authorizeBook(Book $book): void
     {
-        abort_unless($book->authorProfile->user_id === request()->user()->id, 403);
+        abort_unless($book->authorProfile->user_id === $this->user()->id, 403);
     }
 
     private function authorizeListing(Book $book, BetaReadingListing $listing): void

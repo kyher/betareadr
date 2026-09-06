@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class FeedController extends Controller
+class FeedController extends AuthenticatedUserController
 {
     public function index(Request $request, FindNextFeedListing $findNextListing): Response|RedirectResponse
     {
@@ -91,7 +91,7 @@ class FeedController extends Controller
 
     private function profileOrRedirect(Request $request): BetaReaderProfile|RedirectResponse
     {
-        $profile = $request->user()->betaReaderProfile;
+        $profile = $this->user()->betaReaderProfile;
 
         if ($profile === null) {
             return to_route('beta-reader-profile.create')

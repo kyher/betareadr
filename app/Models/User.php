@@ -30,6 +30,8 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
+    public const string AUTH_GUARD = 'web';
+
     /** @return HasOne<AuthorProfile, $this> */
     public function authorProfile(): HasOne
     {

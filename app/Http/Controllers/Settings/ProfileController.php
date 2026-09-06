@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers\Settings;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\AuthenticatedUserController;
 use App\Http\Requests\Settings\ProfileDeleteRequest;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class ProfileController extends Controller
+class ProfileController extends AuthenticatedUserController
 {
     /**
      * Show the user's profile settings page.
@@ -26,16 +27,17 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $this->user();
+        $user->fill($request->validated());
 
-        $request->user()->save();
+        $user->save();
 
-        App::setLocale($request->user()->locale);
+        App::setLocale($user->locale);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Profile updated.')]);
 
         return to_route('profile.edit')
-            ->withCookie(cookie()->forever('locale', $request->user()->locale));
+            ->withCookie(cookie()->forever('locale', $user->locale));
     }
 
     /**
@@ -43,9 +45,9 @@ class ProfileController extends Controller
      */
     public function destroy(ProfileDeleteRequest $request): RedirectResponse
     {
-        $user = $request->user();
+        $user = $this->user();
 
-        Auth::logout();
+        Auth::guard(User::AUTH_GUARD)->logout();
 
         $user->delete();
 
