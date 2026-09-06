@@ -1,0 +1,56 @@
+<script setup lang="ts">
+import { Form, Head } from '@inertiajs/vue3';
+import InputError from '@/components/InputError.vue';
+import PasswordInput from '@/components/PasswordInput.vue';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
+import AuthSimpleLayout from '@/layouts/auth/AuthSimpleLayout.vue';
+</script>
+
+<template>
+    <Head title="Admin login" />
+
+    <AuthSimpleLayout
+        title="BetaReadr Admin"
+        description="Enter your administrator credentials"
+    >
+        <Form
+            action="/admin/login"
+            method="post"
+            :reset-on-success="['password']"
+            v-slot="{ errors, processing }"
+            class="grid gap-6"
+        >
+            <div class="grid gap-2">
+                <Label for="email">Email address</Label>
+                <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autocomplete="email"
+                    required
+                    autofocus
+                />
+                <InputError :message="errors.email" />
+            </div>
+
+            <div class="grid gap-2">
+                <Label for="password">Password</Label>
+                <PasswordInput
+                    id="password"
+                    name="password"
+                    autocomplete="current-password"
+                    required
+                />
+                <InputError :message="errors.password" />
+            </div>
+
+            <Button type="submit" :disabled="processing">
+                <Spinner v-if="processing" />
+                Log in
+            </Button>
+        </Form>
+    </AuthSimpleLayout>
+</template>
