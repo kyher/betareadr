@@ -13,6 +13,12 @@ class SetLocale
 {
     public function handle(Request $request, Closure $next): Response
     {
+        if ($request->is('admin', 'admin/*')) {
+            App::setLocale('en');
+
+            return $next($request);
+        }
+
         $locales = array_map('strval', array_keys(config('app.supported_locales')));
         $locale = (Auth::guard(User::AUTH_GUARD)->check() ? Auth::guard(User::AUTH_GUARD)->user()->locale : null)
             ?? $request->cookie('locale')

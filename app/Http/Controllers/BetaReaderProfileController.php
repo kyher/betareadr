@@ -13,7 +13,7 @@ use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class BetaReaderProfileController extends Controller
+class BetaReaderProfileController extends AuthenticatedUserController
 {
     public function create(): Response|RedirectResponse
     {

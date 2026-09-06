@@ -16,40 +16,36 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Artisan::command('admin:create {email}', function (string $email) {
+$promptForPassword = function (): string {
+    $attributes = Validator::make([
+        'password' => password('Password', required: true),
+        'password_confirmation' => password('Confirm password', required: true),
+    ], [
+        'password' => ['required', 'string', Password::default(), 'confirmed'],
+    ])->validate();
+
+    return $attributes['password'];
+};
+
+Artisan::command('admin:create {email}', function (string $email) use ($promptForPassword) {
     $email = Str::lower($email);
     $name = text('Name', required: true);
-    $password = password('Password', required: true);
-    $confirmation = password('Confirm password', required: true);
 
     $attributes = Validator::make([
         'name' => $name,
         'email' => $email,
-        'password' => $password,
-        'password_confirmation' => $confirmation,
     ], [
         'name' => ['required', 'string', 'max:255'],
         'email' => ['required', 'email', 'max:255', Rule::unique(Administrator::class)],
-        'password' => ['required', 'string', Password::default(), 'confirmed'],
     ])->validate();
 
-    Administrator::create($attributes);
+    Administrator::create([...$attributes, 'password' => $promptForPassword()]);
     $this->info("Administrator {$email} created.");
 })->purpose('Create an administrator');
 
-Artisan::command('admin:reset-password {email}', function (string $email) {
+Artisan::command('admin:reset-password {email}', function (string $email) use ($promptForPassword) {
     $administrator = Administrator::where('email', Str::lower($email))->firstOrFail();
-    $password = password('Password', required: true);
-    $confirmation = password('Confirm password', required: true);
-
-    Validator::make([
-        'password' => $password,
-        'password_confirmation' => $confirmation,
-    ], [
-        'password' => ['required', 'string', Password::default(), 'confirmed'],
-    ])->validate();
-
-    $administrator->update(['password' => $password]);
+    $administrator->update(['password' => $promptForPassword()]);
     $this->info("Administrator {$administrator->email} password reset.");
 })->purpose('Reset an administrator password');
 

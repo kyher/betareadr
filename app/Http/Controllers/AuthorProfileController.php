@@ -13,7 +13,7 @@ use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class AuthorProfileController extends Controller
+class AuthorProfileController extends AuthenticatedUserController
 {
     public function create(): Response|RedirectResponse
     {

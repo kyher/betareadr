@@ -70,11 +70,13 @@ class AdminTest extends TestCase
 
     public function test_admin_uses_a_separate_scoped_session_cookie(): void
     {
-        $cookie = collect($this->get('/admin/login')->headers->getCookies())
+        $response = $this->withCookie('locale', 'fr')->get('/admin/login');
+        $cookie = collect($response->headers->getCookies())
             ->first(fn ($cookie) => $cookie->getName() === config('session.cookie').'_admin');
 
         $this->assertNotNull($cookie);
         $this->assertSame('/admin', $cookie->getPath());
+        $this->assertSame('en', app()->getLocale());
     }
 
     public function test_administrator_commands_manage_credentials(): void

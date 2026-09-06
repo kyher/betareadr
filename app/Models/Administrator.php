@@ -10,6 +10,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 #[Hidden(['password'])]
 class Administrator extends Authenticatable
 {
+    public const string AUTH_GUARD = 'admin';
+
     protected function casts(): array
     {
         return ['password' => 'hashed'];

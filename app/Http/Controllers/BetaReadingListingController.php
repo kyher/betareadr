@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class BetaReadingListingController extends Controller
+class BetaReadingListingController extends AuthenticatedUserController
 {
     public function index(Book $book): Response
     {

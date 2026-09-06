@@ -43,7 +43,7 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-        'admin' => [
+        Administrator::AUTH_GUARD => [
             'driver' => 'session',
             'provider' => 'administrators',
         ],

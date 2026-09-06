@@ -7,6 +7,7 @@ use App\Http\Controllers\BetaReadingListingController;
 use App\Http\Controllers\BetaReadingListingReviewController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\FeedController;
+use App\Models\Administrator;
 use App\Models\AuthorProfile;
 use App\Models\BetaReaderProfile;
 use App\Models\BetaReadingListing;
@@ -24,9 +25,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('login', [AdminAuthenticationController::class, 'create'])->name('login');
     Route::post('login', [AdminAuthenticationController::class, 'store'])->name('login.store');
 
-    Route::middleware('auth:admin')->group(function () {
+    Route::middleware('auth:'.Administrator::AUTH_GUARD)->group(function () {
         Route::get('/', fn () => Inertia::render('admin/Dashboard', [
-            'administrator' => Auth::guard('admin')->user()->only('name'),
+            'administrator' => Auth::guard(Administrator::AUTH_GUARD)->user()->only('name'),
             'counts' => [
                 'users' => User::count(),
                 'authorProfiles' => AuthorProfile::count(),

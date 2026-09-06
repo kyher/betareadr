@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Administrator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +16,7 @@ class AdminAuthenticationController extends Controller
 {
     public function create(): Response|RedirectResponse
     {
-        return Auth::guard('admin')->check()
+        return Auth::guard(Administrator::AUTH_GUARD)->check()
             ? redirect()->route('admin.dashboard')
             : Inertia::render('admin/Login');
     }
@@ -29,7 +30,7 @@ class AdminAuthenticationController extends Controller
         $credentials['email'] = Str::lower($credentials['email']);
         $key = 'admin-login:'.hash('sha256', $credentials['email'].'|'.$request->ip());
 
-        if (RateLimiter::tooManyAttempts($key, 5) || ! Auth::guard('admin')->attempt($credentials)) {
+        if (RateLimiter::tooManyAttempts($key, 5) || ! Auth::guard(Administrator::AUTH_GUARD)->attempt($credentials)) {
             RateLimiter::hit($key, 60);
 
             throw ValidationException::withMessages([
@@ -45,7 +46,7 @@ class AdminAuthenticationController extends Controller
 
     public function destroy(Request $request): RedirectResponse
     {
-        Auth::guard('admin')->logout();
+        Auth::guard(Administrator::AUTH_GUARD)->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

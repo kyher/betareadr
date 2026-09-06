@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class FeedController extends Controller
+class FeedController extends AuthenticatedUserController
 {
     public function index(Request $request, FindNextFeedListing $findNextListing): Response|RedirectResponse
     {
