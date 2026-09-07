@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { Head, Link, usePage } from '@inertiajs/vue3';
-import AppearanceToggle from '@/components/AppearanceToggle.vue';
-import BrandLogo from '@/components/BrandLogo.vue';
+import { Head } from '@inertiajs/vue3';
 import PaginationLinks from '@/components/PaginationLinks.vue';
+import PublicProfileHeader from '@/components/PublicProfileHeader.vue';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
 import {
     Card,
     CardDescription,
@@ -13,7 +11,6 @@ import {
 } from '@/components/ui/card';
 import { getInitials } from '@/composables/useInitials';
 import { useTranslation } from '@/composables/useTranslation';
-import { dashboard, home, login } from '@/routes';
 import type { AuthorProfile, Book } from '@/types';
 
 type Paginator<T> = {
@@ -22,31 +19,13 @@ type Paginator<T> = {
 };
 
 defineProps<{ authorProfile: AuthorProfile; books: Paginator<Book> }>();
-const page = usePage();
 const { t } = useTranslation();
 </script>
 
 <template>
     <Head :title="authorProfile.display_name" />
-    <div class="min-h-screen bg-muted/30">
-        <header class="border-b bg-background">
-            <div
-                class="mx-auto flex h-16 max-w-5xl items-center justify-between px-4"
-            >
-                <Link :href="home()"><BrandLogo /></Link>
-                <div class="flex items-center gap-2">
-                    <AppearanceToggle />
-                    <Button variant="outline" as-child>
-                        <Link
-                            :href="page.props.auth.user ? dashboard() : login()"
-                            >{{
-                                t(page.props.auth.user ? 'Dashboard' : 'Log in')
-                            }}</Link
-                        >
-                    </Button>
-                </div>
-            </div>
-        </header>
+    <div class="paper-texture min-h-screen bg-muted/30">
+        <PublicProfileHeader />
         <main class="mx-auto max-w-3xl px-4 py-16 sm:py-24">
             <div class="flex flex-col items-center text-center">
                 <Avatar class="size-24">
@@ -72,7 +51,11 @@ const { t } = useTranslation();
                     {{ t('Books') }}
                 </h2>
                 <div v-if="books.data.length" class="mt-6 grid gap-4">
-                    <Card v-for="book in books.data" :key="book.id" class="paper-sheet">
+                    <Card
+                        v-for="book in books.data"
+                        :key="book.id"
+                        class="paper-sheet"
+                    >
                         <CardHeader>
                             <CardTitle>{{ book.title }}</CardTitle>
                             <p class="text-sm text-muted-foreground">

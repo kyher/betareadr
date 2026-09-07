@@ -34,7 +34,9 @@ const { t } = useTranslation();
         />
     </Head>
 
-    <div class="min-h-screen overflow-hidden bg-background text-foreground">
+    <div
+        class="paper-texture min-h-screen overflow-hidden bg-background text-foreground"
+    >
         <header class="relative z-20 border-b border-border/70">
             <nav
                 class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8 lg:px-10"
@@ -397,7 +399,7 @@ const { t } = useTranslation();
             <div
                 class="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10"
             >
-                <p class="font-semibold text-foreground">BetaReadr</p>
+                <BrandLogo class="text-sm [&_svg]:size-6" />
                 <p>
                     {{ t('Thoughtful feedback for books before publication.') }}
                 </p>

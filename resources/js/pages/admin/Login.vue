@@ -13,7 +13,9 @@ import AuthSimpleLayout from '@/layouts/auth/AuthSimpleLayout.vue';
 <template>
     <Head title="Admin login" />
 
-    <div class="fixed top-4 right-4 z-10"><AppearanceToggle /></div>
+    <div class="admin-surface fixed top-4 right-4 z-10">
+        <AppearanceToggle />
+    </div>
 
     <AuthSimpleLayout
         title="BetaReadr Admin"
@@ -50,7 +52,11 @@ import AuthSimpleLayout from '@/layouts/auth/AuthSimpleLayout.vue';
                 <InputError :message="errors.password" />
             </div>
 
-            <Button type="submit" :disabled="processing">
+            <Button
+                type="submit"
+                class="shadow-none hover:translate-y-0"
+                :disabled="processing"
+            >
                 <Spinner v-if="processing" />
                 Log in
             </Button>
