@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import { Link, usePage } from '@inertiajs/vue3';
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
+import { Link } from '@inertiajs/vue3';
+import BrandLogo from '@/components/BrandLogo.vue';
 import { home } from '@/routes';
-
-const page = usePage();
-const name = page.props.name;
 
 defineProps<{
     title?: string;
@@ -14,7 +11,7 @@ defineProps<{
 
 <template>
     <div
-        class="relative grid h-dvh flex-col items-center justify-center px-8 sm:px-0 lg:max-w-none lg:grid-cols-2 lg:px-0"
+        class="paper-texture relative grid h-dvh flex-col items-center justify-center px-8 sm:px-0 lg:max-w-none lg:grid-cols-2 lg:px-0"
     >
         <div
             class="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r"
@@ -24,8 +21,7 @@ defineProps<{
                 :href="home()"
                 class="relative z-20 flex items-center text-lg font-medium"
             >
-                <AppLogoIcon class="mr-2 size-8 fill-current text-white" />
-                {{ name }}
+                <BrandLogo class="text-white [&_svg]:text-white" />
             </Link>
         </div>
         <div class="lg:p-8">

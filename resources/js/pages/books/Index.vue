@@ -98,7 +98,7 @@ defineOptions({
         </Card>
 
         <div v-else class="grid gap-4">
-            <Card v-for="book in books.data" :key="book.id">
+            <Card v-for="book in books.data" :key="book.id" class="paper-sheet">
                 <CardHeader class="gap-4 sm:flex-row sm:items-start">
                     <div class="min-w-0 flex-1">
                         <CardTitle>{{ book.title }}</CardTitle>
@@ -107,7 +107,7 @@ defineOptions({
                         </p>
                         <CardDescription
                             v-if="book.description"
-                            class="mt-3 whitespace-pre-line text-foreground"
+                            class="reading-copy mt-3 whitespace-pre-line text-foreground"
                             >{{ book.description }}</CardDescription
                         >
                         <CardDescription v-else class="mt-2 italic">

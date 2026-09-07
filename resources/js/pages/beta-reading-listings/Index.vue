@@ -144,7 +144,11 @@ defineOptions({
         </Card>
 
         <div v-else class="grid gap-4">
-            <Card v-for="listing in listings.data" :key="listing.id">
+            <Card
+                v-for="listing in listings.data"
+                :key="listing.id"
+                class="paper-sheet"
+            >
                 <CardHeader class="gap-4 sm:flex-row sm:items-start">
                     <div class="min-w-0 flex-1">
                         <div class="flex flex-wrap items-center gap-2">
@@ -168,7 +172,9 @@ defineOptions({
                                 {{ formatDate(listing.closed_at) }}
                             </template>
                         </CardDescription>
-                        <p class="mt-4 text-sm leading-6 whitespace-pre-line">
+                        <p
+                            class="reading-copy mt-4 leading-6 whitespace-pre-line"
+                        >
                             {{ listing.reading_brief }}
                         </p>
                     </div>

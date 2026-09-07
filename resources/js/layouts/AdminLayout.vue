@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { Form, Link, usePage } from '@inertiajs/vue3';
+import AppearanceToggle from '@/components/AppearanceToggle.vue';
+import BrandLogo from '@/components/BrandLogo.vue';
 import { Button } from '@/components/ui/button';
 
 const administrator = usePage<{ administrator: { name: string } }>().props
@@ -7,19 +9,30 @@ const administrator = usePage<{ administrator: { name: string } }>().props
 </script>
 
 <template>
-    <div class="min-h-svh bg-muted/30">
-        <header class="border-b bg-background">
+    <div class="admin-surface min-h-svh bg-background">
+        <header class="border-b bg-card">
             <div
-                class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4"
+                class="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 py-3 sm:px-6 sm:py-4"
             >
-                <Link href="/admin" class="font-semibold">BetaReadr Admin</Link>
-                <nav aria-label="Admin navigation">
+                <Link
+                    href="/admin"
+                    class="flex shrink-0 items-center gap-1 sm:gap-2"
+                >
+                    <BrandLogo class="text-lg [&_svg]:size-8" />
+                    <span class="hidden text-sm text-muted-foreground sm:inline"
+                        >Admin</span
+                    >
+                </Link>
+                <nav aria-label="Admin navigation" class="hidden sm:block">
                     <Link href="/admin" class="text-sm font-medium">
                         Dashboard
                     </Link>
                 </nav>
                 <div class="flex items-center gap-3">
-                    <span class="text-sm text-muted-foreground">
+                    <AppearanceToggle />
+                    <span
+                        class="hidden text-sm text-muted-foreground md:inline"
+                    >
                         {{ administrator.name }}
                     </span>
                     <Form action="/admin/logout" method="post">

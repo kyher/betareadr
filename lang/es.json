@@ -223,5 +223,7 @@
     "End this match?": "¿Finalizar esta conexión?",
     "This is permanent. The original interest cannot be reconsidered.": "Esta acción es definitiva. La muestra de interés original no podrá reconsiderarse.",
     "pending": "pendientes",
-    "approved": "aprobados"
+    "approved": "aprobados",
+    "Switch to dark mode": "Cambiar al modo oscuro",
+    "Switch to light mode": "Cambiar al modo claro"
 }

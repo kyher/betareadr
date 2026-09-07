@@ -208,11 +208,11 @@ defineOptions({
         <div v-if="displayedListing" class="relative mx-auto w-full max-w-xl">
             <div
                 aria-hidden="true"
-                class="absolute inset-3 -z-10 rounded-xl border bg-muted/40"
+                class="absolute inset-3 -z-10 rotate-1 rounded-sm border bg-muted/60"
             />
 
             <Card
-                class="relative cursor-grab touch-pan-y overflow-hidden shadow-lg select-none active:cursor-grabbing"
+                class="paper-sheet relative cursor-grab touch-pan-y overflow-hidden border-l-4 border-l-primary/50 select-none active:cursor-grabbing"
                 :style="cardStyle"
                 @pointerdown="onPointerDown"
                 @pointermove="onPointerMove"
@@ -228,20 +228,20 @@ defineOptions({
                     }"
                 >
                     <div
-                        class="rounded-xl border-2 border-current px-4 py-2 text-xl font-bold tracking-wider uppercase"
+                        class="rotate-[-4deg] border-2 border-current px-4 py-1 font-hand text-3xl font-bold"
                     >
                         {{ t('Interested') }}
                     </div>
                 </div>
                 <div
                     aria-hidden="true"
-                    class="pointer-events-none absolute inset-0 z-10 flex items-center justify-end bg-rose-500/15 p-8 text-rose-700 dark:text-rose-300"
+                    class="pointer-events-none absolute inset-0 z-10 flex items-center justify-end bg-foreground/10 p-8 text-foreground"
                     :style="{
                         opacity: direction === 'pass' ? decisionStrength : 0,
                     }"
                 >
                     <div
-                        class="rounded-xl border-2 border-current px-4 py-2 text-xl font-bold tracking-wider uppercase"
+                        class="rotate-3 border-2 border-current px-4 py-1 font-hand text-3xl font-bold"
                     >
                         {{ t('Pass') }}
                     </div>
@@ -293,7 +293,7 @@ defineOptions({
                         >
                             {{ t('About the book') }}
                         </h2>
-                        <p class="leading-7 whitespace-pre-line">
+                        <p class="reading-copy leading-7 whitespace-pre-line">
                             {{ displayedListing.book.description }}
                         </p>
                     </section>
@@ -303,7 +303,7 @@ defineOptions({
                         >
                             {{ t('Reading Brief') }}
                         </h2>
-                        <p class="leading-7 whitespace-pre-line">
+                        <p class="reading-copy leading-7 whitespace-pre-line">
                             {{ displayedListing.reading_brief }}
                         </p>
                     </section>
@@ -314,7 +314,7 @@ defineOptions({
                         type="button"
                         size="lg"
                         variant="outline"
-                        class="border-rose-300 text-rose-700 hover:bg-rose-50 hover:text-rose-800 dark:border-rose-800 dark:text-rose-300 dark:hover:bg-rose-950"
+                        class="border-border text-muted-foreground hover:bg-muted hover:text-foreground"
                         :disabled="processing"
                         @click="submitDecision('pass')"
                     >

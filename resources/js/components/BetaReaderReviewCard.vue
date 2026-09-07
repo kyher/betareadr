@@ -33,7 +33,7 @@ const formatDate = (date: string) =>
 </script>
 
 <template>
-    <Card>
+    <Card class="paper-sheet">
         <CardHeader>
             <CardTitle>{{ reader.profile.display_name }}</CardTitle>
             <CardDescription>
