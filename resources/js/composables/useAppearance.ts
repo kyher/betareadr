@@ -65,6 +65,7 @@ const prefersDark = (): boolean => {
 };
 
 const handleSystemThemeChange = () => {
+    systemDark.value = prefersDark();
     const currentAppearance = getStoredAppearance();
 
     updateTheme(currentAppearance || 'system');
@@ -77,6 +78,7 @@ export function initializeTheme(): void {
 
     // Initialize theme from saved preference or default to system...
     const savedAppearance = getStoredAppearance();
+    systemDark.value = prefersDark();
     updateTheme(savedAppearance || 'system');
 
     // Set up system theme change listener...
@@ -84,9 +86,11 @@ export function initializeTheme(): void {
 }
 
 const appearance = ref<Appearance>('system');
+const systemDark = ref(false);
 
 export function useAppearance(): UseAppearanceReturn {
     onMounted(() => {
+        systemDark.value = prefersDark();
         const savedAppearance = localStorage.getItem(
             'appearance',
         ) as Appearance | null;
@@ -98,7 +102,7 @@ export function useAppearance(): UseAppearanceReturn {
 
     const resolvedAppearance = computed<ResolvedAppearance>(() => {
         if (appearance.value === 'system') {
-            return prefersDark() ? 'dark' : 'light';
+            return systemDark.value ? 'dark' : 'light';
         }
 
         return appearance.value;

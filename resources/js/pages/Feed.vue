@@ -212,7 +212,7 @@ defineOptions({
             />
 
             <Card
-                class="relative cursor-grab touch-pan-y overflow-hidden border-l-4 border-l-primary/50 select-none active:cursor-grabbing"
+                class="paper-sheet relative cursor-grab touch-pan-y overflow-hidden border-l-4 border-l-primary/50 select-none active:cursor-grabbing"
                 :style="cardStyle"
                 @pointerdown="onPointerDown"
                 @pointermove="onPointerMove"

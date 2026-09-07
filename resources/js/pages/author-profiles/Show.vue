@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import AppearanceToggle from '@/components/AppearanceToggle.vue';
+import BrandLogo from '@/components/BrandLogo.vue';
 import PaginationLinks from '@/components/PaginationLinks.vue';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -32,9 +33,7 @@ const { t } = useTranslation();
             <div
                 class="mx-auto flex h-16 max-w-5xl items-center justify-between px-4"
             >
-                <Link :href="home()" class="text-lg font-semibold"
-                    >BetaReadr</Link
-                >
+                <Link :href="home()"><BrandLogo /></Link>
                 <div class="flex items-center gap-2">
                     <AppearanceToggle />
                     <Button variant="outline" as-child>
@@ -73,7 +72,7 @@ const { t } = useTranslation();
                     {{ t('Books') }}
                 </h2>
                 <div v-if="books.data.length" class="mt-6 grid gap-4">
-                    <Card v-for="book in books.data" :key="book.id">
+                    <Card v-for="book in books.data" :key="book.id" class="paper-sheet">
                         <CardHeader>
                             <CardTitle>{{ book.title }}</CardTitle>
                             <p class="text-sm text-muted-foreground">

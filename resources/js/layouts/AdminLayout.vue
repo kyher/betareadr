@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Form, Link, usePage } from '@inertiajs/vue3';
 import AppearanceToggle from '@/components/AppearanceToggle.vue';
+import BrandLogo from '@/components/BrandLogo.vue';
 import { Button } from '@/components/ui/button';
 
 const administrator = usePage<{ administrator: { name: string } }>().props
@@ -13,9 +14,10 @@ const administrator = usePage<{ administrator: { name: string } }>().props
             <div
                 class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4"
             >
-                <Link href="/admin" class="font-serif text-lg font-semibold"
-                    >BetaReadr Admin</Link
-                >
+                <Link href="/admin" class="flex items-center gap-2">
+                    <BrandLogo />
+                    <span class="text-sm text-muted-foreground">Admin</span>
+                </Link>
                 <nav aria-label="Admin navigation">
                     <Link href="/admin" class="text-sm font-medium">
                         Dashboard

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
+import AppearanceToggle from '@/components/AppearanceToggle.vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,8 @@ import AuthSimpleLayout from '@/layouts/auth/AuthSimpleLayout.vue';
 
 <template>
     <Head title="Admin login" />
+
+    <div class="fixed top-4 right-4 z-10"><AppearanceToggle /></div>
 
     <AuthSimpleLayout
         title="BetaReadr Admin"

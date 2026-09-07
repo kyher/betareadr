@@ -12,7 +12,7 @@ import {
     Users,
 } from '@lucide/vue';
 import AppearanceToggle from '@/components/AppearanceToggle.vue';
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
+import BrandLogo from '@/components/BrandLogo.vue';
 import LanguageSelect from '@/components/LanguageSelect.vue';
 import { useTranslation } from '@/composables/useTranslation';
 import { dashboard, home, login, register } from '@/routes';
@@ -42,16 +42,10 @@ const { t } = useTranslation();
             >
                 <Link
                     :href="home()"
-                    class="flex items-center gap-2 rounded-sm font-serif text-xl font-semibold focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+                    class="rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
                     :aria-label="t('BetaReadr home')"
                 >
-                    <span
-                        class="grid size-10 place-items-center text-primary"
-                        aria-hidden="true"
-                    >
-                        <AppLogoIcon class="size-10" />
-                    </span>
-                    BetaReadr
+                    <BrandLogo />
                 </Link>
 
                 <div class="flex items-center gap-2 sm:gap-3">

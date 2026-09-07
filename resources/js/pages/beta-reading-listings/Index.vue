@@ -144,7 +144,7 @@ defineOptions({
         </Card>
 
         <div v-else class="grid gap-4">
-            <Card v-for="listing in listings.data" :key="listing.id">
+            <Card v-for="listing in listings.data" :key="listing.id" class="paper-sheet">
                 <CardHeader class="gap-4 sm:flex-row sm:items-start">
                     <div class="min-w-0 flex-1">
                         <div class="flex flex-wrap items-center gap-2">

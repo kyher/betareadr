@@ -9,7 +9,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('beta_reading_listing_decisions', function (Blueprint $table) {
-            $table->renameColumn('decision', 'reader_decision');
             $table->enum('author_decision', ['approved', 'declined'])->nullable();
         });
 
@@ -29,7 +28,6 @@ return new class extends Migration
         Schema::dropIfExists('beta_reading_matches');
         Schema::table('beta_reading_listing_decisions', function (Blueprint $table) {
             $table->dropColumn('author_decision');
-            $table->renameColumn('reader_decision', 'decision');
         });
     }
 };

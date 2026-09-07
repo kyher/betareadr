@@ -222,7 +222,7 @@
         font-family: var(--font-hand);
     }
 
-    [data-slot='card'] {
+    .paper-sheet {
         box-shadow: 2px 3px 0 hsl(28 22% 20% / 0.09);
     }
 
