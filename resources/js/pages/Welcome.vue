@@ -11,6 +11,7 @@ import {
     Sparkles,
     Users,
 } from '@lucide/vue';
+import AppearanceToggle from '@/components/AppearanceToggle.vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import LanguageSelect from '@/components/LanguageSelect.vue';
 import { useTranslation } from '@/composables/useTranslation';
@@ -54,6 +55,7 @@ const { t } = useTranslation();
                 </Link>
 
                 <div class="flex items-center gap-2 sm:gap-3">
+                    <AppearanceToggle />
                     <LanguageSelect />
                     <Link
                         v-if="page.props.auth.user"

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, usePage } from '@inertiajs/vue3';
+import AppearanceToggle from '@/components/AppearanceToggle.vue';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { getInitials } from '@/composables/useInitials';
@@ -26,14 +27,17 @@ const languageName = (language: ReadingLanguage) =>
                 <Link :href="home()" class="text-lg font-semibold"
                     >BetaReadr</Link
                 >
-                <Button variant="outline" as-child>
-                    <Link
-                        :href="page.props.auth.user ? dashboard() : login()"
-                        >{{
-                            t(page.props.auth.user ? 'Dashboard' : 'Log in')
-                        }}</Link
-                    >
-                </Button>
+                <div class="flex items-center gap-2">
+                    <AppearanceToggle />
+                    <Button variant="outline" as-child>
+                        <Link
+                            :href="page.props.auth.user ? dashboard() : login()"
+                            >{{
+                                t(page.props.auth.user ? 'Dashboard' : 'Log in')
+                            }}</Link
+                        >
+                    </Button>
+                </div>
             </div>
         </header>
         <main class="mx-auto max-w-3xl px-4 py-16 sm:py-24">

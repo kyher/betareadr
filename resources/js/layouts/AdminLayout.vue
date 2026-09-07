@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Form, Link, usePage } from '@inertiajs/vue3';
+import AppearanceToggle from '@/components/AppearanceToggle.vue';
 import { Button } from '@/components/ui/button';
 
 const administrator = usePage<{ administrator: { name: string } }>().props
@@ -21,6 +22,7 @@ const administrator = usePage<{ administrator: { name: string } }>().props
                     </Link>
                 </nav>
                 <div class="flex items-center gap-3">
+                    <AppearanceToggle />
                     <span class="text-sm text-muted-foreground">
                         {{ administrator.name }}
                     </span>
