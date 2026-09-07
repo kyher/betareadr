@@ -11,6 +11,7 @@ import {
     Sparkles,
     Users,
 } from '@lucide/vue';
+import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import LanguageSelect from '@/components/LanguageSelect.vue';
 import { useTranslation } from '@/composables/useTranslation';
 import { dashboard, home, login, register } from '@/routes';
@@ -32,9 +33,7 @@ const { t } = useTranslation();
         />
     </Head>
 
-    <div
-        class="min-h-screen overflow-hidden bg-background text-foreground selection:bg-amber-200 selection:text-stone-950 dark:selection:bg-amber-700 dark:selection:text-white"
-    >
+    <div class="min-h-screen overflow-hidden bg-background text-foreground">
         <header class="relative z-20 border-b border-border/70">
             <nav
                 class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8 lg:px-10"
@@ -42,14 +41,14 @@ const { t } = useTranslation();
             >
                 <Link
                     :href="home()"
-                    class="flex items-center gap-2 rounded-md text-lg font-semibold tracking-tight focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+                    class="flex items-center gap-2 rounded-sm font-serif text-xl font-semibold focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
                     :aria-label="t('BetaReadr home')"
                 >
                     <span
-                        class="grid size-9 place-items-center rounded-xl bg-amber-400 text-stone-950 shadow-sm"
+                        class="grid size-10 place-items-center text-primary"
                         aria-hidden="true"
                     >
-                        <BookOpen class="size-5" :stroke-width="2.25" />
+                        <AppLogoIcon class="size-10" />
                     </span>
                     BetaReadr
                 </Link>
@@ -59,7 +58,7 @@ const { t } = useTranslation();
                     <Link
                         v-if="page.props.auth.user"
                         :href="dashboard()"
-                        class="inline-flex min-h-10 items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                        class="inline-flex min-h-10 items-center gap-2 rounded-sm bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:-translate-y-px hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                     >
                         {{ t('Dashboard') }}
                         <ArrowRight class="size-4" aria-hidden="true" />
@@ -67,12 +66,12 @@ const { t } = useTranslation();
                     <template v-else>
                         <Link
                             :href="login()"
-                            class="inline-flex min-h-10 items-center rounded-lg px-3 py-2 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:px-4"
+                            class="inline-flex min-h-10 items-center rounded-sm px-3 py-2 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:px-4"
                             >{{ t('Log in') }}</Link
                         >
                         <Link
                             :href="register()"
-                            class="inline-flex min-h-10 items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                            class="inline-flex min-h-10 items-center gap-2 rounded-sm bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:-translate-y-px hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                         >
                             {{ t('Register') }}
                             <ArrowRight
@@ -88,7 +87,7 @@ const { t } = useTranslation();
         <main>
             <section class="relative isolate">
                 <div
-                    class="absolute inset-x-0 top-0 -z-10 h-[34rem] bg-[radial-gradient(ellipse_at_top_right,rgba(251,191,36,0.18),transparent_48%),radial-gradient(ellipse_at_top_left,rgba(16,185,129,0.12),transparent_45%)] dark:bg-[radial-gradient(ellipse_at_top_right,rgba(251,191,36,0.10),transparent_48%),radial-gradient(ellipse_at_top_left,rgba(16,185,129,0.08),transparent_45%)]"
+                    class="absolute inset-x-0 top-0 -z-10 h-[34rem] bg-linear-to-b from-primary/5 to-transparent"
                     aria-hidden="true"
                 />
                 <div
@@ -96,7 +95,7 @@ const { t } = useTranslation();
                 >
                     <div class="max-w-3xl">
                         <p
-                            class="mb-6 inline-flex items-center gap-2 rounded-full border border-amber-300/70 bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-950 dark:border-amber-700/60 dark:bg-amber-950/40 dark:text-amber-200"
+                            class="mb-6 inline-flex items-center gap-2 border-b-2 border-primary/45 px-1 py-1 font-hand text-xl font-semibold text-primary"
                         >
                             <Sparkles class="size-4" aria-hidden="true" />
                             {{
@@ -106,10 +105,10 @@ const { t } = useTranslation();
                             }}
                         </p>
                         <h1
-                            class="text-4xl leading-[1.08] font-bold tracking-tight text-balance sm:text-6xl lg:text-7xl"
+                            class="text-4xl leading-[1.02] font-semibold text-balance sm:text-6xl lg:text-7xl"
                         >
                             {{ t('Find the feedback your book needs') }}
-                            <span class="text-amber-600 dark:text-amber-400">{{
+                            <span class="text-primary">{{
                                 t('before publication.')
                             }}</span>
                         </h1>
@@ -128,21 +127,21 @@ const { t } = useTranslation();
                         >
                             <Link
                                 :href="register()"
-                                class="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                                class="inline-flex min-h-12 items-center justify-center gap-2 rounded-sm bg-primary px-6 py-3 font-semibold text-primary-foreground shadow-sm transition hover:-translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                             >
                                 {{ t('Register for BetaReadr') }}
                                 <ArrowRight class="size-4" aria-hidden="true" />
                             </Link>
                             <Link
                                 :href="login()"
-                                class="inline-flex min-h-12 items-center justify-center rounded-lg border border-border bg-background/70 px-6 py-3 font-semibold backdrop-blur transition hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                                class="inline-flex min-h-12 items-center justify-center rounded-sm border border-border bg-card/70 px-6 py-3 font-semibold transition hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                                 >{{ t('Log in') }}</Link
                             >
                         </div>
                         <Link
                             v-else
                             :href="dashboard()"
-                            class="mt-9 inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                            class="mt-9 inline-flex min-h-12 items-center justify-center gap-2 rounded-sm bg-primary px-6 py-3 font-semibold text-primary-foreground shadow-sm transition hover:-translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                         >
                             {{ t('Go to your Dashboard') }}
                             <ArrowRight class="size-4" aria-hidden="true" />
@@ -154,15 +153,15 @@ const { t } = useTranslation();
                         aria-hidden="true"
                     >
                         <div
-                            class="absolute -inset-5 -z-10 rotate-3 rounded-[2.25rem] bg-amber-300/30 blur-sm dark:bg-amber-500/10"
+                            class="absolute -inset-3 -z-10 rotate-2 rounded-sm border border-primary/20 bg-primary/8"
                         />
                         <div
-                            class="rounded-[2rem] border border-border bg-card p-5 shadow-2xl shadow-stone-900/10 sm:p-7 dark:shadow-black/30"
+                            class="rounded-sm border border-border bg-card p-5 shadow-[4px_6px_0_hsl(24_24%_16%/0.12)] sm:p-7"
                         >
                             <div class="mb-6 flex items-center justify-between">
                                 <div class="flex items-center gap-3">
                                     <div
-                                        class="grid size-11 place-items-center rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
+                                        class="grid size-11 place-items-center rounded-full bg-secondary text-primary"
                                     >
                                         <Feather class="size-5" />
                                     </div>
@@ -176,14 +175,16 @@ const { t } = useTranslation();
                                     </div>
                                 </div>
                                 <span
-                                    class="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800 dark:bg-amber-950 dark:text-amber-300"
+                                    class="rounded-sm bg-secondary px-3 py-1 text-xs font-semibold text-secondary-foreground"
                                     >{{ t('In progress') }}</span
                                 >
                             </div>
                             <div
-                                class="rounded-2xl bg-gradient-to-br from-stone-800 to-stone-950 p-6 text-white"
+                                class="rounded-sm bg-sidebar p-6 text-sidebar-foreground"
                             >
-                                <BookOpen class="mb-10 size-7 text-amber-300" />
+                                <BookOpen
+                                    class="mb-10 size-7 text-sidebar-primary"
+                                />
                                 <div
                                     class="h-4 w-4/5 rounded-full bg-white/90"
                                 />
@@ -194,17 +195,17 @@ const { t } = useTranslation();
                             <div
                                 class="mt-5 grid grid-cols-3 gap-2 text-center text-xs font-medium text-muted-foreground"
                             >
-                                <div class="rounded-xl bg-muted p-3">
+                                <div class="rounded-sm bg-muted p-3">
                                     <Heart
                                         class="mx-auto mb-2 size-5 text-rose-500"
                                     />{{ t('Interest') }}
                                 </div>
-                                <div class="rounded-xl bg-muted p-3">
+                                <div class="rounded-sm bg-muted p-3">
                                     <Users
                                         class="mx-auto mb-2 size-5 text-emerald-600 dark:text-emerald-400"
                                     />{{ t('Match') }}
                                 </div>
-                                <div class="rounded-xl bg-muted p-3">
+                                <div class="rounded-sm bg-muted p-3">
                                     <MessageCircle
                                         class="mx-auto mb-2 size-5 text-amber-600 dark:text-amber-400"
                                     />{{ t('Feedback') }}
@@ -223,9 +224,7 @@ const { t } = useTranslation();
                     class="mx-auto max-w-7xl px-5 py-20 sm:px-8 lg:px-10 lg:py-28"
                 >
                     <div class="mx-auto max-w-2xl text-center">
-                        <p
-                            class="text-sm font-bold tracking-widest text-amber-700 uppercase dark:text-amber-400"
-                        >
+                        <p class="font-hand text-xl font-semibold text-primary">
                             {{ t('Two paths, one community') }}
                         </p>
                         <h2
@@ -245,10 +244,10 @@ const { t } = useTranslation();
 
                     <div class="mt-12 grid gap-6 lg:grid-cols-2">
                         <article
-                            class="rounded-3xl border border-border bg-card p-7 shadow-sm sm:p-10"
+                            class="rounded-sm border border-border bg-card p-7 sm:p-10"
                         >
                             <div
-                                class="grid size-12 place-items-center rounded-2xl bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300"
+                                class="grid size-12 place-items-center rounded-sm bg-secondary text-primary"
                             >
                                 <Feather class="size-6" aria-hidden="true" />
                             </div>
@@ -293,10 +292,10 @@ const { t } = useTranslation();
                         </article>
 
                         <article
-                            class="rounded-3xl border border-border bg-card p-7 shadow-sm sm:p-10"
+                            class="rounded-sm border border-border bg-card p-7 sm:p-10"
                         >
                             <div
-                                class="grid size-12 place-items-center rounded-2xl bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
+                                class="grid size-12 place-items-center rounded-sm bg-secondary text-primary"
                             >
                                 <Search class="size-6" aria-hidden="true" />
                             </div>
@@ -350,14 +349,14 @@ const { t } = useTranslation();
             <section aria-labelledby="cta-heading">
                 <div class="mx-auto max-w-5xl px-5 py-20 sm:px-8 lg:py-28">
                     <div
-                        class="relative overflow-hidden rounded-3xl bg-stone-950 px-6 py-14 text-center text-white shadow-xl sm:px-12 sm:py-16 dark:bg-stone-900"
+                        class="relative overflow-hidden rounded-sm border border-sidebar-border bg-sidebar px-6 py-14 text-center text-sidebar-foreground shadow-[4px_6px_0_hsl(24_24%_16%/0.18)] sm:px-12 sm:py-16"
                     >
                         <div
-                            class="absolute -top-24 -right-16 size-64 rounded-full bg-amber-400/20 blur-3xl"
+                            class="absolute -top-24 -right-16 size-64 rounded-full border border-sidebar-primary/15"
                             aria-hidden="true"
                         />
                         <div
-                            class="absolute -bottom-24 -left-16 size-64 rounded-full bg-emerald-400/15 blur-3xl"
+                            class="absolute -bottom-24 -left-16 size-64 rounded-full border border-sidebar-primary/10"
                             aria-hidden="true"
                         />
                         <div class="relative mx-auto max-w-2xl">
@@ -367,7 +366,9 @@ const { t } = useTranslation();
                             >
                                 {{ t('Your next chapter starts here.') }}
                             </h2>
-                            <p class="mt-4 text-lg leading-8 text-stone-300">
+                            <p
+                                class="mt-4 text-lg leading-8 text-sidebar-foreground/75"
+                            >
                                 {{
                                     t(
                                         'Join BetaReadr as an author, a beta reader, or both—and help make pre-publication feedback more thoughtful.',
@@ -377,7 +378,7 @@ const { t } = useTranslation();
                             <Link
                                 v-if="!page.props.auth.user"
                                 :href="register()"
-                                class="mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-amber-400 px-6 py-3 font-semibold text-stone-950 shadow-sm transition hover:bg-amber-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                                class="mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-sm bg-sidebar-primary px-6 py-3 font-semibold text-sidebar-primary-foreground shadow-sm transition hover:-translate-y-px focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                             >
                                 {{ t('Register for BetaReadr') }}
                                 <ArrowRight class="size-4" aria-hidden="true" />
@@ -385,7 +386,7 @@ const { t } = useTranslation();
                             <Link
                                 v-else
                                 :href="dashboard()"
-                                class="mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-amber-400 px-6 py-3 font-semibold text-stone-950 shadow-sm transition hover:bg-amber-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                                class="mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-sm bg-sidebar-primary px-6 py-3 font-semibold text-sidebar-primary-foreground shadow-sm transition hover:-translate-y-px focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                             >
                                 {{ t('Go to your Dashboard') }}
                                 <ArrowRight class="size-4" aria-hidden="true" />

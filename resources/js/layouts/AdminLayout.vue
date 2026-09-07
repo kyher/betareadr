@@ -7,12 +7,14 @@ const administrator = usePage<{ administrator: { name: string } }>().props
 </script>
 
 <template>
-    <div class="min-h-svh bg-muted/30">
-        <header class="border-b bg-background">
+    <div class="min-h-svh bg-background">
+        <header class="border-b bg-card">
             <div
                 class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4"
             >
-                <Link href="/admin" class="font-semibold">BetaReadr Admin</Link>
+                <Link href="/admin" class="font-serif text-lg font-semibold"
+                    >BetaReadr Admin</Link
+                >
                 <nav aria-label="Admin navigation">
                     <Link href="/admin" class="text-sm font-medium">
                         Dashboard

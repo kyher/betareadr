@@ -208,11 +208,11 @@ defineOptions({
         <div v-if="displayedListing" class="relative mx-auto w-full max-w-xl">
             <div
                 aria-hidden="true"
-                class="absolute inset-3 -z-10 rounded-xl border bg-muted/40"
+                class="absolute inset-3 -z-10 rotate-1 rounded-sm border bg-muted/60"
             />
 
             <Card
-                class="relative cursor-grab touch-pan-y overflow-hidden shadow-lg select-none active:cursor-grabbing"
+                class="relative cursor-grab touch-pan-y overflow-hidden border-l-4 border-l-primary/50 select-none active:cursor-grabbing"
                 :style="cardStyle"
                 @pointerdown="onPointerDown"
                 @pointermove="onPointerMove"
@@ -228,7 +228,7 @@ defineOptions({
                     }"
                 >
                     <div
-                        class="rounded-xl border-2 border-current px-4 py-2 text-xl font-bold tracking-wider uppercase"
+                        class="rotate-[-4deg] border-2 border-current px-4 py-1 font-hand text-3xl font-bold"
                     >
                         {{ t('Interested') }}
                     </div>
@@ -241,7 +241,7 @@ defineOptions({
                     }"
                 >
                     <div
-                        class="rounded-xl border-2 border-current px-4 py-2 text-xl font-bold tracking-wider uppercase"
+                        class="rotate-3 border-2 border-current px-4 py-1 font-hand text-3xl font-bold"
                     >
                         {{ t('Pass') }}
                     </div>

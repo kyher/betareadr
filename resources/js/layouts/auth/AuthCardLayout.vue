@@ -26,14 +26,12 @@ defineProps<{
                 class="flex items-center gap-2 self-center font-medium"
             >
                 <div class="flex h-9 w-9 items-center justify-center">
-                    <AppLogoIcon
-                        class="size-9 fill-current text-black dark:text-white"
-                    />
+                    <AppLogoIcon class="size-11 text-primary" />
                 </div>
             </Link>
 
             <div class="flex flex-col gap-6">
-                <Card class="rounded-xl">
+                <Card>
                     <CardHeader class="px-10 pt-8 pb-0 text-center">
                         <CardTitle class="text-xl">{{ title }}</CardTitle>
                         <CardDescription>

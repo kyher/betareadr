@@ -21,16 +21,14 @@ defineProps<{
                         class="flex flex-col items-center gap-2 font-medium"
                     >
                         <div
-                            class="mb-1 flex h-9 w-9 items-center justify-center rounded-md"
+                            class="mb-1 flex size-14 items-center justify-center"
                         >
-                            <AppLogoIcon
-                                class="size-9 fill-current text-[var(--foreground)] dark:text-white"
-                            />
+                            <AppLogoIcon class="size-14 text-primary" />
                         </div>
                         <span class="sr-only">{{ title }}</span>
                     </Link>
                     <div class="space-y-2 text-center">
-                        <h1 class="text-xl font-medium">{{ title }}</h1>
+                        <h1 class="text-3xl font-semibold">{{ title }}</h1>
                         <p class="text-center text-sm text-muted-foreground">
                             {{ description }}
                         </p>
