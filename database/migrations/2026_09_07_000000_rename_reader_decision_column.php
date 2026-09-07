@@ -16,9 +16,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        if (Schema::hasColumn('beta_reading_listing_decisions', 'reader_decision')
-            && ! Schema::hasColumn('beta_reading_listing_decisions', 'decision')) {
-            Schema::table('beta_reading_listing_decisions', fn (Blueprint $table) => $table->renameColumn('reader_decision', 'decision'));
-        }
+        // Forward-only repair: the earlier migration owns the normal rollback.
     }
 };
