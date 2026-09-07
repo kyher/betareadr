@@ -225,6 +225,11 @@
         font-family: var(--font-hand);
     }
 
+    .reading-copy {
+        font-family: var(--font-serif);
+        font-size: 1.0625rem;
+    }
+
     .paper-sheet {
         box-shadow: 2px 3px 0 hsl(28 22% 20% / 0.09);
     }
@@ -256,6 +261,10 @@
     .admin-surface [data-slot='button'] {
         box-shadow: none !important;
         transform: none !important;
+    }
+
+    .admin-surface .paper-texture {
+        background-image: none;
     }
 }
 

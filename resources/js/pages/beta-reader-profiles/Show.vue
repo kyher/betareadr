@@ -42,7 +42,7 @@ const languageName = (language: ReadingLanguage) =>
                 </p>
                 <p
                     v-if="betaReaderProfile.bio"
-                    class="mt-8 max-w-2xl text-left leading-7 whitespace-pre-line"
+                    class="reading-copy mt-8 max-w-2xl text-left leading-7 whitespace-pre-line"
                 >
                     {{ betaReaderProfile.bio }}
                 </p>

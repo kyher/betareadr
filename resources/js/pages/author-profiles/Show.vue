@@ -41,7 +41,7 @@ const { t } = useTranslation();
                 </p>
                 <p
                     v-if="authorProfile.bio"
-                    class="mt-8 max-w-2xl text-left leading-7 whitespace-pre-line"
+                    class="reading-copy mt-8 max-w-2xl text-left leading-7 whitespace-pre-line"
                 >
                     {{ authorProfile.bio }}
                 </p>
@@ -65,7 +65,7 @@ const { t } = useTranslation();
                             </p>
                             <CardDescription
                                 v-if="book.description"
-                                class="whitespace-pre-line text-foreground"
+                                class="reading-copy whitespace-pre-line text-foreground"
                                 >{{ book.description }}</CardDescription
                             >
                         </CardHeader>

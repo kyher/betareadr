@@ -172,7 +172,9 @@ defineOptions({
                                 {{ formatDate(listing.closed_at) }}
                             </template>
                         </CardDescription>
-                        <p class="mt-4 text-sm leading-6 whitespace-pre-line">
+                        <p
+                            class="reading-copy mt-4 leading-6 whitespace-pre-line"
+                        >
                             {{ listing.reading_brief }}
                         </p>
                     </div>

@@ -235,7 +235,7 @@ defineOptions({
                 </div>
                 <div
                     aria-hidden="true"
-                    class="pointer-events-none absolute inset-0 z-10 flex items-center justify-end bg-rose-500/15 p-8 text-rose-700 dark:text-rose-300"
+                    class="pointer-events-none absolute inset-0 z-10 flex items-center justify-end bg-foreground/10 p-8 text-foreground"
                     :style="{
                         opacity: direction === 'pass' ? decisionStrength : 0,
                     }"
@@ -293,7 +293,7 @@ defineOptions({
                         >
                             {{ t('About the book') }}
                         </h2>
-                        <p class="leading-7 whitespace-pre-line">
+                        <p class="reading-copy leading-7 whitespace-pre-line">
                             {{ displayedListing.book.description }}
                         </p>
                     </section>
@@ -303,7 +303,7 @@ defineOptions({
                         >
                             {{ t('Reading Brief') }}
                         </h2>
-                        <p class="leading-7 whitespace-pre-line">
+                        <p class="reading-copy leading-7 whitespace-pre-line">
                             {{ displayedListing.reading_brief }}
                         </p>
                     </section>
@@ -314,7 +314,7 @@ defineOptions({
                         type="button"
                         size="lg"
                         variant="outline"
-                        class="border-rose-300 text-rose-700 hover:bg-rose-50 hover:text-rose-800 dark:border-rose-800 dark:text-rose-300 dark:hover:bg-rose-950"
+                        class="border-border text-muted-foreground hover:bg-muted hover:text-foreground"
                         :disabled="processing"
                         @click="submitDecision('pass')"
                     >

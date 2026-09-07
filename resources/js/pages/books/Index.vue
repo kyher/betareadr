@@ -107,7 +107,7 @@ defineOptions({
                         </p>
                         <CardDescription
                             v-if="book.description"
-                            class="mt-3 whitespace-pre-line text-foreground"
+                            class="reading-copy mt-3 whitespace-pre-line text-foreground"
                             >{{ book.description }}</CardDescription
                         >
                         <CardDescription v-else class="mt-2 italic">
