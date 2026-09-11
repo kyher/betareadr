@@ -190,23 +190,21 @@ const { t } = useTranslation();
                                     class="mt-3 h-2.5 w-1/2 rounded-full bg-white/40"
                                 />
                             </div>
-                            <div
-                                class="mt-5 grid grid-cols-3 gap-2 text-center text-xs font-medium text-muted-foreground"
-                            >
+                            <div class="mt-5 grid grid-cols-3 gap-2">
                                 <div class="rounded-sm bg-muted p-3">
                                     <Heart
-                                        class="mx-auto mb-2 size-5 text-rose-500"
-                                    />{{ t('Interest') }}
+                                        class="mx-auto size-5 text-rose-500"
+                                    />
                                 </div>
                                 <div class="rounded-sm bg-muted p-3">
                                     <Users
-                                        class="mx-auto mb-2 size-5 text-emerald-600 dark:text-emerald-400"
-                                    />{{ t('Match') }}
+                                        class="mx-auto size-5 text-emerald-600 dark:text-emerald-400"
+                                    />
                                 </div>
                                 <div class="rounded-sm bg-muted p-3">
                                     <MessageCircle
-                                        class="mx-auto mb-2 size-5 text-amber-600 dark:text-amber-400"
-                                    />{{ t('Feedback') }}
+                                        class="mx-auto size-5 text-amber-600 dark:text-amber-400"
+                                    />
                                 </div>
                             </div>
                         </div>
