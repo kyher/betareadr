@@ -39,7 +39,7 @@ const { t } = useTranslation();
     >
         <header class="relative z-20 border-b border-border/70">
             <nav
-                class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8 lg:px-10"
+                class="mx-auto flex max-w-7xl items-center justify-between px-3 py-4 sm:px-8 lg:px-10"
                 :aria-label="t('Primary navigation')"
             >
                 <Link
@@ -47,7 +47,7 @@ const { t } = useTranslation();
                     class="rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
                     :aria-label="t('BetaReadr home')"
                 >
-                    <BrandLogo />
+                    <BrandLogo class="max-sm:gap-0 max-sm:text-[0px]" />
                 </Link>
 
                 <div class="flex items-center gap-2 sm:gap-3">
@@ -64,7 +64,7 @@ const { t } = useTranslation();
                     <template v-else>
                         <Link
                             :href="login()"
-                            class="inline-flex min-h-10 items-center rounded-sm px-3 py-2 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:px-4"
+                            class="hidden min-h-10 items-center rounded-sm px-4 py-2 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:inline-flex"
                             >{{ t('Log in') }}</Link
                         >
                         <Link
