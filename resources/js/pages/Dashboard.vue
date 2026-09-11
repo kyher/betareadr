@@ -81,7 +81,7 @@ defineOptions({
                         {{ authorProfile.bio }}
                     </p>
                 </div>
-                <div class="flex gap-2">
+                <div class="flex flex-wrap gap-2">
                     <Button variant="outline" as-child>
                         <Link :href="showAuthorProfile(authorProfile.handle)"
                             ><Eye /> {{ t('View') }}</Link
@@ -150,7 +150,7 @@ defineOptions({
                         {{ betaReaderProfile.bio }}
                     </p>
                 </div>
-                <div class="flex gap-2">
+                <div class="flex flex-wrap gap-2">
                     <Button variant="outline" as-child>
                         <Link
                             :href="
