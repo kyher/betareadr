@@ -19,6 +19,7 @@ return new class extends Migration
                 ->unique()
                 ->constrained()
                 ->cascadeOnDelete();
+            $table->timestamp('ended_at')->nullable();
             $table->timestamps();
         });
     }
