@@ -114,7 +114,7 @@ defineOptions({
                             {{ t('No description') }}
                         </CardDescription>
                     </div>
-                    <div class="flex shrink-0 gap-2">
+                    <div class="flex flex-wrap gap-2 sm:shrink-0">
                         <Button variant="outline" size="sm" as-child>
                             <Link
                                 :href="

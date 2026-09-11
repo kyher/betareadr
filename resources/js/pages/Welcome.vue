@@ -39,7 +39,7 @@ const { t } = useTranslation();
     >
         <header class="relative z-20 border-b border-border/70">
             <nav
-                class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8 lg:px-10"
+                class="mx-auto flex max-w-7xl items-center justify-between px-3 py-4 sm:px-8 lg:px-10"
                 :aria-label="t('Primary navigation')"
             >
                 <Link
@@ -47,7 +47,7 @@ const { t } = useTranslation();
                     class="rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
                     :aria-label="t('BetaReadr home')"
                 >
-                    <BrandLogo />
+                    <BrandLogo class="max-sm:gap-0 max-sm:text-[0px]" />
                 </Link>
 
                 <div class="flex items-center gap-2 sm:gap-3">
@@ -64,7 +64,7 @@ const { t } = useTranslation();
                     <template v-else>
                         <Link
                             :href="login()"
-                            class="inline-flex min-h-10 items-center rounded-sm px-3 py-2 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:px-4"
+                            class="hidden min-h-10 items-center rounded-sm px-4 py-2 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:inline-flex"
                             >{{ t('Log in') }}</Link
                         >
                         <Link
@@ -190,23 +190,21 @@ const { t } = useTranslation();
                                     class="mt-3 h-2.5 w-1/2 rounded-full bg-white/40"
                                 />
                             </div>
-                            <div
-                                class="mt-5 grid grid-cols-3 gap-2 text-center text-xs font-medium text-muted-foreground"
-                            >
+                            <div class="mt-5 grid grid-cols-3 gap-2">
                                 <div class="rounded-sm bg-muted p-3">
                                     <Heart
-                                        class="mx-auto mb-2 size-5 text-rose-500"
-                                    />{{ t('Interest') }}
+                                        class="mx-auto size-5 text-rose-500"
+                                    />
                                 </div>
                                 <div class="rounded-sm bg-muted p-3">
                                     <Users
-                                        class="mx-auto mb-2 size-5 text-emerald-600 dark:text-emerald-400"
-                                    />{{ t('Match') }}
+                                        class="mx-auto size-5 text-emerald-600 dark:text-emerald-400"
+                                    />
                                 </div>
                                 <div class="rounded-sm bg-muted p-3">
                                     <MessageCircle
-                                        class="mx-auto mb-2 size-5 text-amber-600 dark:text-amber-400"
-                                    />{{ t('Feedback') }}
+                                        class="mx-auto size-5 text-amber-600 dark:text-amber-400"
+                                    />
                                 </div>
                             </div>
                         </div>

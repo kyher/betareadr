@@ -178,8 +178,13 @@ defineOptions({
                             {{ listing.reading_brief }}
                         </p>
                     </div>
-                    <div class="flex shrink-0 flex-wrap gap-2">
-                        <Button variant="outline" size="sm" as-child>
+                    <div class="flex flex-wrap gap-2 sm:shrink-0">
+                        <Button
+                            class="h-auto max-w-full whitespace-normal"
+                            variant="outline"
+                            size="sm"
+                            as-child
+                        >
                             <Link
                                 :href="
                                     BetaReadingListingReviewController.index({
