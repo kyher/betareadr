@@ -56,7 +56,7 @@ class BetaReadingListingReviewTest extends TestCase
             ->assertSessionHasErrors('book');
         $this->assertDatabaseHas('books', ['id' => $book->id]);
 
-        $this->actingAs($author)->delete(route('books.listings.readers.end', [$book, $listing, $match]));
+        $this->actingAs($author)->delete(route('matches.end', $match));
         $this->assertNotNull($match->refresh()->ended_at);
 
         $this->actingAs($author)->get(route('books.listings.readers.index', [$book, $listing]))
@@ -119,6 +119,64 @@ class BetaReadingListingReviewTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->where('approved.0.id', $second->id)
                 ->where('approved.1.id', $first->id));
+    }
+
+    public function test_match_participants_can_view_their_matches(): void
+    {
+        $author = $this->author();
+        $book = $this->bookFor($author);
+        $interest = $this->interestFor($this->listingFor($book), 'reader');
+        app(ReviewInterest::class)->handle($interest, BetaReadingListingAuthorDecision::Approved);
+        $match = $interest->match;
+        $reader = $interest->betaReaderProfile->user;
+
+        $this->actingAs($author)->get(route('matches.index'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('matches/Index')
+                ->where('matches.0.id', $match->id)
+                ->where('matches.0.role', 'author')
+                ->where('matches.0.profile.handle', 'reader')
+                ->where('matches.0.book.title', 'A Book')
+                ->where('matches.0.listing.reading_brief', 'A draft ready for feedback.'));
+
+        $this->actingAs($reader)->get(route('matches.index'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('matches.0.id', $match->id)
+                ->where('matches.0.role', 'beta_reader')
+                ->where('matches.0.profile.handle', 'author'));
+
+        $this->actingAs(User::factory()->create())->get(route('matches.index'))
+            ->assertInertia(fn (Assert $page) => $page->has('matches', 0));
+    }
+
+    public function test_either_participant_can_end_a_match_once(): void
+    {
+        $author = $this->author();
+        $interest = $this->interestFor($this->listingFor($this->bookFor($author)), 'reader');
+        app(ReviewInterest::class)->handle($interest, BetaReadingListingAuthorDecision::Approved);
+        $match = $interest->match;
+        $reader = $interest->betaReaderProfile->user;
+
+        $this->actingAs($reader)->delete(route('matches.end', $match))->assertRedirect();
+        $endedAt = $match->refresh()->ended_at;
+
+        $this->actingAs($author)->delete(route('matches.end', $match))->assertRedirect();
+
+        $this->assertNotNull($endedAt);
+        $this->assertTrue($endedAt->equalTo($match->refresh()->ended_at));
+        $this->assertSame(BetaReadingListingAuthorDecision::Approved, $interest->refresh()->author_decision);
+    }
+
+    public function test_user_outside_match_cannot_end_it(): void
+    {
+        $interest = $this->interestFor($this->listingFor($this->bookFor($this->author())), 'reader');
+        app(ReviewInterest::class)->handle($interest, BetaReadingListingAuthorDecision::Approved);
+
+        $this->actingAs(User::factory()->create())
+            ->delete(route('matches.end', $interest->match))
+            ->assertForbidden();
+
+        $this->assertNull($interest->match->refresh()->ended_at);
     }
 
     private function author(string $handle = 'author'): User

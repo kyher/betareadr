@@ -7,6 +7,7 @@ use App\Http\Controllers\BetaReadingListingController;
 use App\Http\Controllers\BetaReadingListingReviewController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\FeedController;
+use App\Http\Controllers\MatchController;
 use App\Models\Administrator;
 use App\Models\AuthorProfile;
 use App\Models\BetaReaderProfile;
@@ -75,6 +76,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('feed/{listing}/interest', [FeedController::class, 'interest'])->name('feed.interest');
     Route::post('feed/{listing}/pass', [FeedController::class, 'pass'])->name('feed.pass');
 
+    Route::get('matches', [MatchController::class, 'index'])->name('matches.index');
+    Route::delete('matches/{match}', [MatchController::class, 'end'])->name('matches.end');
+
     Route::resource('books', BookController::class)->except('show');
 
     Route::prefix('books/{book}/listings')->name('books.listings.')->group(function () {
@@ -88,7 +92,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('{listing}/readers', [BetaReadingListingReviewController::class, 'index'])->name('readers.index');
         Route::post('{listing}/interests/{interest}/approve', [BetaReadingListingReviewController::class, 'approve'])->name('readers.approve');
         Route::post('{listing}/interests/{interest}/decline', [BetaReadingListingReviewController::class, 'decline'])->name('readers.decline');
-        Route::delete('{listing}/matches/{match}', [BetaReadingListingReviewController::class, 'end'])->name('readers.end');
     });
 });
 

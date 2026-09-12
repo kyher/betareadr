@@ -5,7 +5,6 @@ namespace App\Policies;
 use App\Enums\BetaReadingListingReaderDecisionType;
 use App\Models\BetaReadingListing;
 use App\Models\BetaReadingListingReaderDecision;
-use App\Models\BetaReadingMatch;
 use App\Models\Book;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -30,20 +29,6 @@ class BetaReadingListingPolicy
         if ($listing->book_id !== $book->id
             || $interest->beta_reading_listing_id !== $listing->id
             || $interest->reader_decision !== BetaReadingListingReaderDecisionType::Interested) {
-            return Response::denyAsNotFound();
-        }
-
-        return $this->ownerResponse($user, $listing);
-    }
-
-    public function endMatch(
-        User $user,
-        BetaReadingListing $listing,
-        Book $book,
-        BetaReadingMatch $match,
-    ): Response {
-        if ($listing->book_id !== $book->id
-            || $match->readerDecision->beta_reading_listing_id !== $listing->id) {
             return Response::denyAsNotFound();
         }
 

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\BetaReadingListings\EndBetaReadingMatch;
 use App\Actions\BetaReadingListings\ReviewInterest;
 use App\Enums\BetaReadingListingAuthorDecision;
 use App\Enums\BetaReadingListingReaderDecisionType;
@@ -70,21 +69,6 @@ class BetaReadingListingReviewController extends Controller
     ): RedirectResponse {
         Gate::authorize('reviewInterest', [$listing, $book, $interest]);
         $reviewInterest->handle($interest, BetaReadingListingAuthorDecision::Declined);
-
-        return back();
-    }
-
-    public function end(
-        Book $book,
-        BetaReadingListing $listing,
-        BetaReadingMatch $match,
-        EndBetaReadingMatch $endMatch,
-    ): RedirectResponse {
-        Gate::authorize('endMatch', [$listing, $book, $match]);
-
-        if ($endMatch->handle($match)) {
-            Inertia::flash('toast', ['type' => 'success', 'message' => __('Match ended.')]);
-        }
 
         return back();
     }
