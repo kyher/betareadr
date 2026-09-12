@@ -77,7 +77,7 @@ An Author's reversible removal of a Beta Reading Listing from Beta Readers' feed
 _Avoid_: Remove, delete
 
 **Delete Book**:
-An Author's permanent removal of a Book, its Listings, their Interests, and any ended Matches. Deletion is unavailable while the Book has an active Match.
+An Author's permanent removal of a Book, its Listings, their Interests, and any ended Matches and Conversations not retained for moderation. Deletion is unavailable while the Book has an active Match.
 _Avoid_: Close, archive
 
 **Interest**:
@@ -97,13 +97,17 @@ A connection created when an Author approves a Beta Reader's Interest in a speci
 _Avoid_: Friendship, pairing
 
 **End Match**:
-An Author's irreversible termination of a Match. The original Interest remains resolved and cannot be reconsidered.
+Either participant's irreversible termination of a Match. The original Interest remains resolved and cannot be reconsidered.
 _Avoid_: Remove Match, unmatch
 
 **Conversation**:
-The private communication between the Author and Beta Reader belonging to one Match. Participants may use it to arrange external manuscript delivery without automatically exposing contact details.
+The private communication between the Author and Beta Reader belonging to one Match, which either participant may initiate. It remains available but read-only after the Match ends; participants may use it to arrange external manuscript delivery without automatically exposing contact details.
 _Avoid_: Chat room, thread
 
+**Conversation Message**:
+An immutable plain-text contribution sent by either participant within an active Match's Conversation.
+_Avoid_: Chat, comment, direct message
+
 **Block**:
-A User-level safety action that prevents two Users from discovering or contacting each other through either profile and ends their existing Matches. Related Conversation history is retained for moderation but hidden from both participants.
+A User-level safety action that prevents two Users from discovering or contacting each other through either profile and ends their existing Matches. Related Conversation history survives Book or User deletion for moderation but is hidden from both participants; a deleted User's identity is anonymized.
 _Avoid_: Mute, profile block

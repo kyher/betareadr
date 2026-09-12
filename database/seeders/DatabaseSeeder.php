@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Enums\BetaReadingListingAuthorDecision;
+use App\Enums\BetaReadingListingReaderDecisionType;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -24,7 +26,7 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('password'),
             ],
         );
-        $reader->betaReaderProfile()->updateOrCreate(
+        $readerProfile = $reader->betaReaderProfile()->updateOrCreate(
             ['user_id' => $reader->id],
             [
                 'display_name' => fake()->name(),
@@ -33,6 +35,34 @@ class DatabaseSeeder extends Seeder
                 'reading_languages' => ['*'],
             ],
         );
+        $authorProfile = $reader->authorProfile()->updateOrCreate(
+            ['user_id' => $reader->id],
+            [
+                'display_name' => 'Test Author',
+                'handle' => 'test-author',
+                'bio' => fake()->paragraph(),
+            ],
+        );
+        $testListing = $authorProfile->books()->create([
+            'title' => 'The Test Manuscript',
+            'description' => fake()->paragraphs(2, true),
+            'language' => 'en',
+        ])->betaReadingListings()->create([
+            'reading_brief' => 'Looking for feedback on character motivation and pacing.',
+            'word_count' => 80000,
+        ]);
+        $matchedReader = User::factory()->create()->betaReaderProfile()->create([
+            'display_name' => 'Matched Beta Reader',
+            'handle' => 'matched-beta-reader',
+            'bio' => fake()->paragraph(),
+            'reading_languages' => ['*'],
+        ]);
+        $authorInterest = $matchedReader->readerDecisions()->create([
+            'beta_reading_listing_id' => $testListing->id,
+            'reader_decision' => BetaReadingListingReaderDecisionType::Interested,
+            'author_decision' => BetaReadingListingAuthorDecision::Approved,
+        ]);
+        $authorInterest->match()->create();
 
         foreach (range(1, 4) as $authorNumber) {
             $user = User::factory()->create();
@@ -50,13 +80,24 @@ class DatabaseSeeder extends Seeder
                     'language' => 'en',
                 ]);
 
-                $book->betaReadingListings()->create([
+                $listing = $book->betaReadingListings()->create([
                     'reading_brief' => fake()->paragraphs(2, true),
                     'word_count' => fake()->numberBetween(45000, 120000),
                     'closed_at' => $authorNumber === 1 && $bookNumber === 2
                         ? now()
                         : null,
                 ]);
+
+                if ($bookNumber === 1 && $authorNumber <= 2) {
+                    $interest = $readerProfile->readerDecisions()->create([
+                        'beta_reading_listing_id' => $listing->id,
+                        'reader_decision' => BetaReadingListingReaderDecisionType::Interested,
+                        'author_decision' => BetaReadingListingAuthorDecision::Approved,
+                    ]);
+                    $interest->match()->create([
+                        'ended_at' => $authorNumber === 2 ? now() : null,
+                    ]);
+                }
             }
         }
     }

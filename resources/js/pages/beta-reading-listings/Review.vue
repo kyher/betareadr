@@ -2,6 +2,7 @@
 import { Form, Head } from '@inertiajs/vue3';
 import { Check, UserRoundCheck, UserRoundX } from '@lucide/vue';
 import BetaReadingListingReviewController from '@/actions/App/Http/Controllers/BetaReadingListingReviewController';
+import MatchController from '@/actions/App/Http/Controllers/MatchController';
 import BetaReaderReviewCard from '@/components/BetaReaderReviewCard.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -175,13 +176,7 @@ defineOptions({
                     </DialogTrigger>
                     <DialogContent>
                         <Form
-                            v-bind="
-                                BetaReadingListingReviewController.end.form({
-                                    book: book.id,
-                                    listing: listing.id,
-                                    match: reader.match_id!,
-                                })
-                            "
+                            v-bind="MatchController.end.form(reader.match_id!)"
                             :options="{ preserveScroll: true }"
                             v-slot="{ processing }"
                         >

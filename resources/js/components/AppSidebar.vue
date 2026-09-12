@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { BookCopy, LayoutGrid, Rows3 } from '@lucide/vue';
+import { BookCopy, Handshake, LayoutGrid, Rows3 } from '@lucide/vue';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -28,6 +28,10 @@ const mainNavItems = computed<NavItem[]>(() => [
         : []),
     ...(page.props.auth.has_author_profile
         ? [{ title: t('Books'), href: books(), icon: BookCopy }]
+        : []),
+    ...(page.props.auth.has_author_profile ||
+    page.props.auth.has_beta_reader_profile
+        ? [{ title: t('Matches'), href: '/matches', icon: Handshake }]
         : []),
 ]);
 </script>
