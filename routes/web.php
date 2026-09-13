@@ -6,6 +6,7 @@ use App\Http\Controllers\BetaReaderProfileController;
 use App\Http\Controllers\BetaReadingListingController;
 use App\Http\Controllers\BetaReadingListingReviewController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\MatchController;
 use App\Models\Administrator;
@@ -77,6 +78,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('feed/{listing}/pass', [FeedController::class, 'pass'])->name('feed.pass');
 
     Route::get('matches', [MatchController::class, 'index'])->name('matches.index');
+    Route::get('matches/{match}/conversation', [ConversationController::class, 'show'])->name('matches.conversation');
+    Route::get('matches/{match}/messages', [ConversationController::class, 'index'])->name('matches.messages.index');
+    Route::post('matches/{match}/messages', [ConversationController::class, 'store'])->name('matches.messages.store');
     Route::delete('matches/{match}', [MatchController::class, 'end'])->name('matches.end');
 
     Route::resource('books', BookController::class)->except('show');

@@ -229,5 +229,15 @@
     "pending": "pendientes",
     "approved": "aprobados",
     "Switch to dark mode": "Cambiar al modo oscuro",
-    "Switch to light mode": "Cambiar al modo claro"
+    "Switch to light mode": "Cambiar al modo claro",
+    "Conversation": "Conversación",
+    "Message": "Mensaje",
+    "Send": "Enviar",
+    "You": "Tú",
+    "Load older messages": "Cargar mensajes anteriores",
+    "Could not load messages.": "No se pudieron cargar los mensajes.",
+    "Could not send message.": "No se pudo enviar el mensaje.",
+    "This Match has ended.": "Esta conexión ha finalizado.",
+    "This Match has ended. The Conversation is read-only.": "Esta conexión ha finalizado. La conversación es de solo lectura.",
+    "The message must not be empty.": "El mensaje no puede estar vacío."
 }
