@@ -30,6 +30,7 @@ type Match = {
     listing: { id: number; reading_brief: string };
     created_at: string;
     ended_at: string | null;
+    unread_count: number;
 };
 
 defineProps<{ matches: Match[] }>();
@@ -91,50 +92,60 @@ defineOptions({
                         </p>
                     </div>
 
-                    <Dialog v-if="!match.ended_at">
-                        <DialogTrigger as-child>
-                            <Button variant="destructive" size="sm">
-                                {{ t('End match') }}
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                            <Form
-                                v-bind="MatchController.end.form(match.id)"
-                                :options="{ preserveScroll: true }"
-                                v-slot="{ processing }"
-                            >
-                                <DialogHeader>
-                                    <DialogTitle>{{
-                                        t('End this match?')
-                                    }}</DialogTitle>
-                                    <DialogDescription>
-                                        {{
-                                            t(
-                                                'This is permanent. The original interest cannot be reconsidered.',
-                                            )
-                                        }}
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <DialogFooter class="mt-6 gap-2">
-                                    <DialogClose as-child>
+                    <div class="flex flex-wrap gap-2">
+                        <Button size="sm" as-child>
+                            <Link :href="`/matches/${match.id}/conversation`">
+                                {{ t('Conversation')
+                                }}<span v-if="match.unread_count">
+                                    ({{ match.unread_count }})</span
+                                >
+                            </Link>
+                        </Button>
+                        <Dialog v-if="!match.ended_at">
+                            <DialogTrigger as-child>
+                                <Button variant="destructive" size="sm">
+                                    {{ t('End match') }}
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <Form
+                                    v-bind="MatchController.end.form(match.id)"
+                                    :options="{ preserveScroll: true }"
+                                    v-slot="{ processing }"
+                                >
+                                    <DialogHeader>
+                                        <DialogTitle>{{
+                                            t('End this match?')
+                                        }}</DialogTitle>
+                                        <DialogDescription>
+                                            {{
+                                                t(
+                                                    'This is permanent. The original interest cannot be reconsidered.',
+                                                )
+                                            }}
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <DialogFooter class="mt-6 gap-2">
+                                        <DialogClose as-child>
+                                            <Button
+                                                type="button"
+                                                variant="secondary"
+                                            >
+                                                {{ t('Cancel') }}
+                                            </Button>
+                                        </DialogClose>
                                         <Button
-                                            type="button"
-                                            variant="secondary"
+                                            type="submit"
+                                            variant="destructive"
+                                            :disabled="processing"
                                         >
-                                            {{ t('Cancel') }}
+                                            {{ t('End match') }}
                                         </Button>
-                                    </DialogClose>
-                                    <Button
-                                        type="submit"
-                                        variant="destructive"
-                                        :disabled="processing"
-                                    >
-                                        {{ t('End match') }}
-                                    </Button>
-                                </DialogFooter>
-                            </Form>
-                        </DialogContent>
-                    </Dialog>
+                                    </DialogFooter>
+                                </Form>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
                 </CardHeader>
                 <CardContent>
                     <p class="text-sm font-medium">{{ t('Reading Brief') }}</p>

@@ -8,7 +8,7 @@ use Illuminate\Auth\Access\Response;
 
 class BetaReadingMatchPolicy
 {
-    public function end(User $user, BetaReadingMatch $match): Response
+    public function view(User $user, BetaReadingMatch $match): Response
     {
         $decision = $match->readerDecision;
 
@@ -16,5 +16,10 @@ class BetaReadingMatchPolicy
             || $decision->betaReadingListing->book->authorProfile->user_id === $user->id
             ? Response::allow()
             : Response::deny();
+    }
+
+    public function end(User $user, BetaReadingMatch $match): Response
+    {
+        return $this->view($user, $match);
     }
 }

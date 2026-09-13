@@ -20,4 +20,4 @@ RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
 
 WORKDIR /var/www/html
 
-EXPOSE 8000 5173
+EXPOSE 8000 5173 8080
