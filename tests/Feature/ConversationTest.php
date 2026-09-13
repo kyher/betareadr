@@ -67,7 +67,10 @@ class ConversationTest extends TestCase
     {
         [$match, $author, $reader] = $this->match();
         for ($i = 1; $i <= 52; $i++) {
-            $match->messages()->create(['sender_id' => $reader->id, 'body' => "Message {$i}", 'created_at' => now()]);
+            $message = $match->messages()->create(['sender_id' => $reader->id, 'body' => "Message {$i}", 'created_at' => now()]);
+            if ($i === 4) {
+                $fourthMessageId = $message->id;
+            }
         }
         $match->messages()->create(['sender_id' => $author->id, 'body' => 'Mine', 'created_at' => now()]);
 
@@ -76,7 +79,7 @@ class ConversationTest extends TestCase
         $this->get(route('matches.index'))->assertInertia(fn (Assert $page) => $page->where('matches.0.unread_count', 0));
         $first = $this->getJson(route('matches.messages.index', $match))->assertOk()->assertJsonCount(50, 'messages')->json();
         $this->assertSame('Mine', $first['messages'][0]['body']);
-        $this->assertSame(4, $first['next_cursor']);
+        $this->assertSame($fourthMessageId, $first['next_cursor']);
         $match->messages()->create(['sender_id' => $reader->id, 'body' => 'New while paging']);
         $second = $this->getJson(route('matches.messages.index', ['match' => $match, 'cursor' => $first['next_cursor']]))->assertOk()->assertJsonCount(3, 'messages')->json();
         $this->assertNull($second['next_cursor']);

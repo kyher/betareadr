@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\ConversationMessageSent;
+use App\Actions\Conversations\SendConversationMessage;
 use App\Models\BetaReadingMatch;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
-use Throwable;
 
 class ConversationController extends Controller
 {
@@ -58,7 +56,7 @@ class ConversationController extends Controller
         ]);
     }
 
-    public function store(BetaReadingMatch $match, Request $request): JsonResponse
+    public function store(BetaReadingMatch $match, Request $request, SendConversationMessage $sendMessage): JsonResponse
     {
         Gate::authorize('view', $match);
         $input = $request->validate(['body' => ['required', 'string', 'max:5000', function (string $attribute, mixed $value, $fail): void {
@@ -67,21 +65,7 @@ class ConversationController extends Controller
             }
         }]]);
 
-        $message = DB::transaction(function () use ($match, $request, $input) {
-            $locked = BetaReadingMatch::query()->lockForUpdate()->findOrFail($match->id);
-            abort_if($locked->ended_at !== null, 409, 'This Match has ended.');
-
-            return $locked->messages()->create([
-                'sender_id' => $request->user(User::AUTH_GUARD)->id,
-                'body' => $input['body'],
-            ]);
-        });
-
-        try {
-            event(new ConversationMessageSent($match->id, $message->id));
-        } catch (Throwable $exception) {
-            Log::warning('Conversation notification failed', ['match_id' => $match->id, 'message_id' => $message->id, 'exception' => $exception]);
-        }
+        $message = $sendMessage->handle($match, $request->user(User::AUTH_GUARD), $input['body']);
 
         return response()->json(['message' => $message->only(['id', 'sender_id', 'body', 'created_at'])], 201);
     }
