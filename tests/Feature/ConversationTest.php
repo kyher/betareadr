@@ -58,7 +58,7 @@ class ConversationTest extends TestCase
         $notification = new ConversationMessageSent($match->id, $match->messages()->max('id'));
         $this->assertSame(['match_id' => $match->id, 'message_id' => $match->messages()->max('id')], $notification->broadcastWith());
 
-        app(EndBetaReadingMatch::class)->handle($match);
+        app(EndBetaReadingMatch::class)->handle($match, $author);
         $this->postJson($send, ['body' => 'Too late'])->assertStatus(409);
         $this->getJson(route('matches.messages.index', $match))->assertOk()->assertJsonCount(2, 'messages');
     }
@@ -111,14 +111,37 @@ class ConversationTest extends TestCase
         $this->assertDatabaseMissing('conversation_messages', ['beta_reading_match_id' => $match->id]);
     }
 
-    private function match(): array
+    public function test_one_inbox_shows_both_roles_with_latest_preview_and_ended_by(): void
+    {
+        [$authorMatch, $user, $reader] = $this->match();
+        [$readerMatch, $otherAuthor] = $this->match('-two');
+        $readerProfile = $user->betaReaderProfile()->create(['display_name' => 'Reader side', 'handle' => 'reader-side', 'reading_languages' => ['*']]);
+        $readerMatch->readerDecision->forceFill(['beta_reader_profile_id' => $readerProfile->id])->save();
+
+        $this->actingAs($reader)->postJson(route('matches.messages.store', $authorMatch), ['body' => 'Latest note'])->assertCreated();
+        $this->actingAs($otherAuthor)->delete(route('matches.end', $readerMatch))->assertRedirect();
+
+        $this->actingAs($user)->get(route('matches.index'))->assertInertia(fn (Assert $page) => $page
+            ->component('matches/Index')
+            ->has('matches', 2)
+            ->where('matches.0.role', 'beta_reader')
+            ->where('matches.0.profile.display_name', 'Author')
+            ->where('matches.0.ended_by', 'author')
+            ->where('matches.0.unread_count', 0)
+            ->where('matches.1.role', 'author')
+            ->where('matches.1.profile.display_name', 'Reader')
+            ->where('matches.1.latest_message.body', 'Latest note')
+            ->where('matches.1.unread_count', 1));
+    }
+
+    private function match(string $suffix = ''): array
     {
         $author = User::factory()->create();
-        $authorProfile = $author->authorProfile()->create(['display_name' => 'Author', 'handle' => 'author']);
+        $authorProfile = $author->authorProfile()->create(['display_name' => 'Author', 'handle' => 'author'.$suffix]);
         $book = $authorProfile->books()->create(['title' => 'Book', 'language' => 'en']);
         $listing = $book->betaReadingListings()->create(['reading_brief' => 'Draft', 'word_count' => 100]);
         $reader = User::factory()->create();
-        $profile = $reader->betaReaderProfile()->create(['display_name' => 'Reader', 'handle' => 'reader', 'reading_languages' => ['*']]);
+        $profile = $reader->betaReaderProfile()->create(['display_name' => 'Reader', 'handle' => 'reader'.$suffix, 'reading_languages' => ['*']]);
         $decision = $profile->readerDecisions()->create(['beta_reading_listing_id' => $listing->id, 'reader_decision' => 'interested', 'author_decision' => 'approved']);
 
         return [$decision->match()->create([]), $author, $reader];

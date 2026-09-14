@@ -239,5 +239,15 @@
     "Could not send message.": "Impossible d’envoyer le message.",
     "This Match has ended.": "Cette mise en relation est terminée.",
     "This Match has ended. The Conversation is read-only.": "Cette mise en relation est terminée. La conversation est en lecture seule.",
-    "The message must not be empty.": "Le message ne doit pas être vide."
+    "The message must not be empty.": "Le message ne doit pas être vide.",
+    "Ended by": "Terminée par",
+    "Author": "Auteur",
+    "Beta Reader": "Bêta-lecteur",
+    "participant": "participant",
+    "No messages yet": "Aucun message pour le moment",
+    "unread": "non lus",
+    "Sending": "Envoi en cours",
+    "Sent": "Envoyé",
+    "Failed to send": "Échec de l’envoi",
+    "Retry send": "Réessayer l’envoi"
 }

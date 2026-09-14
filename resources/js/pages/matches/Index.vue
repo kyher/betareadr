@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { Form, Head, Link } from '@inertiajs/vue3';
+import { Form, Head, Link, router } from '@inertiajs/vue3';
 import { Handshake } from '@lucide/vue';
+import type Echo from 'laravel-echo';
+import { onMounted, onUnmounted } from 'vue';
 import MatchController from '@/actions/App/Http/Controllers/MatchController';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -20,7 +23,9 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { getInitials } from '@/composables/useInitials';
 import { useTranslation } from '@/composables/useTranslation';
+import { createConversationEcho } from '@/lib/conversationEcho';
 
 type Match = {
     id: number;
@@ -30,10 +35,35 @@ type Match = {
     listing: { id: number; reading_brief: string };
     created_at: string;
     ended_at: string | null;
+    ended_by: 'author' | 'beta_reader' | null;
     unread_count: number;
+    latest_message: { body: string; created_at: string } | null;
 };
 
-defineProps<{ matches: Match[] }>();
+const props = defineProps<{ matches: Match[] }>();
+let echo: Echo<'reverb'> | undefined;
+const refresh = () => router.reload({ only: ['matches'] });
+
+onMounted(() => {
+    if (!props.matches.length) {
+        return;
+    }
+
+    echo = createConversationEcho();
+
+    if (!echo) {
+        return;
+    }
+
+    for (const match of props.matches) {
+        echo.private(`matches.${match.id}`)
+            .listen('ConversationMessageSent', refresh)
+            .listen('BetaReadingMatchEnded', refresh);
+    }
+
+    echo.connector.pusher.connection.bind('connected', refresh);
+});
+onUnmounted(() => echo?.disconnect());
 
 const { t } = useTranslation();
 
@@ -66,6 +96,11 @@ defineOptions({
         <div v-else class="grid gap-4">
             <Card v-for="match in matches" :key="match.id">
                 <CardHeader class="gap-4 sm:flex-row sm:items-start">
+                    <Avatar class="size-12">
+                        <AvatarFallback>{{
+                            getInitials(match.profile.display_name)
+                        }}</AvatarFallback>
+                    </Avatar>
                     <div class="min-w-0 flex-1">
                         <CardTitle>
                             <Link
@@ -83,6 +118,34 @@ defineOptions({
                             {{ match.book.title }} ·
                             {{ match.ended_at ? t('Ended') : t('Active') }}
                         </CardDescription>
+                        <p
+                            v-if="match.ended_at"
+                            class="mt-1 text-xs text-muted-foreground"
+                        >
+                            {{ t('Ended by') }}
+                            <span class="lowercase">{{
+                                match.ended_by === 'author'
+                                    ? t('Author')
+                                    : match.ended_by === 'beta_reader'
+                                      ? t('Beta Reader')
+                                      : t('participant')
+                            }}</span>
+                            · {{ new Date(match.ended_at).toLocaleString() }}
+                        </p>
+                        <p
+                            v-if="match.latest_message"
+                            class="mt-2 truncate text-sm text-muted-foreground"
+                        >
+                            {{ match.latest_message.body }} ·
+                            {{
+                                new Date(
+                                    match.latest_message.created_at,
+                                ).toLocaleString()
+                            }}
+                        </p>
+                        <p v-else class="mt-2 text-sm text-muted-foreground">
+                            {{ t('No messages yet') }}
+                        </p>
                         <p class="mt-2 text-sm font-medium text-foreground">
                             {{
                                 match.role === 'author'
@@ -95,9 +158,11 @@ defineOptions({
                     <div class="flex flex-wrap gap-2">
                         <Button size="sm" as-child>
                             <Link :href="`/matches/${match.id}/conversation`">
-                                {{ t('Conversation')
-                                }}<span v-if="match.unread_count">
-                                    ({{ match.unread_count }})</span
+                                {{ t('Conversation') }}
+                                <span
+                                    v-if="match.unread_count"
+                                    :aria-label="`${match.unread_count} ${t('unread')}`"
+                                    >({{ match.unread_count }})</span
                                 >
                             </Link>
                         </Button>

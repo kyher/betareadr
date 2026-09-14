@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 /**
@@ -16,9 +17,10 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property int $author_read_message_id
  * @property int $reader_read_message_id
+ * @property int|null $ended_by_user_id
  * @property BetaReadingListingReaderDecision $readerDecision
  */
-#[Fillable(['ended_at'])]
+#[Fillable(['ended_at', 'ended_by_user_id'])]
 class BetaReadingMatch extends Model
 {
     /** @return BelongsTo<BetaReadingListingReaderDecision, $this> */
@@ -31,6 +33,12 @@ class BetaReadingMatch extends Model
     public function messages(): HasMany
     {
         return $this->hasMany(ConversationMessage::class);
+    }
+
+    /** @return HasOne<ConversationMessage, $this> */
+    public function latestMessage(): HasOne
+    {
+        return $this->hasOne(ConversationMessage::class)->latestOfMany();
     }
 
     protected function casts(): array

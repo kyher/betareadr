@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
-import Echo from 'laravel-echo';
-import Pusher from 'pusher-js';
-import { onMounted, onUnmounted, ref } from 'vue';
+import { Head, Link, router } from '@inertiajs/vue3';
+import type Echo from 'laravel-echo';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/composables/useTranslation';
+import { createConversationEcho } from '@/lib/conversationEcho';
 
 type Message = {
     id: number;
@@ -17,7 +17,9 @@ const props = defineProps<{
     match: {
         id: number;
         ended_at: string | null;
+        ended_by: 'author' | 'beta_reader' | null;
         profile: { display_name: string };
+        book: { title: string };
     };
     userId: number;
 }>();
@@ -27,7 +29,14 @@ const nextCursor = ref<number | null>(null);
 const body = ref('');
 const error = ref('');
 const sending = ref(false);
+const sendState = ref<'idle' | 'sending' | 'sent' | 'failed'>('idle');
 const ended = ref(Boolean(props.match.ended_at));
+watch(
+    () => props.match.ended_at,
+    (value) => {
+        ended.value = Boolean(value);
+    },
+);
 let echo: Echo<'reverb'> | undefined;
 
 const url = `/matches/${props.match.id}/messages`;
@@ -96,6 +105,7 @@ async function send() {
     }
 
     sending.value = true;
+    sendState.value = 'sending';
 
     try {
         const response = await fetch(url, {
@@ -113,6 +123,7 @@ async function send() {
         if (!response.ok) {
             if (response.status === 409) {
                 ended.value = true;
+                router.reload({ only: ['match'] });
             }
 
             throw new Error(
@@ -122,37 +133,48 @@ async function send() {
             );
         }
 
+        const { message }: { message: Message } = await response.json();
+
+        if (!messages.value.some((existing) => existing.id === message.id)) {
+            messages.value.unshift(message);
+        }
+
         body.value = '';
-        await catchUp();
+        error.value = '';
+        sendState.value = 'sent';
     } catch (exception) {
         error.value = String(exception);
+        sendState.value = 'failed';
     } finally {
         sending.value = false;
+    }
+}
+
+function onKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
+        event.preventDefault();
+        void send();
     }
 }
 
 onMounted(() => {
     void catchUp();
 
-    if (!import.meta.env.VITE_REVERB_APP_KEY) {
+    echo = createConversationEcho();
+
+    if (!echo) {
         return;
     }
 
-    echo = new Echo({
-        broadcaster: 'reverb',
-        Pusher,
-        key: import.meta.env.VITE_REVERB_APP_KEY,
-        wsHost: import.meta.env.VITE_REVERB_HOST ?? window.location.hostname,
-        wsPort: Number(import.meta.env.VITE_REVERB_PORT ?? 8080),
-        wssPort: Number(import.meta.env.VITE_REVERB_PORT ?? 443),
-        forceTLS: import.meta.env.VITE_REVERB_SCHEME === 'https',
-        enabledTransports: ['ws', 'wss'],
-    });
     echo.private(`matches.${props.match.id}`).listen(
         'ConversationMessageSent',
         () => {
             void catchUp();
         },
+    );
+    echo.private(`matches.${props.match.id}`).listen(
+        'BetaReadingMatchEnded',
+        () => router.reload({ only: ['match'] }),
     );
     echo.connector.pusher.connection.bind('connected', () => {
         void catchUp();
@@ -177,6 +199,7 @@ defineOptions({
         <h1 class="text-2xl font-semibold">
             {{ t('Conversation') }} · {{ match.profile.display_name }}
         </h1>
+        <p class="text-sm text-muted-foreground">{{ match.book.title }}</p>
         <p v-if="error" role="alert" class="text-sm text-destructive">
             {{ error }}
         </p>
@@ -203,10 +226,27 @@ defineOptions({
                 <p class="break-words whitespace-pre-wrap">
                     {{ message.body }}
                 </p>
+                <time
+                    class="text-xs text-muted-foreground"
+                    :datetime="message.created_at"
+                    >{{ new Date(message.created_at).toLocaleString() }}</time
+                >
             </div>
         </div>
         <p v-if="ended" class="text-sm text-muted-foreground">
             {{ t('This Match has ended. The Conversation is read-only.') }}
+            {{ t('Ended by') }}
+            <span class="lowercase">{{
+                match.ended_by === 'author'
+                    ? t('Author')
+                    : match.ended_by === 'beta_reader'
+                      ? t('Beta Reader')
+                      : t('participant')
+            }}</span>
+            ·
+            {{
+                match.ended_at ? new Date(match.ended_at).toLocaleString() : ''
+            }}
         </p>
         <form v-else class="flex flex-col gap-2" @submit.prevent="send">
             <label for="message">{{ t('Message') }}</label>
@@ -216,9 +256,21 @@ defineOptions({
                 maxlength="5000"
                 required
                 class="min-h-24 rounded-md border bg-background p-2"
+                @keydown="onKeydown"
             />
+            <p v-if="sendState !== 'idle'" role="status" class="text-sm">
+                {{
+                    t(
+                        sendState === 'sending'
+                            ? 'Sending'
+                            : sendState === 'sent'
+                              ? 'Sent'
+                              : 'Failed to send',
+                    )
+                }}
+            </p>
             <Button type="submit" :disabled="sending || !body.trim()">{{
-                t('Send')
+                t(sendState === 'failed' ? 'Retry send' : 'Send')
             }}</Button>
         </form>
     </div>

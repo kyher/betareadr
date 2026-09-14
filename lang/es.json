@@ -239,5 +239,15 @@
     "Could not send message.": "No se pudo enviar el mensaje.",
     "This Match has ended.": "Esta conexión ha finalizado.",
     "This Match has ended. The Conversation is read-only.": "Esta conexión ha finalizado. La conversación es de solo lectura.",
-    "The message must not be empty.": "El mensaje no puede estar vacío."
+    "The message must not be empty.": "El mensaje no puede estar vacío.",
+    "Ended by": "Finalizada por",
+    "Author": "Autor",
+    "Beta Reader": "Lector beta",
+    "participant": "participante",
+    "No messages yet": "Todavía no hay mensajes",
+    "unread": "sin leer",
+    "Sending": "Enviando",
+    "Sent": "Enviado",
+    "Failed to send": "Error al enviar",
+    "Retry send": "Reintentar envío"
 }
