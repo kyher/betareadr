@@ -24,7 +24,13 @@ class ConversationController extends Controller
         $profile = $isAuthor ? $match->readerDecision->betaReaderProfile : $match->readerDecision->betaReadingListing->book->authorProfile;
 
         return Inertia::render('matches/Conversation', [
-            'match' => ['id' => $match->id, 'ended_at' => $match->ended_at?->toISOString(), 'profile' => $profile->only(['display_name'])],
+            'match' => [
+                'id' => $match->id,
+                'ended_at' => $match->ended_at?->toISOString(),
+                'ended_by' => $match->ended_by_user_id === null ? null : ($match->ended_by_user_id === $match->readerDecision->betaReadingListing->book->authorProfile->user_id ? 'author' : 'beta_reader'),
+                'profile' => $profile->only(['display_name']),
+                'book' => $match->readerDecision->betaReadingListing->book->only(['title']),
+            ],
             'userId' => $user->id,
         ]);
     }
