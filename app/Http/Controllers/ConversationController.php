@@ -16,23 +16,39 @@ class ConversationController extends Controller
 {
     public function show(BetaReadingMatch $match, Request $request): Response
     {
-        Gate::authorize('view', $match);
-        DB::transaction(fn () => $this->markRead(BetaReadingMatch::query()->lockForUpdate()->findOrFail($match->id), $request->user(User::AUTH_GUARD)->id));
-        $match->load('readerDecision.betaReaderProfile', 'readerDecision.betaReadingListing.book.authorProfile');
-        $user = $request->user(User::AUTH_GUARD);
-        $isAuthor = $match->readerDecision->betaReadingListing->book->authorProfile->user_id === $user->id;
-        $profile = $isAuthor ? $match->readerDecision->betaReaderProfile : $match->readerDecision->betaReadingListing->book->authorProfile;
+        return DB::transaction(function () use ($match, $request): Response {
+            $match = BetaReadingMatch::query()->lockForUpdate()->findOrFail($match->id);
+            Gate::authorize('view', $match);
+            $this->markRead($match, $request->user(User::AUTH_GUARD)->id);
+            if ($match->beta_reading_listing_decision_id === null) {
+                return Inertia::render('matches/Conversation', [
+                    'match' => [
+                        'id' => $match->id,
+                        'ended_at' => $match->ended_at?->toISOString(),
+                        'ended_by' => null,
+                        'profile' => ['display_name' => __('Deleted participant')],
+                        'book' => ['title' => $match->retained_book_title],
+                    ],
+                    'userId' => $request->user(User::AUTH_GUARD)->id,
+                ]);
+            }
 
-        return Inertia::render('matches/Conversation', [
-            'match' => [
-                'id' => $match->id,
-                'ended_at' => $match->ended_at?->toISOString(),
-                'ended_by' => $match->ended_by_user_id === null ? null : ($match->ended_by_user_id === $match->readerDecision->betaReadingListing->book->authorProfile->user_id ? 'author' : 'beta_reader'),
-                'profile' => $profile->only(['display_name']),
-                'book' => $match->readerDecision->betaReadingListing->book->only(['title']),
-            ],
-            'userId' => $user->id,
-        ]);
+            $match->load('readerDecision.betaReaderProfile', 'readerDecision.betaReadingListing.book.authorProfile');
+            $user = $request->user(User::AUTH_GUARD);
+            $isAuthor = $match->readerDecision->betaReadingListing->book->authorProfile->user_id === $user->id;
+            $profile = $isAuthor ? $match->readerDecision->betaReaderProfile : $match->readerDecision->betaReadingListing->book->authorProfile;
+
+            return Inertia::render('matches/Conversation', [
+                'match' => [
+                    'id' => $match->id,
+                    'ended_at' => $match->ended_at?->toISOString(),
+                    'ended_by' => $match->ended_by_user_id === null ? null : ($match->ended_by_user_id === $match->readerDecision->betaReadingListing->book->authorProfile->user_id ? 'author' : 'beta_reader'),
+                    'profile' => $profile->only(['display_name']),
+                    'book' => $match->readerDecision->betaReadingListing->book->only(['title']),
+                ],
+                'userId' => $user->id,
+            ]);
+        });
     }
 
     public function index(BetaReadingMatch $match, Request $request): JsonResponse
@@ -78,9 +94,11 @@ class ConversationController extends Controller
 
     private function markRead(BetaReadingMatch $match, int $userId): void
     {
-        $isAuthor = $match->readerDecision->betaReadingListing->book->authorProfile->user_id === $userId;
+        $isAuthor = $match->beta_reading_listing_decision_id === null
+            ? $match->remaining_role === 'author'
+            : $match->readerDecision->betaReadingListing->book->authorProfile->user_id === $userId;
         $readColumn = $isAuthor ? 'author_read_message_id' : 'reader_read_message_id';
-        $latestReceivedId = $match->messages()->where('sender_id', '!=', $userId)->max('id');
+        $latestReceivedId = $match->messages()->where(fn ($query) => $query->whereNull('sender_id')->orWhere('sender_id', '!=', $userId))->max('id');
         if ($latestReceivedId !== null && $latestReceivedId > $match->$readColumn) {
             $match->forceFill([$readColumn => $latestReceivedId])->save();
         }

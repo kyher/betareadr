@@ -8,7 +8,7 @@ import { createConversationEcho } from '@/lib/conversationEcho';
 
 type Message = {
     id: number;
-    sender_id: number;
+    sender_id: number | null;
     body: string;
     created_at: string;
 };

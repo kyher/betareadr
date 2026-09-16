@@ -69,7 +69,7 @@ const { t } = useTranslation();
                             <DialogDescription>
                                 {{
                                     t(
-                                        'Once your account is deleted, all of its resources and data will also be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.',
+                                        'Deleting your account will end all active Matches and remove your profiles. Conversations will remain read-only for the other participants, with your identity shown as deleted. Please enter your password to confirm.',
                                     )
                                 }}
                             </DialogDescription>

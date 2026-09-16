@@ -26,11 +26,13 @@ class EndBetaReadingMatch
         });
 
         if ($ended) {
-            try {
-                event(new BetaReadingMatchEnded($match->id));
-            } catch (Throwable $exception) {
-                Log::warning('Match end notification failed', ['match_id' => $match->id, 'exception' => $exception]);
-            }
+            DB::afterCommit(function () use ($match): void {
+                try {
+                    event(new BetaReadingMatchEnded($match->id));
+                } catch (Throwable $exception) {
+                    Log::warning('Match end notification failed', ['match_id' => $match->id, 'exception' => $exception]);
+                }
+            });
         }
 
         return $ended;

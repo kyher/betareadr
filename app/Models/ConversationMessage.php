@@ -9,7 +9,7 @@ use Illuminate\Support\Carbon;
 /**
  * @property int $id
  * @property int $beta_reading_match_id
- * @property int $sender_id
+ * @property int|null $sender_id
  * @property string $body
  * @property Carbon|null $created_at
  */

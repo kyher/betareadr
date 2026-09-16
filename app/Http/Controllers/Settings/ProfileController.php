@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Settings;
 
+use App\Actions\BetaReadingListings\EndBetaReadingMatch;
+use App\Actions\Users\DeleteUser;
 use App\Http\Controllers\AuthenticatedUserController;
 use App\Http\Requests\Settings\ProfileDeleteRequest;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
@@ -43,13 +45,13 @@ class ProfileController extends AuthenticatedUserController
     /**
      * Delete the user's profile.
      */
-    public function destroy(ProfileDeleteRequest $request): RedirectResponse
+    public function destroy(ProfileDeleteRequest $request, DeleteUser $deleteUser, EndBetaReadingMatch $endMatch): RedirectResponse
     {
         $user = $this->user();
 
         Auth::guard(User::AUTH_GUARD)->logout();
 
-        $user->delete();
+        $deleteUser->handle($user, $endMatch);
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

@@ -1,4 +1,5 @@
 {
+    "Deleted participant": "Participant supprimé",
     "Author profile created.": "Profil d’auteur créé.",
     "Author profile updated.": "Profil d’auteur mis à jour.",
     "Beta reader profile created.": "Profil de bêta-lecteur créé.",
@@ -83,7 +84,7 @@
     "Name": "Nom",
     "New password": "Nouveau mot de passe",
     "No description": "Aucune description",
-    "Once your account is deleted, all of its resources and data will also be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.": "La suppression de votre compte entraînera la suppression définitive de toutes ses ressources et données. Saisissez votre mot de passe pour confirmer.",
+    "Deleting your account will end all active Matches and remove your profiles. Conversations will remain read-only for the other participants, with your identity shown as deleted. Please enter your password to confirm.": "La suppression de votre compte mettra fin à toutes les mises en relation actives et supprimera vos profils. Les conversations resteront accessibles en lecture seule aux autres participants et votre identité apparaîtra comme supprimée. Saisissez votre mot de passe pour confirmer.",
     "Open a Beta Reading Listing with a focused Reading Brief.": "Publiez une annonce de bêta-lecture avec un brief précis.",
     "Open Listing": "Annonce ouverte",
     "Pass": "Passer",

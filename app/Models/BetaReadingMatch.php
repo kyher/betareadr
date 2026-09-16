@@ -11,7 +11,10 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
- * @property int $beta_reading_listing_decision_id
+ * @property int|null $beta_reading_listing_decision_id
+ * @property int|null $remaining_user_id
+ * @property string|null $remaining_role
+ * @property string|null $retained_book_title
  * @property Carbon|null $ended_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at

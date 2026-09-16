@@ -10,6 +10,10 @@ class BetaReadingMatchPolicy
 {
     public function view(User $user, BetaReadingMatch $match): Response
     {
+        if ($match->beta_reading_listing_decision_id === null) {
+            return $match->remaining_user_id === $user->id ? Response::allow() : Response::deny();
+        }
+
         $decision = $match->readerDecision;
 
         return $decision->betaReaderProfile->user_id === $user->id
