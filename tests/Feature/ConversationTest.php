@@ -113,12 +113,14 @@ class ConversationTest extends TestCase
         $this->assertDatabaseMissing('conversation_messages', ['beta_reading_match_id' => $match->id]);
     }
 
-    public function test_account_deletion_ends_matches_and_preserves_read_only_history_for_both_roles(): void
+    public function test_account_deletion_removes_matches_and_all_messages_for_both_roles(): void
     {
         foreach (['author', 'reader'] as $role) {
             [$match, $author, $reader] = $this->match('-'.$role);
             $deleted = $role === 'author' ? $author : $reader;
             $remaining = $role === 'author' ? $reader : $author;
+            $decision = $match->readerDecision;
+            $book = $decision->betaReadingListing->book;
             $match->messages()->create(['sender_id' => $deleted->id, 'body' => 'From deleted participant']);
             $match->messages()->create(['sender_id' => $remaining->id, 'body' => 'From remaining participant']);
 
@@ -126,38 +128,54 @@ class ConversationTest extends TestCase
                 ->assertSessionHasNoErrors()->assertRedirect(route('home'));
             $this->assertGuest();
             $this->assertNull($deleted->fresh());
-            $this->assertNotNull($match->fresh()->ended_at);
+            $this->assertNull($match->fresh());
+            $this->assertNull($decision->fresh());
+            $this->assertDatabaseMissing('conversation_messages', ['beta_reading_match_id' => $match->id]);
+            $this->assertDatabaseMissing($role === 'author' ? 'author_profiles' : 'beta_reader_profiles', ['user_id' => $deleted->id]);
+            $this->assertSame($role === 'reader', $book->fresh() !== null);
+            $this->assertNotNull($remaining->fresh());
 
             $this->actingAs($remaining)->get(route('matches.index'))
-                ->assertInertia(fn (Assert $page) => $page
-                    ->where('matches.0.profile.display_name', 'Deleted participant')
-                    ->where('matches.0.profile.handle', null)
-                    ->where('matches.0.unread_count', 1));
-            $this->get(route('matches.conversation', $match))->assertOk();
-            $this->get(route('matches.index'))->assertInertia(fn (Assert $page) => $page->where('matches.0.unread_count', 0));
-            $this->getJson(route('matches.messages.index', $match))->assertOk()->assertJsonCount(2, 'messages');
-            $this->postJson(route('matches.messages.store', $match), ['body' => 'Too late'])->assertStatus(409);
-            $this->actingAs(User::factory()->create())->get(route('matches.conversation', $match))->assertForbidden();
+                ->assertInertia(fn (Assert $page) => $page->has('matches', 0));
+            $this->get(route('matches.conversation', $match))->assertNotFound();
+            $this->getJson(route('matches.messages.index', $match))->assertNotFound();
+            $this->postJson(route('matches.messages.store', $match), ['body' => 'Too late'])->assertNotFound();
+            $this->postJson('/broadcasting/auth', ['channel_name' => 'private-matches.'.$match->id, 'socket_id' => '1.2'])->assertForbidden();
         }
     }
 
-    public function test_deletion_preserves_ended_matches_and_ends_both_profile_roles(): void
+    public function test_deletion_removes_ended_matches_and_both_profile_roles_without_other_users_data(): void
     {
         [$authorMatch, $user, $reader] = $this->match();
         [$readerMatch, $otherAuthor] = $this->match('-other');
+        [$unrelatedMatch, $unrelatedAuthor] = $this->match('-unrelated');
         $profile = $user->betaReaderProfile()->create(['display_name' => 'Both roles', 'handle' => 'both', 'reading_languages' => ['*']]);
         $readerMatch->readerDecision->forceFill(['beta_reader_profile_id' => $profile->id])->save();
+        $unrelatedMatch->readerDecision->forceFill(['beta_reader_profile_id' => $reader->betaReaderProfile->id])->save();
         app(EndBetaReadingMatch::class)->handle($authorMatch, $reader);
-        $endedAt = $authorMatch->fresh()->ended_at;
+        foreach ([$authorMatch, $readerMatch] as $match) {
+            $match->messages()->create(['sender_id' => $user->id, 'body' => 'Deleted']);
+        }
+        $unrelatedMatch->messages()->create(['sender_id' => $reader->id, 'body' => 'Kept']);
+        $otherListing = $readerMatch->readerDecision->betaReadingListing;
+        $pass = $profile->readerDecisions()->create(['beta_reading_listing_id' => $unrelatedMatch->readerDecision->beta_reading_listing_id, 'reader_decision' => 'passed']);
+        $ownedProfile = $user->authorProfile;
+        $ownedBook = $authorMatch->readerDecision->betaReadingListing->book;
+        $ownedListing = $authorMatch->readerDecision->betaReadingListing;
 
         $this->actingAs($user)->delete(route('profile.destroy'), ['password' => 'password'])->assertRedirect(route('home'));
 
-        $this->assertEquals($endedAt, $authorMatch->fresh()->ended_at);
-        $this->assertNotNull($readerMatch->fresh()->ended_at);
-        $this->actingAs($reader)->get(route('matches.conversation', $authorMatch))->assertOk();
-        $this->actingAs($otherAuthor)->get(route('matches.conversation', $readerMatch))->assertOk();
-        $this->actingAs($reader)->delete(route('profile.destroy'), ['password' => 'password'])->assertRedirect(route('home'));
-        $this->assertNull($authorMatch->fresh());
+        foreach ([$user, $profile, $ownedProfile, $ownedBook, $ownedListing, $pass, $authorMatch, $readerMatch] as $record) {
+            $this->assertNull($record->fresh());
+        }
+        $this->assertDatabaseCount('conversation_messages', 1);
+        $this->assertDatabaseHas('conversation_messages', ['beta_reading_match_id' => $unrelatedMatch->id, 'body' => 'Kept']);
+        foreach ([$reader, $otherAuthor, $unrelatedAuthor, $otherListing, $otherListing->book, $unrelatedMatch] as $record) {
+            $this->assertNotNull($record->fresh());
+        }
+        $this->actingAs($reader)->get(route('matches.index'))
+            ->assertInertia(fn (Assert $page) => $page->has('matches', 1)->where('matches.0.id', $unrelatedMatch->id));
+        $this->actingAs($otherAuthor)->get(route('matches.conversation', $readerMatch))->assertNotFound();
     }
 
     public function test_match_end_notification_waits_for_the_outer_transaction(): void

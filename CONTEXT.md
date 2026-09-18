@@ -12,6 +12,10 @@ _Avoid_: Member, account
 A trusted BetaReadr operator with an identity separate from every User and access to administrative functions.
 _Avoid_: Admin User, User role
 
+**Delete User**:
+A User's permanent removal of their identity, both Profiles, Books, Listings, Interests, Passes, and every Match and Conversation in which they participate, including active Matches. Entire Conversations disappear for both participants, including both participants' messages and any history hidden by a Block; no moderation exception survives User deletion.
+_Avoid_: Deactivate, archive, anonymize
+
 **Author**:
 A User participating through an Author Profile to seek beta-reader feedback on one or more books.
 _Avoid_: Writer, creator
@@ -109,5 +113,5 @@ An immutable plain-text contribution sent by either participant within an active
 _Avoid_: Chat, comment, direct message
 
 **Block**:
-A User-level safety action that prevents two Users from discovering or contacting each other through either profile and ends their existing Matches. Related Conversation history survives Book or User deletion for moderation but is hidden from both participants; a deleted User's identity is anonymized.
+A User-level safety action that prevents two Users from discovering or contacting each other through either profile and ends their existing Matches. Related Conversation history is hidden from both participants and retained for moderation, including after Book deletion, but is permanently removed when either User is deleted.
 _Avoid_: Mute, profile block

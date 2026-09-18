@@ -30,9 +30,9 @@ import { createConversationEcho } from '@/lib/conversationEcho';
 type Match = {
     id: number;
     role: 'author' | 'beta_reader';
-    profile: { display_name: string; handle: string | null };
-    book: { id: number | null; title: string };
-    listing: { id: number | null; reading_brief: string };
+    profile: { display_name: string; handle: string };
+    book: { id: number; title: string };
+    listing: { id: number; reading_brief: string };
     created_at: string;
     ended_at: string | null;
     ended_by: 'author' | 'beta_reader' | null;
@@ -104,7 +104,6 @@ defineOptions({
                     <div class="min-w-0 flex-1">
                         <CardTitle>
                             <Link
-                                v-if="match.profile.handle"
                                 class="hover:underline"
                                 :href="
                                     match.role === 'author'
@@ -114,7 +113,6 @@ defineOptions({
                             >
                                 {{ match.profile.display_name }}
                             </Link>
-                            <span v-else>{{ match.profile.display_name }}</span>
                         </CardTitle>
                         <CardDescription class="mt-1">
                             {{ match.book.title }} ·

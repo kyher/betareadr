@@ -20,10 +20,9 @@ class MatchController extends Controller
 
         return DB::transaction(function () use ($user): Response {
             $matches = BetaReadingMatch::query()
-                ->where(fn ($query) => $query->where('remaining_user_id', $user->id)
-                    ->orWhereHas('readerDecision', fn ($query) => $query
-                        ->whereHas('betaReaderProfile', fn ($query) => $query->where('user_id', $user->id))
-                        ->orWhereHas('betaReadingListing.book.authorProfile', fn ($query) => $query->where('user_id', $user->id))))
+                ->whereHas('readerDecision', fn ($query) => $query
+                    ->whereHas('betaReaderProfile', fn ($query) => $query->where('user_id', $user->id))
+                    ->orWhereHas('betaReadingListing.book.authorProfile', fn ($query) => $query->where('user_id', $user->id)))
                 ->lockForUpdate()
                 ->with([
                     'readerDecision.betaReaderProfile',
@@ -34,21 +33,6 @@ class MatchController extends Controller
                 ->latest('id')
                 ->get()
                 ->map(function (BetaReadingMatch $match) use ($user): array {
-                    if ($match->beta_reading_listing_decision_id === null) {
-                        return [
-                            'id' => $match->id,
-                            'unread_count' => $match->messages()->whereNull('sender_id')->where('id', '>', $match->remaining_role === 'author' ? $match->author_read_message_id : $match->reader_read_message_id)->count(),
-                            'role' => $match->remaining_role,
-                            'profile' => ['display_name' => __('Deleted participant'), 'handle' => null],
-                            'book' => ['id' => null, 'title' => $match->retained_book_title],
-                            'listing' => ['id' => null, 'reading_brief' => ''],
-                            'created_at' => $match->created_at?->toISOString(),
-                            'ended_at' => $match->ended_at?->toISOString(),
-                            'ended_by' => null,
-                            'latest_message' => $match->latestMessage?->only(['body', 'created_at']),
-                        ];
-                    }
-
                     $decision = $match->readerDecision;
                     $listing = $decision->betaReadingListing;
                     $book = $listing->book;

@@ -4,6 +4,8 @@ namespace Tests\Feature\Settings;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Password;
 use Tests\TestCase;
 
 class ProfileUpdateTest extends TestCase
@@ -68,6 +70,12 @@ class ProfileUpdateTest extends TestCase
     public function test_user_can_delete_their_account()
     {
         $user = User::factory()->create();
+        $other = User::factory()->create();
+        Password::broker('users')->createToken($user);
+        Password::broker('users')->createToken($other);
+        foreach ([$user, $other] as $owner) {
+            DB::table('sessions')->insert(['id' => 'session-'.$owner->id, 'user_id' => $owner->id, 'payload' => '', 'last_activity' => time()]);
+        }
 
         $response = $this
             ->actingAs($user)
@@ -81,6 +89,10 @@ class ProfileUpdateTest extends TestCase
 
         $this->assertGuest();
         $this->assertNull($user->fresh());
+        $this->assertDatabaseMissing('sessions', ['user_id' => $user->id]);
+        $this->assertDatabaseMissing('password_reset_tokens', ['email' => $user->email]);
+        $this->assertDatabaseHas('sessions', ['user_id' => $other->id]);
+        $this->assertDatabaseHas('password_reset_tokens', ['email' => $other->email]);
     }
 
     public function test_correct_password_must_be_provided_to_delete_account()

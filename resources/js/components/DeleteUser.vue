@@ -69,7 +69,7 @@ const { t } = useTranslation();
                             <DialogDescription>
                                 {{
                                     t(
-                                        'Deleting your account will end all active Matches and remove your profiles. Conversations will remain read-only for the other participants, with your identity shown as deleted. Please enter your password to confirm.',
+                                        'Deleting your account permanently removes your profiles, Books, Listings, and all Matches and Conversations, including all messages for both participants. This includes active Matches and blocked history. This cannot be undone. Please enter your password to confirm.',
                                     )
                                 }}
                             </DialogDescription>
