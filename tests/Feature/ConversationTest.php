@@ -3,9 +3,11 @@
 namespace Tests\Feature;
 
 use App\Actions\BetaReadingListings\EndBetaReadingMatch;
+use App\Events\BetaReadingMatchEnded;
 use App\Events\ConversationMessageSent;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Inertia\Testing\AssertableInertia as Assert;
 use RuntimeException;
@@ -109,6 +111,88 @@ class ConversationTest extends TestCase
         $author->delete();
 
         $this->assertDatabaseMissing('conversation_messages', ['beta_reading_match_id' => $match->id]);
+    }
+
+    public function test_account_deletion_removes_matches_and_all_messages_for_both_roles(): void
+    {
+        foreach (['author', 'reader'] as $role) {
+            [$match, $author, $reader] = $this->match('-'.$role);
+            $deleted = $role === 'author' ? $author : $reader;
+            $remaining = $role === 'author' ? $reader : $author;
+            $decision = $match->readerDecision;
+            $book = $decision->betaReadingListing->book;
+            $match->messages()->create(['sender_id' => $deleted->id, 'body' => 'From deleted participant']);
+            $match->messages()->create(['sender_id' => $remaining->id, 'body' => 'From remaining participant']);
+
+            $this->actingAs($deleted)->delete(route('profile.destroy'), ['password' => 'password'])
+                ->assertSessionHasNoErrors()->assertRedirect(route('home'));
+            $this->assertGuest();
+            $this->assertNull($deleted->fresh());
+            $this->assertNull($match->fresh());
+            $this->assertNull($decision->fresh());
+            $this->assertDatabaseMissing('conversation_messages', ['beta_reading_match_id' => $match->id]);
+            $this->assertDatabaseMissing($role === 'author' ? 'author_profiles' : 'beta_reader_profiles', ['user_id' => $deleted->id]);
+            $this->assertSame($role === 'reader', $book->fresh() !== null);
+            $this->assertNotNull($remaining->fresh());
+
+            $this->actingAs($remaining)->get(route('matches.index'))
+                ->assertInertia(fn (Assert $page) => $page->has('matches', 0));
+            $this->get(route('matches.conversation', $match))->assertNotFound();
+            $this->getJson(route('matches.messages.index', $match))->assertNotFound();
+            $this->postJson(route('matches.messages.store', $match), ['body' => 'Too late'])->assertNotFound();
+            $this->postJson('/broadcasting/auth', ['channel_name' => 'private-matches.'.$match->id, 'socket_id' => '1.2'])->assertForbidden();
+        }
+    }
+
+    public function test_deletion_removes_ended_matches_and_both_profile_roles_without_other_users_data(): void
+    {
+        [$authorMatch, $user, $reader] = $this->match();
+        [$readerMatch, $otherAuthor] = $this->match('-other');
+        [$unrelatedMatch, $unrelatedAuthor] = $this->match('-unrelated');
+        $profile = $user->betaReaderProfile()->create(['display_name' => 'Both roles', 'handle' => 'both', 'reading_languages' => ['*']]);
+        $readerMatch->readerDecision->forceFill(['beta_reader_profile_id' => $profile->id])->save();
+        $unrelatedMatch->readerDecision->forceFill(['beta_reader_profile_id' => $reader->betaReaderProfile->id])->save();
+        app(EndBetaReadingMatch::class)->handle($authorMatch, $reader);
+        foreach ([$authorMatch, $readerMatch] as $match) {
+            $match->messages()->create(['sender_id' => $user->id, 'body' => 'Deleted']);
+        }
+        $unrelatedMatch->messages()->create(['sender_id' => $reader->id, 'body' => 'Kept']);
+        $otherListing = $readerMatch->readerDecision->betaReadingListing;
+        $pass = $profile->readerDecisions()->create(['beta_reading_listing_id' => $unrelatedMatch->readerDecision->beta_reading_listing_id, 'reader_decision' => 'passed']);
+        $ownedProfile = $user->authorProfile;
+        $ownedBook = $authorMatch->readerDecision->betaReadingListing->book;
+        $ownedListing = $authorMatch->readerDecision->betaReadingListing;
+
+        $this->actingAs($user)->delete(route('profile.destroy'), ['password' => 'password'])->assertRedirect(route('home'));
+
+        foreach ([$user, $profile, $ownedProfile, $ownedBook, $ownedListing, $pass, $authorMatch, $readerMatch] as $record) {
+            $this->assertNull($record->fresh());
+        }
+        $this->assertDatabaseCount('conversation_messages', 1);
+        $this->assertDatabaseHas('conversation_messages', ['beta_reading_match_id' => $unrelatedMatch->id, 'body' => 'Kept']);
+        foreach ([$reader, $otherAuthor, $unrelatedAuthor, $otherListing, $otherListing->book, $unrelatedMatch] as $record) {
+            $this->assertNotNull($record->fresh());
+        }
+        $this->actingAs($reader)->get(route('matches.index'))
+            ->assertInertia(fn (Assert $page) => $page->has('matches', 1)->where('matches.0.id', $unrelatedMatch->id));
+        $this->actingAs($otherAuthor)->get(route('matches.conversation', $readerMatch))->assertNotFound();
+    }
+
+    public function test_match_end_notification_waits_for_the_outer_transaction(): void
+    {
+        config()->set('broadcasting.default', 'null');
+        [$match, $author] = $this->match();
+        $notified = false;
+        Event::listen(BetaReadingMatchEnded::class, function () use (&$notified): void {
+            $notified = true;
+        });
+
+        DB::transaction(function () use ($match, $author, &$notified): void {
+            app(EndBetaReadingMatch::class)->handle($match, $author);
+            $this->assertFalse($notified);
+        });
+
+        $this->assertTrue($notified);
     }
 
     public function test_one_inbox_shows_both_roles_with_latest_preview_and_ended_by(): void

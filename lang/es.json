@@ -83,7 +83,7 @@
     "Name": "Nombre",
     "New password": "Nueva contraseña",
     "No description": "Sin descripción",
-    "Once your account is deleted, all of its resources and data will also be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.": "Al eliminar tu cuenta, todos sus recursos y datos se borrarán permanentemente. Introduce tu contraseña para confirmarlo.",
+    "Deleting your account permanently removes your profiles, Books, Listings, and all Matches and Conversations, including all messages for both participants. This includes active Matches and blocked history. This cannot be undone. Please enter your password to confirm.": "Eliminar tu cuenta eliminará permanentemente tus perfiles, libros, convocatorias y todas las conexiones y conversaciones, incluidos todos los mensajes de ambos participantes. Esto incluye las conexiones activas y el historial bloqueado. Esta acción no se puede deshacer. Introduce tu contraseña para confirmar.",
     "Open a Beta Reading Listing with a focused Reading Brief.": "Publica un anuncio de lectura beta con un resumen bien enfocado.",
     "Open Listing": "Anuncio abierto",
     "Pass": "Pasar",

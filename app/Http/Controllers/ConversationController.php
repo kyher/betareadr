@@ -16,23 +16,26 @@ class ConversationController extends Controller
 {
     public function show(BetaReadingMatch $match, Request $request): Response
     {
-        Gate::authorize('view', $match);
-        DB::transaction(fn () => $this->markRead(BetaReadingMatch::query()->lockForUpdate()->findOrFail($match->id), $request->user(User::AUTH_GUARD)->id));
-        $match->load('readerDecision.betaReaderProfile', 'readerDecision.betaReadingListing.book.authorProfile');
-        $user = $request->user(User::AUTH_GUARD);
-        $isAuthor = $match->readerDecision->betaReadingListing->book->authorProfile->user_id === $user->id;
-        $profile = $isAuthor ? $match->readerDecision->betaReaderProfile : $match->readerDecision->betaReadingListing->book->authorProfile;
+        return DB::transaction(function () use ($match, $request): Response {
+            $match = BetaReadingMatch::query()->lockForUpdate()->findOrFail($match->id);
+            Gate::authorize('view', $match);
+            $this->markRead($match, $request->user(User::AUTH_GUARD)->id);
+            $match->load('readerDecision.betaReaderProfile', 'readerDecision.betaReadingListing.book.authorProfile');
+            $user = $request->user(User::AUTH_GUARD);
+            $isAuthor = $match->readerDecision->betaReadingListing->book->authorProfile->user_id === $user->id;
+            $profile = $isAuthor ? $match->readerDecision->betaReaderProfile : $match->readerDecision->betaReadingListing->book->authorProfile;
 
-        return Inertia::render('matches/Conversation', [
-            'match' => [
-                'id' => $match->id,
-                'ended_at' => $match->ended_at?->toISOString(),
-                'ended_by' => $match->ended_by_user_id === null ? null : ($match->ended_by_user_id === $match->readerDecision->betaReadingListing->book->authorProfile->user_id ? 'author' : 'beta_reader'),
-                'profile' => $profile->only(['display_name']),
-                'book' => $match->readerDecision->betaReadingListing->book->only(['title']),
-            ],
-            'userId' => $user->id,
-        ]);
+            return Inertia::render('matches/Conversation', [
+                'match' => [
+                    'id' => $match->id,
+                    'ended_at' => $match->ended_at?->toISOString(),
+                    'ended_by' => $match->ended_by_user_id === null ? null : ($match->ended_by_user_id === $match->readerDecision->betaReadingListing->book->authorProfile->user_id ? 'author' : 'beta_reader'),
+                    'profile' => $profile->only(['display_name']),
+                    'book' => $match->readerDecision->betaReadingListing->book->only(['title']),
+                ],
+                'userId' => $user->id,
+            ]);
+        });
     }
 
     public function index(BetaReadingMatch $match, Request $request): JsonResponse
