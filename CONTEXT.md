@@ -65,11 +65,11 @@ The Listing-specific description of the draft being offered and the feedback the
 _Avoid_: Book description, listing description
 
 **Content Warning**:
-A declared type of potentially distressing or sensitive material present in a Book.
+A publicly visible declaration, chosen from a shared set of topics, of potentially distressing or sensitive material present in a Book. An empty selection means no warnings were declared, not that the Book is free of such material.
 _Avoid_: Trigger, tag
 
 **Content Boundary**:
-A type of material a Beta Reader has chosen not to encounter. Listings for a Book with a matching Content Warning are excluded from that reader's feed.
+A private selection from the same set of topics that a Beta Reader has chosen not to encounter. Listings for a Book with a matching Content Warning are excluded from that reader's Feed; existing Interests and Matches remain intact when boundaries change.
 _Avoid_: Preference, dislike
 
 **Feed**:
