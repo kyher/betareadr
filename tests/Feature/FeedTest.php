@@ -14,6 +14,49 @@ class FeedTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_content_boundaries_filter_exact_book_warnings_and_follow_edits(): void
+    {
+        [$reader, $profile] = $this->reader();
+        $abuse = $this->listingFor($this->author('abuse-author'));
+        $violence = $this->listingFor($this->author('violence-author'));
+        $abuse->book->update(['content_warnings' => ['abuse']]);
+        $violence->book->update(['content_warnings' => ['violence']]);
+        $profile->update(['content_boundaries' => ['abuse']]);
+
+        $this->actingAs($reader)->get(route('feed.index'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('listing.id', $violence->id)
+                ->where('listing.book.content_warnings', ['violence']));
+
+        $violence->book->update(['content_warnings' => ['violence', 'abuse']]);
+        $this->actingAs($reader)->get(route('feed.index'))
+            ->assertInertia(fn (Assert $page) => $page->where('listing', null));
+
+        $profile->update(['content_boundaries' => []]);
+        $reader->unsetRelation('betaReaderProfile');
+        $this->actingAs($reader)->get(route('feed.index'))
+            ->assertInertia(fn (Assert $page) => $page->where('listing.id', $abuse->id));
+
+        $this->actingAs($reader)->post(route('feed.interest', $abuse))
+            ->assertSessionHasNoErrors();
+        $this->assertSame(1, $profile->readerDecisions()->count());
+    }
+
+    public function test_stale_feed_card_can_still_submit_interest_after_warning_change(): void
+    {
+        [$reader, $profile] = $this->reader();
+        $profile->update(['content_boundaries' => ['abuse']]);
+        $listing = $this->listingFor($this->author());
+
+        $this->actingAs($reader)->get(route('feed.index'))
+            ->assertInertia(fn (Assert $page) => $page->where('listing.id', $listing->id));
+
+        $listing->book->update(['content_warnings' => ['abuse']]);
+        $this->actingAs($reader)->post(route('feed.interest', $listing))
+            ->assertSessionHasNoErrors();
+        $this->assertSame(1, $profile->readerDecisions()->count());
+    }
+
     public function test_guests_cannot_view_or_decide_feed_listings(): void
     {
         $listing = $this->listingFor($this->author());
