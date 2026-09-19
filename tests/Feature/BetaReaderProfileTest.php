@@ -15,6 +15,27 @@ class BetaReaderProfileTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_content_boundaries_are_saved_but_not_public(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user)->post(route('beta-reader-profile.store'), [
+            'display_name' => 'Private Reader', 'handle' => 'private-reader',
+            'reading_languages' => ['en'], 'content_boundaries' => ['abuse'],
+        ])->assertSessionHasNoErrors();
+        $profile = $user->betaReaderProfile;
+        $this->assertSame(['abuse'], $profile->content_boundaries);
+
+        $this->actingAs($user)->get(route('beta-reader-profile.edit'))
+            ->assertInertia(fn (Assert $page) => $page->where('betaReaderProfile.content_boundaries', ['abuse']));
+        $this->get(route('beta-readers.show', $profile))
+            ->assertInertia(fn (Assert $page) => $page->missing('betaReaderProfile.content_boundaries'));
+
+        $this->actingAs($user)->patch(route('beta-reader-profile.update'), [
+            'display_name' => 'Private Reader', 'reading_languages' => ['en'],
+            'content_boundaries' => ['unknown'],
+        ])->assertSessionHasErrors('content_boundaries.0');
+    }
+
     public function test_guests_cannot_access_beta_reader_profile_setup(): void
     {
         $this->get(route('beta-reader-profile.create'))->assertRedirect(route('login'));

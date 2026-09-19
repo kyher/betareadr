@@ -17,6 +17,12 @@ class FindNextFeedListing
                 ->where('user_id', '!=', $profile->user_id))
             ->when(! in_array(BetaReaderProfile::ANY_LANGUAGE, $profile->reading_languages, true), fn ($query) => $query
                 ->whereHas('book', fn ($query) => $query->whereIn('language', $profile->reading_languages)))
+            ->when($profile->content_boundaries, fn ($query) => $query
+                ->whereDoesntHave('book', fn ($books) => $books->where(function ($warnings) use ($profile) {
+                    foreach ($profile->content_boundaries as $boundary) {
+                        $warnings->orWhereJsonContains('content_warnings', $boundary);
+                    }
+                })))
             ->with('book.authorProfile')
             ->oldest()
             ->oldest('id')

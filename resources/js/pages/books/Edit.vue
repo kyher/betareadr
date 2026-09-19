@@ -2,6 +2,7 @@
 import { Form, Head, Link } from '@inertiajs/vue3';
 import BookController from '@/actions/App/Http/Controllers/BookController';
 import BookLanguageField from '@/components/BookLanguageField.vue';
+import ContentTopicsField from '@/components/ContentTopicsField.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -82,6 +83,11 @@ defineOptions({
                     <BookLanguageField
                         :language="book.language"
                         :error="errors.language"
+                    />
+                    <ContentTopicsField
+                        field="content_warnings"
+                        :selected="book.content_warnings"
+                        :errors="errors"
                     />
                     <div class="flex justify-end gap-3">
                         <Button variant="outline" as-child>

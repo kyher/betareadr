@@ -249,5 +249,19 @@
     "Sending": "Envoi en cours",
     "Sent": "Envoyé",
     "Failed to send": "Échec de l’envoi",
-    "Retry send": "Réessayer l’envoi"
+    "Retry send": "Réessayer l’envoi",
+    "Content warnings": "Avertissements de contenu",
+    "Content boundaries": "Limites de contenu",
+    "No content warnings declared": "Aucun avertissement de contenu déclaré",
+    "Select every applicable topic. No selection means no warnings declared.": "Sélectionnez tous les thèmes concernés. Sans sélection, aucun avertissement n’est déclaré.",
+    "Listings with any selected topic will be hidden from your feed. Only you can see these boundaries.": "Les annonces comportant l’un des thèmes sélectionnés seront masquées dans votre fil. Vous seul pouvez voir ces limites.",
+    "Sexual content": "Contenu sexuel",
+    "Sexual violence": "Violence sexuelle",
+    "Abuse": "Maltraitance",
+    "Violence": "Violence",
+    "Self-harm": "Automutilation",
+    "Suicide": "Suicide",
+    "Eating disorders": "Troubles alimentaires",
+    "Substance use": "Consommation de substances",
+    "Discrimination": "Discrimination"
 }

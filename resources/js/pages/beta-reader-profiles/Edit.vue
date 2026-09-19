@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
 import BetaReaderProfileController from '@/actions/App/Http/Controllers/BetaReaderProfileController';
+import ContentTopicsField from '@/components/ContentTopicsField.vue';
 import InputError from '@/components/InputError.vue';
 import ReadingLanguagesField from '@/components/ReadingLanguagesField.vue';
 import { Button } from '@/components/ui/button';
@@ -97,6 +98,11 @@ defineOptions({
                     <ReadingLanguagesField
                         :languages="betaReaderProfile.reading_languages"
                         :error="errors.reading_languages"
+                    />
+                    <ContentTopicsField
+                        field="content_boundaries"
+                        :selected="betaReaderProfile.content_boundaries"
+                        :errors="errors"
                     />
                     <div class="flex items-center justify-end gap-3">
                         <Button variant="outline" as-child

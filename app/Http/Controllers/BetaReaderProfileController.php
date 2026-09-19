@@ -58,7 +58,7 @@ class BetaReaderProfileController extends AuthenticatedUserController
         }
 
         return Inertia::render('beta-reader-profiles/Edit', [
-            'betaReaderProfile' => $profile->only(['display_name', 'handle', 'bio', 'reading_languages']),
+            'betaReaderProfile' => $profile->only(['display_name', 'handle', 'bio', 'reading_languages', 'content_boundaries']),
         ]);
     }
 

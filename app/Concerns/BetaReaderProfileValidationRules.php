@@ -3,12 +3,28 @@
 namespace App\Concerns;
 
 use App\Enums\ContentLanguage;
+use App\Enums\ContentTopic;
 use App\Models\BetaReaderProfile;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 trait BetaReaderProfileValidationRules
 {
+    /** @return array<string, mixed> */
+    protected function contentBoundaryRules(): array
+    {
+        return [
+            'content_boundaries' => ['sometimes', 'array'],
+            'content_boundaries.*' => ['distinct', Rule::enum(ContentTopic::class)],
+        ];
+    }
+
+    /** @return list<string> */
+    protected function contentBoundaries(): array
+    {
+        return array_values($this->validated('content_boundaries', []));
+    }
+
     /** @return array<string, mixed> */
     protected function readingLanguageRules(): array
     {

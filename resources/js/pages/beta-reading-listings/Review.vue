@@ -4,6 +4,7 @@ import { Check, UserRoundCheck, UserRoundX } from '@lucide/vue';
 import BetaReadingListingReviewController from '@/actions/App/Http/Controllers/BetaReadingListingReviewController';
 import MatchController from '@/actions/App/Http/Controllers/MatchController';
 import BetaReaderReviewCard from '@/components/BetaReaderReviewCard.vue';
+import ContentWarnings from '@/components/ContentWarnings.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -19,7 +20,7 @@ import {
 import { useTranslation } from '@/composables/useTranslation';
 import type { BetaReaderProfile } from '@/types';
 
-type Book = { id: number; title: string };
+type Book = { id: number; title: string; content_warnings: string[] };
 type Listing = { id: number; closed_at: string | null };
 type Reader = {
     id: number;
@@ -52,6 +53,7 @@ defineOptions({
     <div class="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-8 p-4 md:p-8">
         <div>
             <p class="text-sm text-muted-foreground">{{ book.title }}</p>
+            <ContentWarnings :warnings="book.content_warnings" />
             <h1 class="text-2xl font-semibold tracking-tight">
                 {{ t('Review beta readers') }}
             </h1>

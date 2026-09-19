@@ -22,12 +22,13 @@ class StoreBetaReaderProfileRequest extends FormRequest
             'handle' => $this->string('handle')->toString(),
             'bio' => is_string($bio) ? $bio : null,
             'reading_languages' => $this->readingLanguages(),
+            'content_boundaries' => $this->contentBoundaries(),
         ];
     }
 
     /** @return array<string, ValidationRule|array<mixed>|string> */
     public function rules(): array
     {
-        return [...$this->publicProfileRules('beta_reader_profiles'), ...$this->readingLanguageRules()];
+        return [...$this->publicProfileRules('beta_reader_profiles'), ...$this->readingLanguageRules(), ...$this->contentBoundaryRules()];
     }
 }

@@ -12,6 +12,28 @@ class BookTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_content_warnings_are_saved_validated_and_public(): void
+    {
+        $user = $this->author();
+        $this->actingAs($user)->post(route('books.store'), [
+            'title' => 'Warned Book', 'language' => 'en', 'content_warnings' => ['abuse', 'violence'],
+        ])->assertSessionHasNoErrors();
+        $book = $user->authorProfile->books()->where('title', 'Warned Book')->firstOrFail();
+        $this->assertSame(['abuse', 'violence'], $book->content_warnings);
+
+        $this->get(route('authors.show', $user->authorProfile))
+            ->assertInertia(fn (Assert $page) => $page->where('books.data.0.content_warnings', ['abuse', 'violence']));
+
+        $this->actingAs($user)->patch(route('books.update', $book), [
+            'title' => 'Warned Book', 'language' => 'en', 'content_warnings' => ['unknown'],
+        ])->assertSessionHasErrors('content_warnings.0');
+
+        $this->actingAs($user)->patch(route('books.update', $book), [
+            'title' => 'Warned Book', 'language' => 'en',
+        ])->assertSessionHasNoErrors();
+        $this->assertSame([], $book->fresh()->content_warnings);
+    }
+
     public function test_guests_cannot_manage_books(): void
     {
         $book = $this->bookFor(User::factory()->create());

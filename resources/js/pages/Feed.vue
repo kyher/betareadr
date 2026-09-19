@@ -9,6 +9,7 @@ import {
     X,
 } from '@lucide/vue';
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
+import ContentWarnings from '@/components/ContentWarnings.vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -30,6 +31,7 @@ type FeedListing = {
         title: string;
         description: string | null;
         language: ContentLanguage;
+        content_warnings: string[];
     };
     author: {
         display_name: string;
@@ -287,6 +289,9 @@ defineOptions({
                 </CardHeader>
 
                 <CardContent class="grid gap-6">
+                    <ContentWarnings
+                        :warnings="displayedListing.book.content_warnings"
+                    />
                     <section v-if="displayedListing.book.description">
                         <h2
                             class="mb-2 text-sm font-semibold tracking-wide text-muted-foreground uppercase"

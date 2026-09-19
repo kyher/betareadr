@@ -4,6 +4,7 @@ import { Handshake } from '@lucide/vue';
 import type Echo from 'laravel-echo';
 import { onMounted, onUnmounted } from 'vue';
 import MatchController from '@/actions/App/Http/Controllers/MatchController';
+import ContentWarnings from '@/components/ContentWarnings.vue';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -31,7 +32,7 @@ type Match = {
     id: number;
     role: 'author' | 'beta_reader';
     profile: { display_name: string; handle: string };
-    book: { id: number; title: string };
+    book: { id: number; title: string; content_warnings: string[] };
     listing: { id: number; reading_brief: string };
     created_at: string;
     ended_at: string | null;
@@ -118,6 +119,9 @@ defineOptions({
                             {{ match.book.title }} ·
                             {{ match.ended_at ? t('Ended') : t('Active') }}
                         </CardDescription>
+                        <ContentWarnings
+                            :warnings="match.book.content_warnings"
+                        />
                         <p
                             v-if="match.ended_at"
                             class="mt-1 text-xs text-muted-foreground"
