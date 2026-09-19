@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Enums\ContentLanguage;
+use App\Enums\ContentTopic;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -49,6 +50,8 @@ class HandleInertiaRequests extends Middleware
             'locales' => config('app.supported_locales'),
             'contentLanguages' => collect(ContentLanguage::cases())
                 ->mapWithKeys(fn (ContentLanguage $language) => [$language->value => $language->label()]),
+            'contentTopics' => collect(ContentTopic::cases())
+                ->mapWithKeys(fn (ContentTopic $topic) => [$topic->value => __($topic->label())]),
             'translations' => is_file($translations)
                 ? File::json($translations)
                 : [],

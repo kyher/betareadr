@@ -21,12 +21,13 @@ class UpdateBetaReaderProfileRequest extends FormRequest
             'display_name' => $this->string('display_name')->toString(),
             'bio' => is_string($bio) ? $bio : null,
             'reading_languages' => $this->readingLanguages(),
+            'content_boundaries' => $this->contentBoundaries(),
         ];
     }
 
     /** @return array<string, ValidationRule|array<mixed>|string> */
     public function rules(): array
     {
-        return [...$this->publicProfileUpdateRules(), ...$this->readingLanguageRules()];
+        return [...$this->publicProfileUpdateRules(), ...$this->readingLanguageRules(), ...$this->contentBoundaryRules()];
     }
 }
