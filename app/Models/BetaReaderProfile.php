@@ -16,6 +16,7 @@ use Illuminate\Support\Carbon;
  * @property string $handle
  * @property string|null $bio
  * @property list<string> $reading_languages
+ * @property list<string> $content_boundaries
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
