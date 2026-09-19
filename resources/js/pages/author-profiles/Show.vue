@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
+import ContentWarnings from '@/components/ContentWarnings.vue';
 import PaginationLinks from '@/components/PaginationLinks.vue';
 import PublicProfileHeader from '@/components/PublicProfileHeader.vue';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -63,6 +64,9 @@ const { t } = useTranslation();
                                     $page.props.contentLanguages[book.language]
                                 }}
                             </p>
+                            <ContentWarnings
+                                :warnings="book.content_warnings"
+                            />
                             <CardDescription
                                 v-if="book.description"
                                 class="reading-copy whitespace-pre-line text-foreground"

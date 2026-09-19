@@ -4,6 +4,7 @@ import { BookOpen, List, Pencil, Plus, Trash2 } from '@lucide/vue';
 import { computed } from 'vue';
 import BetaReadingListingController from '@/actions/App/Http/Controllers/BetaReadingListingController';
 import BookController from '@/actions/App/Http/Controllers/BookController';
+import ContentWarnings from '@/components/ContentWarnings.vue';
 import InputError from '@/components/InputError.vue';
 import PaginationLinks from '@/components/PaginationLinks.vue';
 import { Button } from '@/components/ui/button';
@@ -105,6 +106,7 @@ defineOptions({
                         <p class="mt-1 text-sm text-muted-foreground">
                             {{ $page.props.contentLanguages[book.language] }}
                         </p>
+                        <ContentWarnings :warnings="book.content_warnings" />
                         <CardDescription
                             v-if="book.description"
                             class="reading-copy mt-3 whitespace-pre-line text-foreground"

@@ -32,6 +32,7 @@ export type BetaReaderProfile = {
     handle: string;
     bio: string | null;
     reading_languages: ReadingLanguage[];
+    content_boundaries: string[];
 };
 
 export type Book = {
@@ -39,6 +40,7 @@ export type Book = {
     title: string;
     description: string | null;
     language: ContentLanguage;
+    content_warnings: string[];
 };
 
 export type Passkey = {
