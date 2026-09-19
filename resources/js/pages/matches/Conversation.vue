@@ -2,6 +2,7 @@
 import { Head, Link, router } from '@inertiajs/vue3';
 import type Echo from 'laravel-echo';
 import { onMounted, onUnmounted, ref, watch } from 'vue';
+import ContentWarnings from '@/components/ContentWarnings.vue';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/composables/useTranslation';
 import { createConversationEcho } from '@/lib/conversationEcho';
@@ -19,7 +20,7 @@ const props = defineProps<{
         ended_at: string | null;
         ended_by: 'author' | 'beta_reader' | null;
         profile: { display_name: string };
-        book: { title: string };
+        book: { title: string; content_warnings: string[] };
     };
     userId: number;
 }>();
@@ -200,6 +201,7 @@ defineOptions({
             {{ t('Conversation') }} · {{ match.profile.display_name }}
         </h1>
         <p class="text-sm text-muted-foreground">{{ match.book.title }}</p>
+        <ContentWarnings :warnings="match.book.content_warnings" />
         <p v-if="error" role="alert" class="text-sm text-destructive">
             {{ error }}
         </p>

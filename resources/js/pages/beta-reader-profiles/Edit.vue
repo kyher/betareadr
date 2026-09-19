@@ -102,7 +102,7 @@ defineOptions({
                     <ContentTopicsField
                         field="content_boundaries"
                         :selected="betaReaderProfile.content_boundaries"
-                        :error="errors.content_boundaries"
+                        :errors="errors"
                     />
                     <div class="flex items-center justify-end gap-3">
                         <Button variant="outline" as-child

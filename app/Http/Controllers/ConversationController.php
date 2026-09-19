@@ -31,7 +31,7 @@ class ConversationController extends Controller
                     'ended_at' => $match->ended_at?->toISOString(),
                     'ended_by' => $match->ended_by_user_id === null ? null : ($match->ended_by_user_id === $match->readerDecision->betaReadingListing->book->authorProfile->user_id ? 'author' : 'beta_reader'),
                     'profile' => $profile->only(['display_name']),
-                    'book' => $match->readerDecision->betaReadingListing->book->only(['title']),
+                    'book' => $match->readerDecision->betaReadingListing->book->only(['title', 'content_warnings']),
                 ],
                 'userId' => $user->id,
             ]);

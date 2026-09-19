@@ -87,7 +87,7 @@ defineOptions({
                     <ContentTopicsField
                         field="content_warnings"
                         :selected="book.content_warnings"
-                        :error="errors.content_warnings"
+                        :errors="errors"
                     />
                     <div class="flex justify-end gap-3">
                         <Button variant="outline" as-child>

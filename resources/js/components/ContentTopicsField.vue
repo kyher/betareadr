@@ -6,7 +6,7 @@ import { useTranslation } from '@/composables/useTranslation';
 defineProps<{
     field: 'content_warnings' | 'content_boundaries';
     selected?: string[];
-    error?: string;
+    errors?: Record<string, string>;
 }>();
 const { t } = useTranslation();
 </script>
@@ -44,6 +44,13 @@ const { t } = useTranslation();
             />
             {{ name }}
         </Label>
-        <InputError :message="error" />
+        <InputError
+            :message="
+                errors?.[field] ??
+                Object.entries(errors ?? {}).find(([key]) =>
+                    key.startsWith(`${field}.`),
+                )?.[1]
+            "
+        />
     </fieldset>
 </template>

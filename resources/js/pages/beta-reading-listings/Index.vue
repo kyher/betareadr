@@ -4,6 +4,7 @@ import { BookOpen, Pencil, Plus, RotateCcw, Users, XCircle } from '@lucide/vue';
 import { computed } from 'vue';
 import BetaReadingListingController from '@/actions/App/Http/Controllers/BetaReadingListingController';
 import BetaReadingListingReviewController from '@/actions/App/Http/Controllers/BetaReadingListingReviewController';
+import ContentWarnings from '@/components/ContentWarnings.vue';
 import InputError from '@/components/InputError.vue';
 import PaginationLinks from '@/components/PaginationLinks.vue';
 import { Badge } from '@/components/ui/badge';
@@ -28,7 +29,7 @@ import {
 import { useTranslation } from '@/composables/useTranslation';
 import { index as books } from '@/routes/books';
 
-type BookSummary = { id: number; title: string };
+type BookSummary = { id: number; title: string; content_warnings: string[] };
 type Listing = {
     id: number;
     reading_brief: string;
@@ -86,6 +87,7 @@ defineOptions({
                 <h1 class="truncate text-2xl font-semibold tracking-tight">
                     {{ book.title }}
                 </h1>
+                <ContentWarnings :warnings="book.content_warnings" />
                 <p class="mt-1 text-muted-foreground">
                     {{ t('Manage recruitment rounds for this book.') }}
                 </p>
