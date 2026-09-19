@@ -18,9 +18,11 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['title', 'description', 'language'])]
+#[Fillable(['title', 'description', 'language', 'content_warnings'])]
 class Book extends Model
 {
+    protected $attributes = ['content_warnings' => '[]'];
+
     /** @return BelongsTo<AuthorProfile, $this> */
     public function authorProfile(): BelongsTo
     {
@@ -35,6 +37,6 @@ class Book extends Model
 
     protected function casts(): array
     {
-        return ['language' => ContentLanguage::class];
+        return ['language' => ContentLanguage::class, 'content_warnings' => 'array'];
     }
 }
