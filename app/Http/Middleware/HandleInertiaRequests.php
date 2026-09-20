@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Enums\ContentLanguage;
 use App\Enums\ContentTopic;
+use App\Models\Administrator;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -60,6 +61,9 @@ class HandleInertiaRequests extends Middleware
                 'has_author_profile' => $user?->authorProfile()->exists() ?? false,
                 'has_beta_reader_profile' => $user?->betaReaderProfile()->exists() ?? false,
             ],
+            'administrator' => $request->is('admin', 'admin/*')
+                ? Auth::guard(Administrator::AUTH_GUARD)->user()?->only('name')
+                : null,
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }
