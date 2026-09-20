@@ -79,6 +79,56 @@ class AdminTest extends TestCase
         $this->assertSame('en', app()->getLocale());
     }
 
+    public function test_administrator_can_review_and_search_paginated_records(): void
+    {
+        $administrator = Administrator::create([
+            'name' => 'Operator', 'email' => 'operator@example.com', 'password' => 'password',
+        ]);
+        $user = User::factory()->create(['name' => 'Specific User', 'email' => 'specific@example.com']);
+        $author = $user->authorProfile()->create(['display_name' => 'Specific Author', 'handle' => 'specific-author']);
+        $user->betaReaderProfile()->create([
+            'display_name' => 'Specific Reader', 'handle' => 'specific-reader',
+            'reading_languages' => ['en'], 'content_boundaries' => ['violence'],
+        ]);
+        $book = $author->books()->create([
+            'title' => 'Specific Book', 'description' => 'Review this description', 'language' => 'en',
+        ]);
+        $listing = $book->betaReadingListings()->create([
+            'reading_brief' => 'Review this brief', 'word_count' => 80000,
+        ]);
+        $closed = $book->betaReadingListings()->create([
+            'reading_brief' => 'Closed brief', 'word_count' => 90000, 'closed_at' => now(),
+        ]);
+        User::factory()->count(12)->create();
+
+        foreach (['users', 'author-profiles', 'beta-reader-profiles', 'books', 'listings'] as $path) {
+            $this->get("/admin/{$path}")->assertRedirect('/admin/login');
+            $this->actingAs($user)->get("/admin/{$path}")->assertRedirect('/admin/login');
+        }
+
+        $this->actingAs($administrator, 'admin');
+        $this->get('/admin/users')->assertInertia(fn (Assert $page) => $page
+            ->component('admin/Index')->where('administrator.name', 'Operator')
+            ->where('type', 'users')->has('records.data', 12)
+            ->where('records.last_page', 2));
+        $this->get('/admin/users?q=specific%20user')->assertInertia(fn (Assert $page) => $page
+            ->where('records.total', 1)->where('records.data.0.name', 'Specific User')
+            ->missing('records.data.0.password'));
+        $this->get('/admin/author-profiles?q=specific%20author')->assertInertia(fn (Assert $page) => $page
+            ->where('records.total', 1)->where('records.data.0.user', 'Specific User'));
+        $this->get('/admin/beta-reader-profiles?q=specific%20reader')->assertInertia(fn (Assert $page) => $page
+            ->where('records.total', 1)->missing('records.data.0.content_boundaries'));
+        $this->get('/admin/books?q=specific%20book')->assertInertia(fn (Assert $page) => $page
+            ->where('records.total', 1)->where('records.data.0.description', 'Review this description'));
+        $this->get('/admin/listings?q=SPECIFIC-AUTHOR')->assertInertia(fn (Assert $page) => $page
+            ->where('records.total', 2));
+        $this->get("/admin/listings?q={$listing->id}&status=open")->assertInertia(fn (Assert $page) => $page
+            ->where('records.total', 1)->where('records.data.0.id', $listing->id)
+            ->where('records.data.0.reading_brief', 'Review this brief'));
+        $this->get('/admin/listings?status=closed')->assertInertia(fn (Assert $page) => $page
+            ->where('records.total', 1)->where('records.data.0.id', $closed->id));
+    }
+
     public function test_administrator_commands_manage_credentials(): void
     {
         $this->artisan('admin:create ADMIN@example.com')
