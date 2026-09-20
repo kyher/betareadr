@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminAuthenticationController;
+use App\Http\Controllers\AdminReviewController;
 use App\Http\Controllers\AuthorProfileController;
 use App\Http\Controllers\BetaReaderProfileController;
 use App\Http\Controllers\BetaReadingListingController;
@@ -16,7 +17,6 @@ use App\Models\BetaReadingListing;
 use App\Models\Book;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -29,7 +29,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::middleware('auth:'.Administrator::AUTH_GUARD)->group(function () {
         Route::get('/', fn () => Inertia::render('admin/Dashboard', [
-            'administrator' => Auth::guard(Administrator::AUTH_GUARD)->user()->only('name'),
             'counts' => [
                 'users' => User::count(),
                 'authorProfiles' => AuthorProfile::count(),
@@ -39,6 +38,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 'listings' => BetaReadingListing::count(),
             ],
         ]))->name('dashboard');
+        Route::get('users', [AdminReviewController::class, 'users'])->name('users.index');
+        Route::get('author-profiles', [AdminReviewController::class, 'authorProfiles'])->name('author-profiles.index');
+        Route::get('beta-reader-profiles', [AdminReviewController::class, 'betaReaderProfiles'])->name('beta-reader-profiles.index');
+        Route::get('books', [AdminReviewController::class, 'books'])->name('books.index');
+        Route::get('listings', [AdminReviewController::class, 'listings'])->name('listings.index');
         Route::post('logout', [AdminAuthenticationController::class, 'destroy'])->name('logout');
     });
 });

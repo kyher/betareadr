@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 defineProps<{
@@ -21,6 +21,14 @@ const labels = {
     openListings: 'Open Beta Reading Listings',
     listings: 'Total Beta Reading Listings',
 };
+const destinations = {
+    users: '/admin/users',
+    authorProfiles: '/admin/author-profiles',
+    betaReaderProfiles: '/admin/beta-reader-profiles',
+    books: '/admin/books',
+    openListings: '/admin/listings?status=open',
+    listings: '/admin/listings',
+};
 </script>
 
 <template>
@@ -29,7 +37,11 @@ const labels = {
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <Card v-for="(label, key) in labels" :key="key">
             <CardHeader class="pb-2">
-                <CardTitle class="text-sm font-medium">{{ label }}</CardTitle>
+                <CardTitle class="text-sm font-medium"
+                    ><Link :href="destinations[key]" class="underline">{{
+                        label
+                    }}</Link></CardTitle
+                >
             </CardHeader>
             <CardContent class="text-3xl font-semibold">
                 {{ counts[key] }}
