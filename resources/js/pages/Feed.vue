@@ -21,6 +21,8 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { useTranslation } from '@/composables/useTranslation';
+import { show as showAuthor } from '@/routes/authors';
+import { index as feed, interest, pass } from '@/routes/feed';
 import type { ContentLanguage } from '@/types';
 
 type FeedListing = {
@@ -138,7 +140,9 @@ function submitDecision(decision: 'interested' | 'pass') {
     translateX.value = decision === 'interested' ? 48 : -48;
 
     router.post(
-        `/feed/${displayedListing.value.id}/${decision === 'interested' ? 'interest' : 'pass'}`,
+        decision === 'interested'
+            ? interest(displayedListing.value.id)
+            : pass(displayedListing.value.id),
         {},
         {
             preserveScroll: true,
@@ -182,7 +186,7 @@ onBeforeUnmount(() => {
 });
 
 defineOptions({
-    layout: { breadcrumbs: [{ title: 'Feed', href: '/feed' }] },
+    layout: { breadcrumbs: [{ title: 'Feed', href: feed() }] },
 });
 </script>
 
@@ -278,7 +282,7 @@ defineOptions({
                         }}
                     </p>
                     <Link
-                        :href="`/authors/${displayedListing.author.handle}`"
+                        :href="showAuthor(displayedListing.author.handle)"
                         class="flex w-fit items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:underline"
                     >
                         <UserRound class="size-4" />

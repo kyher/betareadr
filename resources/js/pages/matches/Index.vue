@@ -27,6 +27,9 @@ import {
 import { getInitials } from '@/composables/useInitials';
 import { useTranslation } from '@/composables/useTranslation';
 import { createConversationEcho } from '@/lib/conversationEcho';
+import { show as showAuthor } from '@/routes/authors';
+import { show as showBetaReader } from '@/routes/beta-readers';
+import { conversation, index as matchesIndex } from '@/routes/matches';
 
 type Match = {
     id: number;
@@ -69,7 +72,7 @@ onUnmounted(() => echo?.disconnect());
 const { t } = useTranslation();
 
 defineOptions({
-    layout: { breadcrumbs: [{ title: 'Matches', href: '/matches' }] },
+    layout: { breadcrumbs: [{ title: 'Matches', href: matchesIndex() }] },
 });
 </script>
 
@@ -108,8 +111,8 @@ defineOptions({
                                 class="hover:underline"
                                 :href="
                                     match.role === 'author'
-                                        ? `/beta-readers/${match.profile.handle}`
-                                        : `/authors/${match.profile.handle}`
+                                        ? showBetaReader(match.profile.handle)
+                                        : showAuthor(match.profile.handle)
                                 "
                             >
                                 {{ match.profile.display_name }}
@@ -161,7 +164,7 @@ defineOptions({
 
                     <div class="flex flex-wrap gap-2">
                         <Button size="sm" as-child>
-                            <Link :href="`/matches/${match.id}/conversation`">
+                            <Link :href="conversation(match.id)">
                                 {{ t('Conversation') }}
                                 <span
                                     v-if="match.unread_count"

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
+import AdminReviewController from '@/actions/App/Http/Controllers/AdminReviewController';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 defineProps<{
@@ -22,12 +23,12 @@ const labels = {
     listings: 'Total Beta Reading Listings',
 };
 const destinations = {
-    users: '/admin/users',
-    authorProfiles: '/admin/author-profiles',
-    betaReaderProfiles: '/admin/beta-reader-profiles',
-    books: '/admin/books',
-    openListings: '/admin/listings?status=open',
-    listings: '/admin/listings',
+    users: AdminReviewController.users(),
+    authorProfiles: AdminReviewController.authorProfiles(),
+    betaReaderProfiles: AdminReviewController.betaReaderProfiles(),
+    books: AdminReviewController.books(),
+    openListings: AdminReviewController.listings({ query: { status: 'open' } }),
+    listings: AdminReviewController.listings(),
 };
 </script>
 
