@@ -17,6 +17,8 @@ import {
 import { useTranslation } from '@/composables/useTranslation';
 import { dashboard } from '@/routes';
 import { index as books } from '@/routes/books';
+import { index as feed } from '@/routes/feed';
+import { index as matches } from '@/routes/matches';
 import type { NavItem } from '@/types';
 
 const page = usePage();
@@ -24,14 +26,14 @@ const { t } = useTranslation();
 const mainNavItems = computed<NavItem[]>(() => [
     { title: t('Dashboard'), href: dashboard(), icon: LayoutGrid },
     ...(page.props.auth.has_beta_reader_profile
-        ? [{ title: t('Feed'), href: '/feed', icon: Rows3 }]
+        ? [{ title: t('Feed'), href: feed(), icon: Rows3 }]
         : []),
     ...(page.props.auth.has_author_profile
         ? [{ title: t('Books'), href: books(), icon: BookCopy }]
         : []),
     ...(page.props.auth.has_author_profile ||
     page.props.auth.has_beta_reader_profile
-        ? [{ title: t('Matches'), href: '/matches', icon: Handshake }]
+        ? [{ title: t('Matches'), href: matches(), icon: Handshake }]
         : []),
 ]);
 </script>

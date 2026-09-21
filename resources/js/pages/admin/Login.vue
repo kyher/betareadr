@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import AuthSimpleLayout from '@/layouts/auth/AuthSimpleLayout.vue';
+import { store } from '@/routes/admin/login';
 </script>
 
 <template>
@@ -23,8 +24,7 @@ import AuthSimpleLayout from '@/layouts/auth/AuthSimpleLayout.vue';
             description="Enter your administrator credentials"
         >
             <Form
-                action="/admin/login"
-                method="post"
+                v-bind="store.form()"
                 :reset-on-success="['password']"
                 v-slot="{ errors, processing }"
                 class="grid gap-6"

@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { Form, Link, usePage } from '@inertiajs/vue3';
+import AdminReviewController from '@/actions/App/Http/Controllers/AdminReviewController';
 import AppearanceToggle from '@/components/AppearanceToggle.vue';
 import BrandLogo from '@/components/BrandLogo.vue';
 import { Button } from '@/components/ui/button';
+import { dashboard, logout } from '@/routes/admin';
 
 const administrator = usePage<{ administrator: { name: string } }>().props
     .administrator;
@@ -15,7 +17,7 @@ const administrator = usePage<{ administrator: { name: string } }>().props
                 class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-3 py-3 sm:px-6 sm:py-4"
             >
                 <Link
-                    href="/admin"
+                    :href="dashboard()"
                     class="flex shrink-0 items-center gap-1 sm:gap-2"
                 >
                     <BrandLogo class="text-lg [&_svg]:size-8" />
@@ -27,12 +29,18 @@ const administrator = usePage<{ administrator: { name: string } }>().props
                     aria-label="Admin navigation"
                     class="order-3 flex w-full flex-wrap gap-3 text-sm font-medium md:order-none md:w-auto"
                 >
-                    <Link href="/admin">Dashboard</Link>
-                    <Link href="/admin/users">Users</Link>
-                    <Link href="/admin/author-profiles">Authors</Link>
-                    <Link href="/admin/beta-reader-profiles">Beta Readers</Link>
-                    <Link href="/admin/books">Books</Link>
-                    <Link href="/admin/listings">Listings</Link>
+                    <Link :href="dashboard()">Dashboard</Link>
+                    <Link :href="AdminReviewController.users()">Users</Link>
+                    <Link :href="AdminReviewController.authorProfiles()"
+                        >Authors</Link
+                    >
+                    <Link :href="AdminReviewController.betaReaderProfiles()"
+                        >Beta Readers</Link
+                    >
+                    <Link :href="AdminReviewController.books()">Books</Link>
+                    <Link :href="AdminReviewController.listings()"
+                        >Listings</Link
+                    >
                 </nav>
                 <div class="flex items-center gap-3">
                     <AppearanceToggle />
@@ -41,7 +49,7 @@ const administrator = usePage<{ administrator: { name: string } }>().props
                     >
                         {{ administrator.name }}
                     </span>
-                    <Form action="/admin/logout" method="post">
+                    <Form v-bind="logout.form()">
                         <Button variant="ghost" type="submit">Log out</Button>
                     </Form>
                 </div>

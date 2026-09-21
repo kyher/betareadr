@@ -6,6 +6,11 @@ import ContentWarnings from '@/components/ContentWarnings.vue';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/composables/useTranslation';
 import { createConversationEcho } from '@/lib/conversationEcho';
+import { index as matchesIndex } from '@/routes/matches';
+import {
+    index as messagesIndex,
+    store as storeMessage,
+} from '@/routes/matches/messages';
 
 type Message = {
     id: number;
@@ -40,11 +45,15 @@ watch(
 );
 let echo: Echo<'reverb'> | undefined;
 
-const url = `/matches/${props.match.id}/messages`;
 async function page(cursor?: number): Promise<Page> {
-    const response = await fetch(cursor ? `${url}?cursor=${cursor}` : url, {
-        headers: { Accept: 'application/json' },
-    });
+    const response = await fetch(
+        messagesIndex.url(props.match.id, {
+            query: { cursor },
+        }),
+        {
+            headers: { Accept: 'application/json' },
+        },
+    );
 
     if (!response.ok) {
         throw new Error(t('Could not load messages.'));
@@ -109,7 +118,7 @@ async function send() {
     sendState.value = 'sending';
 
     try {
-        const response = await fetch(url, {
+        const response = await fetch(storeMessage.url(props.match.id), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -187,14 +196,14 @@ onUnmounted(() => {
 });
 
 defineOptions({
-    layout: { breadcrumbs: [{ title: 'Matches', href: '/matches' }] },
+    layout: { breadcrumbs: [{ title: 'Matches', href: matchesIndex() }] },
 });
 </script>
 
 <template>
     <Head :title="t('Conversation')" />
     <div class="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-4 p-4 md:p-8">
-        <Link href="/matches" class="text-sm underline">{{
+        <Link :href="matchesIndex()" class="text-sm underline">{{
             t('Matches')
         }}</Link>
         <h1 class="text-2xl font-semibold">

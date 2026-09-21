@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { Head, Link, usePage } from '@inertiajs/vue3';
+import AdminReviewController from '@/actions/App/Http/Controllers/AdminReviewController';
 import PaginationLinks from '@/components/PaginationLinks.vue';
+import { show as showAuthor } from '@/routes/authors';
+import { show as showBetaReader } from '@/routes/beta-readers';
 
 type Profile = { display_name: string; handle: string };
 type Record = {
@@ -46,8 +49,13 @@ const titles = {
 const topics = usePage<{ contentTopics: { [key: string]: string } }>().props
     .contentTopics;
 const date = (value: string) => new Date(value).toLocaleDateString('en-GB');
-const profileUrl = (profile: Profile, type: 'authors' | 'beta-readers') =>
-    `/${type}/${encodeURIComponent(profile.handle)}`;
+const destinations = {
+    users: AdminReviewController.users(),
+    'author-profiles': AdminReviewController.authorProfiles(),
+    'beta-reader-profiles': AdminReviewController.betaReaderProfiles(),
+    books: AdminReviewController.books(),
+    listings: AdminReviewController.listings(),
+};
 </script>
 
 <template>
@@ -86,7 +94,7 @@ const profileUrl = (profile: Profile, type: 'authors' | 'beta-readers') =>
         </button>
         <Link
             v-if="search || (status && status !== 'all')"
-            :href="`/admin/${type}`"
+            :href="destinations[type]"
             class="py-2 text-sm underline"
             >Clear</Link
         >
@@ -108,7 +116,7 @@ const profileUrl = (profile: Profile, type: 'authors' | 'beta-readers') =>
                     }}</template>
                     <Link
                         v-else-if="type === 'author-profiles' && record.handle"
-                        :href="`/authors/${encodeURIComponent(record.handle)}`"
+                        :href="showAuthor(record.handle)"
                         class="underline"
                         >{{ record.name }}</Link
                     >
@@ -116,7 +124,7 @@ const profileUrl = (profile: Profile, type: 'authors' | 'beta-readers') =>
                         v-else-if="
                             type === 'beta-reader-profiles' && record.handle
                         "
-                        :href="`/beta-readers/${encodeURIComponent(record.handle)}`"
+                        :href="showBetaReader(record.handle)"
                         class="underline"
                         >{{ record.name }}</Link
                     >
@@ -132,7 +140,7 @@ const profileUrl = (profile: Profile, type: 'authors' | 'beta-readers') =>
                 <p v-if="record.author" class="text-sm">
                     Author:
                     <Link
-                        :href="profileUrl(record.author, 'authors')"
+                        :href="showAuthor(record.author.handle)"
                         class="underline"
                         >{{ record.author.display_name }}</Link
                     >
@@ -140,7 +148,7 @@ const profileUrl = (profile: Profile, type: 'authors' | 'beta-readers') =>
                 <p v-if="record.reader" class="text-sm">
                     Beta Reader:
                     <Link
-                        :href="profileUrl(record.reader, 'beta-readers')"
+                        :href="showBetaReader(record.reader.handle)"
                         class="underline"
                         >{{ record.reader.display_name }}</Link
                     >
@@ -161,7 +169,7 @@ const profileUrl = (profile: Profile, type: 'authors' | 'beta-readers') =>
                     Author:
                     <Link
                         v-if="record.author"
-                        :href="profileUrl(record.author, 'authors')"
+                        :href="showAuthor(record.author.handle)"
                         class="underline"
                         >{{ record.author.display_name }}</Link
                     >
@@ -194,7 +202,7 @@ const profileUrl = (profile: Profile, type: 'authors' | 'beta-readers') =>
                     Author:
                     <Link
                         v-if="record.author"
-                        :href="profileUrl(record.author, 'authors')"
+                        :href="showAuthor(record.author.handle)"
                         class="underline"
                         >{{ record.author.display_name }}</Link
                     >

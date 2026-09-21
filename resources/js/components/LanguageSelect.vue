@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { router, usePage } from '@inertiajs/vue3';
 import { useTranslation } from '@/composables/useTranslation';
+import { update } from '@/routes/language';
 
 const page = usePage();
 const { t } = useTranslation();
 
 function change(event: Event) {
-    router.post('/language', {
+    router.post(update(), {
         locale: (event.target as HTMLSelectElement).value,
     });
 }
