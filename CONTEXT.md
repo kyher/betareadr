@@ -16,6 +16,10 @@ _Avoid_: Admin User, User role
 A User's permanent removal of their identity, both Profiles, Books, Listings, Interests, Passes, and every Match and Conversation in which they participate, including active Matches. Entire Conversations disappear for both participants, including both participants' messages and any history hidden by a Block; no moderation exception survives User deletion.
 _Avoid_: Deactivate, archive, anonymize
 
+**Remove User**:
+An Administrator's permanent deletion of a User under the same removal rules as Delete User. It retains no reason or audit record and does not prevent the person from registering again.
+_Avoid_: Ban, suspend, deactivate
+
 **Author**:
 A User participating through an Author Profile to seek beta-reader feedback on one or more books.
 _Avoid_: Writer, creator

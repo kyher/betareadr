@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import AdminReviewController from '@/actions/App/Http/Controllers/AdminReviewController';
 import PaginationLinks from '@/components/PaginationLinks.vue';
+import { Button } from '@/components/ui/button';
 import { show as showAuthor } from '@/routes/authors';
 import { show as showBetaReader } from '@/routes/beta-readers';
 
@@ -55,6 +56,17 @@ const destinations = {
     'beta-reader-profiles': AdminReviewController.betaReaderProfiles(),
     books: AdminReviewController.books(),
     listings: AdminReviewController.listings(),
+};
+const removeUser = (record: Record) => {
+    if (
+        confirm(
+            `Remove ${record.name}? Their profiles, books, listings, active and ended matches, and entire conversations—including other participants' messages—will be permanently deleted. This cannot be undone.`,
+        )
+    ) {
+        router.delete(AdminReviewController.destroyUser(record.id).url, {
+            preserveScroll: true,
+        });
+    }
 };
 </script>
 
@@ -153,6 +165,14 @@ const destinations = {
                         >{{ record.reader.display_name }}</Link
                     >
                 </p>
+                <Button
+                    class="mt-3"
+                    variant="destructive"
+                    size="sm"
+                    @click="removeUser(record)"
+                >
+                    Remove user
+                </Button>
             </template>
             <template
                 v-else-if="
