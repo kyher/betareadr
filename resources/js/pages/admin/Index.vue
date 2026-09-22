@@ -60,7 +60,7 @@ const destinations = {
 const removeUser = (record: Record) => {
     if (
         confirm(
-            `Remove ${record.name}? Their profiles, books, listings, matches, and entire conversations—including other participants' messages—will be permanently deleted. This cannot be undone.`,
+            `Remove ${record.name}? Their profiles, books, listings, active and ended matches, and entire conversations—including other participants' messages—will be permanently deleted. This cannot be undone.`,
         )
     ) {
         router.delete(AdminReviewController.destroyUser(record.id).url, {
