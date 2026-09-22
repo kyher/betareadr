@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Users\DeleteUser;
 use App\Models\AuthorProfile;
 use App\Models\BetaReaderProfile;
 use App\Models\BetaReadingListing;
 use App\Models\Book;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -34,6 +36,15 @@ class AdminReviewController extends Controller
                     'created_at' => $user->created_at,
                 ]),
         ]);
+    }
+
+    public function destroyUser(User $user, DeleteUser $deleteUser): RedirectResponse
+    {
+        $deleteUser->handle($user);
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('User removed.')]);
+
+        return back();
     }
 
     public function authorProfiles(Request $request): Response
