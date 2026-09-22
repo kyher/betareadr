@@ -129,6 +129,24 @@ class AdminTest extends TestCase
             ->where('records.total', 1)->where('records.data.0.id', $closed->id));
     }
 
+    public function test_administrator_can_remove_a_user(): void
+    {
+        $administrator = Administrator::create([
+            'name' => 'Operator', 'email' => 'operator@example.com', 'password' => 'password',
+        ]);
+        $user = User::factory()->create();
+
+        $this->delete("/admin/users/{$user->id}")->assertRedirect('/admin/login');
+        $this->actingAs(User::factory()->create())
+            ->delete("/admin/users/{$user->id}")->assertRedirect('/admin/login');
+
+        $this->actingAs($administrator, 'admin')
+            ->delete("/admin/users/{$user->id}")->assertRedirect();
+
+        $this->assertModelMissing($user);
+        $this->assertAuthenticatedAs($administrator, 'admin');
+    }
+
     public function test_administrator_commands_manage_credentials(): void
     {
         $this->artisan('admin:create ADMIN@example.com')
