@@ -1,6 +1,33 @@
 export type Locale = 'en' | 'es' | 'fr';
 export type ContentLanguage = 'en' | 'es' | 'fr';
 export type ReadingLanguage = ContentLanguage | '*';
+export type Genre =
+    | 'action_adventure'
+    | 'biography'
+    | 'childrens'
+    | 'contemporary_fiction'
+    | 'crime'
+    | 'erotica'
+    | 'fantasy'
+    | 'graphic_novel'
+    | 'historical_fiction'
+    | 'history'
+    | 'horror'
+    | 'humor'
+    | 'literary_fiction'
+    | 'memoir'
+    | 'mystery'
+    | 'nonfiction'
+    | 'paranormal'
+    | 'poetry'
+    | 'religion_spirituality'
+    | 'romance'
+    | 'science_fiction'
+    | 'self_help'
+    | 'thriller_suspense'
+    | 'western'
+    | 'young_adult'
+    | 'other';
 
 export type User = {
     id: number;
@@ -40,6 +67,7 @@ export type Book = {
     title: string;
     description: string | null;
     language: ContentLanguage;
+    genre: Genre | null;
     content_warnings: string[];
 };
 

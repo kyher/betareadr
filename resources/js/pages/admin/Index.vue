@@ -17,6 +17,7 @@ type Record = {
     user?: string;
     title?: string;
     language?: string;
+    genre?: string | null;
     warnings?: string[];
     description?: string | null;
     closed_at?: string | null;
@@ -193,7 +194,10 @@ const removeUser = (record: Record) => {
                         class="underline"
                         >{{ record.author.display_name }}</Link
                     >
-                    · {{ record.language }}
+                    · {{ record.language
+                    }}<template v-if="record.genre">
+                        · {{ record.genre }}</template
+                    >
                 </p>
                 <p class="text-sm">
                     Content Warnings:

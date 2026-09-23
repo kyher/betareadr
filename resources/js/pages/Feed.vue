@@ -23,7 +23,7 @@ import {
 import { useTranslation } from '@/composables/useTranslation';
 import { show as showAuthor } from '@/routes/authors';
 import { index as feed, interest, pass } from '@/routes/feed';
-import type { ContentLanguage } from '@/types';
+import type { ContentLanguage, Genre } from '@/types';
 
 type FeedListing = {
     id: number;
@@ -33,6 +33,7 @@ type FeedListing = {
         title: string;
         description: string | null;
         language: ContentLanguage;
+        genre: Genre | null;
         content_warnings: string[];
     };
     author: {
@@ -280,6 +281,10 @@ defineOptions({
                                 displayedListing.book.language
                             ]
                         }}
+                        <template v-if="displayedListing.book.genre">
+                            ·
+                            {{ page.props.genres[displayedListing.book.genre] }}
+                        </template>
                     </p>
                     <Link
                         :href="showAuthor(displayedListing.author.handle)"

@@ -105,6 +105,9 @@ defineOptions({
                         <CardTitle>{{ book.title }}</CardTitle>
                         <p class="mt-1 text-sm text-muted-foreground">
                             {{ $page.props.contentLanguages[book.language] }}
+                            <template v-if="book.genre">
+                                · {{ $page.props.genres[book.genre] }}
+                            </template>
                         </p>
                         <ContentWarnings :warnings="book.content_warnings" />
                         <CardDescription

@@ -63,6 +63,9 @@ const { t } = useTranslation();
                                 {{
                                     $page.props.contentLanguages[book.language]
                                 }}
+                                <template v-if="book.genre">
+                                    · {{ $page.props.genres[book.genre] }}
+                                </template>
                             </p>
                             <ContentWarnings
                                 :warnings="book.content_warnings"
