@@ -39,7 +39,7 @@ class BetaReadingListingReviewController extends Controller
             ->map(fn (BetaReadingMatch $match): array => $this->readerData($match->readerDecision, $match->id));
 
         return Inertia::render('beta-reading-listings/Review', [
-            'book' => $book->only(['id', 'title', 'content_warnings']),
+            'book' => $book->only(['id', 'title', 'language', 'genre', 'content_warnings']),
             'listing' => $listing->only(['id', 'closed_at']),
             'interested' => $interested,
             'approved' => $approved,

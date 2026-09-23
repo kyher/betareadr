@@ -44,7 +44,7 @@ class MatchController extends Controller
                         'unread_count' => $match->messages()->where('sender_id', '!=', $user->id)->where('id', '>', $isAuthor ? $match->author_read_message_id : $match->reader_read_message_id)->count(),
                         'role' => $isAuthor ? 'author' : 'beta_reader',
                         'profile' => $profile->only(['display_name', 'handle']),
-                        'book' => $book->only(['id', 'title', 'content_warnings']),
+                        'book' => $book->only(['id', 'title', 'language', 'genre', 'content_warnings']),
                         'listing' => $listing->only(['id', 'reading_brief']),
                         'created_at' => $match->created_at?->toISOString(),
                         'ended_at' => $match->ended_at?->toISOString(),

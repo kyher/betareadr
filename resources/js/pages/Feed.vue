@@ -9,6 +9,7 @@ import {
     X,
 } from '@lucide/vue';
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
+import BookMetadata from '@/components/BookMetadata.vue';
 import ContentWarnings from '@/components/ContentWarnings.vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -275,17 +276,10 @@ defineOptions({
                     <CardTitle class="text-2xl sm:text-3xl">
                         {{ displayedListing.book.title }}
                     </CardTitle>
-                    <p class="text-sm text-muted-foreground">
-                        {{
-                            page.props.contentLanguages[
-                                displayedListing.book.language
-                            ]
-                        }}
-                        <template v-if="displayedListing.book.genre">
-                            ·
-                            {{ page.props.genres[displayedListing.book.genre] }}
-                        </template>
-                    </p>
+                    <BookMetadata
+                        :language="displayedListing.book.language"
+                        :genre="displayedListing.book.genre"
+                    />
                     <Link
                         :href="showAuthor(displayedListing.author.handle)"
                         class="flex w-fit items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:underline"

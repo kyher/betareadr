@@ -96,6 +96,8 @@ class BetaReadingListingTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('beta-reading-listings/Index')
                 ->where('book.id', $book->id)
+                ->where('book.language', 'en')
+                ->where('book.genre', 'fantasy')
                 ->where('hasOpenListing', true)
                 ->has('listings.data', 3)
                 ->where('listings.data.0.id', $open->id)
@@ -236,7 +238,7 @@ class BetaReadingListingTest extends TestCase
 
     private function bookFor(User $user, string $title = 'A Book'): Book
     {
-        return $user->authorProfile->books()->create(['title' => $title, 'language' => 'en']);
+        return $user->authorProfile->books()->create(['title' => $title, 'language' => 'en', 'genre' => 'fantasy']);
     }
 
     private function listingFor(

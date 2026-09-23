@@ -4,6 +4,7 @@ import { Handshake } from '@lucide/vue';
 import type Echo from 'laravel-echo';
 import { onMounted, onUnmounted } from 'vue';
 import MatchController from '@/actions/App/Http/Controllers/MatchController';
+import BookMetadata from '@/components/BookMetadata.vue';
 import ContentWarnings from '@/components/ContentWarnings.vue';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -30,12 +31,16 @@ import { createConversationEcho } from '@/lib/conversationEcho';
 import { show as showAuthor } from '@/routes/authors';
 import { show as showBetaReader } from '@/routes/beta-readers';
 import { conversation, index as matchesIndex } from '@/routes/matches';
+import type { Book } from '@/types';
 
 type Match = {
     id: number;
     role: 'author' | 'beta_reader';
     profile: { display_name: string; handle: string };
-    book: { id: number; title: string; content_warnings: string[] };
+    book: Pick<
+        Book,
+        'id' | 'title' | 'language' | 'genre' | 'content_warnings'
+    >;
     listing: { id: number; reading_brief: string };
     created_at: string;
     ended_at: string | null;
@@ -122,6 +127,10 @@ defineOptions({
                             {{ match.book.title }} ·
                             {{ match.ended_at ? t('Ended') : t('Active') }}
                         </CardDescription>
+                        <BookMetadata
+                            :language="match.book.language"
+                            :genre="match.book.genre"
+                        />
                         <ContentWarnings
                             :warnings="match.book.content_warnings"
                         />
