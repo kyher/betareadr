@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ContentLanguage;
+use App\Enums\Genre;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,11 +16,12 @@ use Illuminate\Support\Carbon;
  * @property string $title
  * @property string|null $description
  * @property ContentLanguage $language
+ * @property Genre|null $genre
  * @property list<string> $content_warnings
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['title', 'description', 'language', 'content_warnings'])]
+#[Fillable(['title', 'description', 'language', 'genre', 'content_warnings'])]
 class Book extends Model
 {
     protected $attributes = ['content_warnings' => '[]'];
@@ -38,6 +40,6 @@ class Book extends Model
 
     protected function casts(): array
     {
-        return ['language' => ContentLanguage::class, 'content_warnings' => 'array'];
+        return ['language' => ContentLanguage::class, 'genre' => Genre::class, 'content_warnings' => 'array'];
     }
 }
