@@ -137,6 +137,8 @@ class BetaReadingListingReviewTest extends TestCase
                 ->where('matches.0.role', 'author')
                 ->where('matches.0.profile.handle', 'reader')
                 ->where('matches.0.book.title', 'A Book')
+                ->where('matches.0.book.language', 'en')
+                ->where('matches.0.book.genre', 'fantasy')
                 ->where('matches.0.listing.reading_brief', 'A draft ready for feedback.'));
 
         $this->actingAs($reader)->get(route('matches.index'))
@@ -189,7 +191,7 @@ class BetaReadingListingReviewTest extends TestCase
 
     private function bookFor(User $author, string $title = 'A Book'): Book
     {
-        return $author->authorProfile->books()->create(['title' => $title, 'language' => 'en']);
+        return $author->authorProfile->books()->create(['title' => $title, 'language' => 'en', 'genre' => 'fantasy']);
     }
 
     private function listingFor(Book $book, bool $closed = false): BetaReadingListing

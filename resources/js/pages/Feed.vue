@@ -9,6 +9,7 @@ import {
     X,
 } from '@lucide/vue';
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
+import BookMetadata from '@/components/BookMetadata.vue';
 import ContentWarnings from '@/components/ContentWarnings.vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -23,7 +24,7 @@ import {
 import { useTranslation } from '@/composables/useTranslation';
 import { show as showAuthor } from '@/routes/authors';
 import { index as feed, interest, pass } from '@/routes/feed';
-import type { ContentLanguage } from '@/types';
+import type { ContentLanguage, Genre } from '@/types';
 
 type FeedListing = {
     id: number;
@@ -33,6 +34,7 @@ type FeedListing = {
         title: string;
         description: string | null;
         language: ContentLanguage;
+        genre: Genre | null;
         content_warnings: string[];
     };
     author: {
@@ -274,13 +276,10 @@ defineOptions({
                     <CardTitle class="text-2xl sm:text-3xl">
                         {{ displayedListing.book.title }}
                     </CardTitle>
-                    <p class="text-sm text-muted-foreground">
-                        {{
-                            page.props.contentLanguages[
-                                displayedListing.book.language
-                            ]
-                        }}
-                    </p>
+                    <BookMetadata
+                        :language="displayedListing.book.language"
+                        :genre="displayedListing.book.genre"
+                    />
                     <Link
                         :href="showAuthor(displayedListing.author.handle)"
                         class="flex w-fit items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:underline"

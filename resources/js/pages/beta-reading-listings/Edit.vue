@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
 import BetaReadingListingController from '@/actions/App/Http/Controllers/BetaReadingListingController';
+import BookMetadata from '@/components/BookMetadata.vue';
 import ContentWarnings from '@/components/ContentWarnings.vue';
 import InputError from '@/components/InputError.vue';
 import { Badge } from '@/components/ui/badge';
@@ -16,8 +17,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from '@/composables/useTranslation';
 import { index as books } from '@/routes/books';
+import type { Book } from '@/types';
 
-type BookSummary = { id: number; title: string; content_warnings: string[] };
+type BookSummary = Pick<
+    Book,
+    'id' | 'title' | 'language' | 'genre' | 'content_warnings'
+>;
 type Listing = {
     id: number;
     reading_brief: string;
@@ -53,6 +58,7 @@ defineOptions({
                     </Badge>
                 </div>
                 <CardDescription>{{ book.title }}</CardDescription>
+                <BookMetadata :language="book.language" :genre="book.genre" />
                 <ContentWarnings :warnings="book.content_warnings" />
             </CardHeader>
             <CardContent>

@@ -2,6 +2,7 @@
 import { Head, Link, router } from '@inertiajs/vue3';
 import type Echo from 'laravel-echo';
 import { onMounted, onUnmounted, ref, watch } from 'vue';
+import BookMetadata from '@/components/BookMetadata.vue';
 import ContentWarnings from '@/components/ContentWarnings.vue';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/composables/useTranslation';
@@ -11,6 +12,7 @@ import {
     index as messagesIndex,
     store as storeMessage,
 } from '@/routes/matches/messages';
+import type { Book } from '@/types';
 
 type Message = {
     id: number;
@@ -25,7 +27,7 @@ const props = defineProps<{
         ended_at: string | null;
         ended_by: 'author' | 'beta_reader' | null;
         profile: { display_name: string };
-        book: { title: string; content_warnings: string[] };
+        book: Pick<Book, 'title' | 'language' | 'genre' | 'content_warnings'>;
     };
     userId: number;
 }>();
@@ -210,6 +212,10 @@ defineOptions({
             {{ t('Conversation') }} · {{ match.profile.display_name }}
         </h1>
         <p class="text-sm text-muted-foreground">{{ match.book.title }}</p>
+        <BookMetadata
+            :language="match.book.language"
+            :genre="match.book.genre"
+        />
         <ContentWarnings :warnings="match.book.content_warnings" />
         <p v-if="error" role="alert" class="text-sm text-destructive">
             {{ error }}

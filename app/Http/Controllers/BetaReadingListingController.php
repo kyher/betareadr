@@ -22,7 +22,7 @@ class BetaReadingListingController extends AuthenticatedUserController
         $this->authorizeBook($book);
 
         return Inertia::render('beta-reading-listings/Index', [
-            'book' => $book->only(['id', 'title', 'content_warnings']),
+            'book' => $book->only(['id', 'title', 'language', 'genre', 'content_warnings']),
             'hasOpenListing' => $book->betaReadingListings()->whereNull('closed_at')->exists(),
             'listings' => $book->betaReadingListings()
                 ->withCount([
@@ -50,7 +50,7 @@ class BetaReadingListingController extends AuthenticatedUserController
         }
 
         return Inertia::render('beta-reading-listings/Create', [
-            'book' => $book->only(['id', 'title', 'content_warnings']),
+            'book' => $book->only(['id', 'title', 'language', 'genre', 'content_warnings']),
         ]);
     }
 
@@ -71,7 +71,7 @@ class BetaReadingListingController extends AuthenticatedUserController
         $this->authorizeListing($book, $listing);
 
         return Inertia::render('beta-reading-listings/Edit', [
-            'book' => $book->only(['id', 'title', 'content_warnings']),
+            'book' => $book->only(['id', 'title', 'language', 'genre', 'content_warnings']),
             'listing' => $this->listingData($listing),
         ]);
     }

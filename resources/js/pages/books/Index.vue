@@ -4,6 +4,7 @@ import { BookOpen, List, Pencil, Plus, Trash2 } from '@lucide/vue';
 import { computed } from 'vue';
 import BetaReadingListingController from '@/actions/App/Http/Controllers/BetaReadingListingController';
 import BookController from '@/actions/App/Http/Controllers/BookController';
+import BookMetadata from '@/components/BookMetadata.vue';
 import ContentWarnings from '@/components/ContentWarnings.vue';
 import InputError from '@/components/InputError.vue';
 import PaginationLinks from '@/components/PaginationLinks.vue';
@@ -103,9 +104,11 @@ defineOptions({
                 <CardHeader class="gap-4 sm:flex-row sm:items-start">
                     <div class="min-w-0 flex-1">
                         <CardTitle>{{ book.title }}</CardTitle>
-                        <p class="mt-1 text-sm text-muted-foreground">
-                            {{ $page.props.contentLanguages[book.language] }}
-                        </p>
+                        <BookMetadata
+                            class="mt-1"
+                            :language="book.language"
+                            :genre="book.genre"
+                        />
                         <ContentWarnings :warnings="book.content_warnings" />
                         <CardDescription
                             v-if="book.description"

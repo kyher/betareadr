@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
 import BookController from '@/actions/App/Http/Controllers/BookController';
+import BookGenreField from '@/components/BookGenreField.vue';
 import BookLanguageField from '@/components/BookLanguageField.vue';
 import ContentTopicsField from '@/components/ContentTopicsField.vue';
 import InputError from '@/components/InputError.vue';
@@ -84,6 +85,7 @@ defineOptions({
                         :language="book.language"
                         :error="errors.language"
                     />
+                    <BookGenreField :genre="book.genre" :error="errors.genre" />
                     <ContentTopicsField
                         field="content_warnings"
                         :selected="book.content_warnings"

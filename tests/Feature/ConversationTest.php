@@ -39,7 +39,11 @@ class ConversationTest extends TestCase
         $this->actingAs($outsider)->postJson('/broadcasting/auth', ['channel_name' => 'private-matches.'.$match->id, 'socket_id' => '1.2'])->assertForbidden();
 
         $this->actingAs($author)->get(route('matches.conversation', $match))
-            ->assertInertia(fn (Assert $page) => $page->component('matches/Conversation')->where('match.id', $match->id));
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('matches/Conversation')
+                ->where('match.id', $match->id)
+                ->where('match.book.language', 'en')
+                ->where('match.book.genre', 'fantasy'));
         $this->actingAs($reader)->get(route('matches.conversation', $match))->assertOk();
         $this->postJson('/broadcasting/auth', ['channel_name' => 'private-matches.'.$match->id, 'socket_id' => '1.2'])->assertOk();
     }
@@ -222,7 +226,7 @@ class ConversationTest extends TestCase
     {
         $author = User::factory()->create();
         $authorProfile = $author->authorProfile()->create(['display_name' => 'Author', 'handle' => 'author'.$suffix]);
-        $book = $authorProfile->books()->create(['title' => 'Book', 'language' => 'en']);
+        $book = $authorProfile->books()->create(['title' => 'Book', 'language' => 'en', 'genre' => 'fantasy']);
         $listing = $book->betaReadingListings()->create(['reading_brief' => 'Draft', 'word_count' => 100]);
         $reader = User::factory()->create();
         $profile = $reader->betaReaderProfile()->create(['display_name' => 'Reader', 'handle' => 'reader'.$suffix, 'reading_languages' => ['*']]);

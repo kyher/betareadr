@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
+import BookMetadata from '@/components/BookMetadata.vue';
 import ContentWarnings from '@/components/ContentWarnings.vue';
 import PaginationLinks from '@/components/PaginationLinks.vue';
 import PublicProfileHeader from '@/components/PublicProfileHeader.vue';
@@ -59,11 +60,10 @@ const { t } = useTranslation();
                     >
                         <CardHeader>
                             <CardTitle>{{ book.title }}</CardTitle>
-                            <p class="text-sm text-muted-foreground">
-                                {{
-                                    $page.props.contentLanguages[book.language]
-                                }}
-                            </p>
+                            <BookMetadata
+                                :language="book.language"
+                                :genre="book.genre"
+                            />
                             <ContentWarnings
                                 :warnings="book.content_warnings"
                             />
