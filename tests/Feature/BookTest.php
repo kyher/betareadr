@@ -16,20 +16,22 @@ class BookTest extends TestCase
     {
         $user = $this->author();
         $this->actingAs($user)->post(route('books.store'), [
-            'title' => 'Warned Book', 'language' => 'en', 'content_warnings' => ['abuse', 'violence'],
+            'title' => 'Warned Book', 'language' => 'en', 'genre' => 'horror', 'content_warnings' => ['abuse', 'violence'],
         ])->assertSessionHasNoErrors();
         $book = $user->authorProfile->books()->where('title', 'Warned Book')->firstOrFail();
         $this->assertSame(['abuse', 'violence'], $book->content_warnings);
 
         $this->get(route('authors.show', $user->authorProfile))
-            ->assertInertia(fn (Assert $page) => $page->where('books.data.0.content_warnings', ['abuse', 'violence']));
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('books.data.0.genre', 'horror')
+                ->where('books.data.0.content_warnings', ['abuse', 'violence']));
 
         $this->actingAs($user)->patch(route('books.update', $book), [
-            'title' => 'Warned Book', 'language' => 'en', 'content_warnings' => ['unknown'],
+            'title' => 'Warned Book', 'language' => 'en', 'genre' => 'horror', 'content_warnings' => ['unknown'],
         ])->assertSessionHasErrors('content_warnings.0');
 
         $this->actingAs($user)->patch(route('books.update', $book), [
-            'title' => 'Warned Book', 'language' => 'en',
+            'title' => 'Warned Book', 'language' => 'en', 'genre' => 'horror',
         ])->assertSessionHasNoErrors();
         $this->assertSame([], $book->fresh()->content_warnings);
     }
@@ -52,7 +54,7 @@ class BookTest extends TestCase
 
         $this->actingAs($user)->get(route('books.index'))->assertRedirect(route('author-profile.create'));
         $this->actingAs($user)->get(route('books.create'))->assertRedirect(route('author-profile.create'));
-        $this->actingAs($user)->post(route('books.store'), ['title' => 'A Book', 'language' => 'en'])
+        $this->actingAs($user)->post(route('books.store'), ['title' => 'A Book', 'language' => 'en', 'genre' => 'other'])
             ->assertRedirect(route('author-profile.create'));
     }
 
@@ -64,12 +66,14 @@ class BookTest extends TestCase
             'title' => '  The Dispossessed  ',
             'description' => '  An ambiguous utopia.  ',
             'language' => 'en',
+            'genre' => 'science_fiction',
         ])->assertSessionHasNoErrors()->assertRedirect(route('books.index'));
 
         $this->actingAs($user)->post(route('books.store'), [
             'title' => 'The Lathe of Heaven',
             'description' => '',
             'language' => 'fr',
+            'genre' => 'science_fiction',
         ])->assertSessionHasNoErrors();
 
         $this->assertDatabaseHas('books', [
@@ -77,11 +81,13 @@ class BookTest extends TestCase
             'title' => 'The Dispossessed',
             'description' => 'An ambiguous utopia.',
             'language' => 'en',
+            'genre' => 'science_fiction',
         ]);
         $this->assertDatabaseHas('books', [
             'title' => 'The Lathe of Heaven',
             'description' => null,
             'language' => 'fr',
+            'genre' => 'science_fiction',
         ]);
     }
 
@@ -90,7 +96,7 @@ class BookTest extends TestCase
         $user = $this->author();
 
         $user->authorProfile->books()->create(['title' => 'Working Title', 'language' => 'en']);
-        $this->actingAs($user)->post(route('books.store'), ['title' => 'Working Title', 'language' => 'en'])
+        $this->actingAs($user)->post(route('books.store'), ['title' => 'Working Title', 'language' => 'en', 'genre' => 'other'])
             ->assertSessionHasNoErrors();
 
         $this->assertSame(2, Book::query()->where('title', 'Working Title')->count());
@@ -104,12 +110,13 @@ class BookTest extends TestCase
             'title' => str_repeat('a', 201),
             'description' => str_repeat('b', 2001),
             'language' => 'xx',
-        ])->assertSessionHasErrors(['title', 'description', 'language']);
+            'genre' => 'made_up',
+        ])->assertSessionHasErrors(['title', 'description', 'language', 'genre']);
 
         $this->actingAs($user)->post(route('books.store'), ['title' => ''])
             ->assertSessionHasErrors('title');
         $this->actingAs($user)->post(route('books.store'), ['title' => 'A Book'])
-            ->assertSessionHasErrors('language');
+            ->assertSessionHasErrors(['language', 'genre']);
     }
 
     public function test_author_sees_only_their_books_on_the_management_page_newest_first(): void
@@ -140,9 +147,10 @@ class BookTest extends TestCase
             'title' => 'Changed Title',
             'description' => 'Changed description.',
             'language' => 'es',
+            'genre' => 'fantasy',
         ])->assertSessionHasNoErrors()->assertRedirect(route('books.index'));
 
-        $this->assertDatabaseHas('books', ['id' => $book->id, 'title' => 'Changed Title', 'language' => 'es']);
+        $this->assertDatabaseHas('books', ['id' => $book->id, 'title' => 'Changed Title', 'language' => 'es', 'genre' => 'fantasy']);
 
         $this->actingAs($user)->delete(route('books.destroy', $book))
             ->assertRedirect(route('books.index'));
