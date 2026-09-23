@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Enums\ContentLanguage;
 use App\Enums\ContentTopic;
+use App\Enums\Genre;
 use App\Models\Administrator;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -53,6 +54,8 @@ class HandleInertiaRequests extends Middleware
                 ->mapWithKeys(fn (ContentLanguage $language) => [$language->value => $language->label()]),
             'contentTopics' => collect(ContentTopic::cases())
                 ->mapWithKeys(fn (ContentTopic $topic) => [$topic->value => __($topic->label())]),
+            'genres' => collect(Genre::cases())
+                ->mapWithKeys(fn (Genre $genre) => [$genre->value => __($genre->label())]),
             'translations' => is_file($translations)
                 ? File::json($translations)
                 : [],

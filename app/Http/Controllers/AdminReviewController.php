@@ -106,6 +106,7 @@ class AdminReviewController extends Controller
                     'title' => $book->title,
                     'author' => $book->authorProfile->only(['display_name', 'handle']),
                     'language' => $book->language->label(),
+                    'genre' => $book->genre === null ? null : __($book->genre->label()),
                     'warnings' => $book->content_warnings,
                     'description' => $book->description,
                     'created_at' => $book->created_at,

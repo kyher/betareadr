@@ -87,7 +87,7 @@ class AuthorProfileController extends AuthenticatedUserController
                 ->latest()
                 ->latest('id')
                 ->paginate(12)
-                ->through(fn ($book): array => $book->only(['id', 'title', 'description', 'language', 'content_warnings'])),
+                ->through(fn ($book): array => $book->only(['id', 'title', 'description', 'language', 'genre', 'content_warnings'])),
         ]);
     }
 }
