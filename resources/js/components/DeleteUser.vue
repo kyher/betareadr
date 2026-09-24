@@ -27,8 +27,10 @@ const { t } = useTranslation();
     <div class="space-y-6">
         <Heading
             variant="small"
-            :title="t('Delete account')"
-            :description="t('Delete your account and all of its resources')"
+            :title="t('Delete User')"
+            :description="
+                t('Permanently delete this User and all associated data')
+            "
         />
         <div
             class="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10"
@@ -46,7 +48,7 @@ const { t } = useTranslation();
                     <Button
                         variant="destructive"
                         data-test="delete-user-button"
-                        >{{ t('Delete account') }}</Button
+                        >{{ t('Delete User') }}</Button
                     >
                 </DialogTrigger>
                 <DialogContent>
@@ -62,14 +64,12 @@ const { t } = useTranslation();
                     >
                         <DialogHeader class="space-y-3">
                             <DialogTitle>{{
-                                t(
-                                    'Are you sure you want to delete your account?',
-                                )
+                                t('Are you sure you want to delete this User?')
                             }}</DialogTitle>
                             <DialogDescription>
                                 {{
                                     t(
-                                        'Deleting your account permanently removes your profiles, Books, Listings, and all Matches and Conversations, including all messages for both participants. This includes active Matches and blocked history. This cannot be undone. Please enter your password to confirm.',
+                                        'Deleting this User permanently removes their Profiles, Books, Listings, and all Matches and Conversations, including all messages for both participants. This includes active Matches and blocked history. This cannot be undone. Please enter your password to confirm.',
                                     )
                                 }}
                             </DialogDescription>
@@ -109,7 +109,7 @@ const { t } = useTranslation();
                                 :disabled="processing"
                                 data-test="confirm-delete-user-button"
                             >
-                                {{ t('Delete account') }}
+                                {{ t('Delete User') }}
                             </Button>
                         </DialogFooter>
                     </Form>

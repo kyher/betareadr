@@ -16,7 +16,7 @@ class ReviewInterest
         BetaReadingListingAuthorDecision $decision,
     ): bool {
         return DB::transaction(function () use ($interest, $decision): bool {
-            // Serialize approval with account deletion before creating a new Match.
+            // Serialize approval with User deletion before creating a new Match.
             $participantIds = [
                 $interest->betaReaderProfile->user_id,
                 $interest->betaReadingListing->book->authorProfile->user_id,

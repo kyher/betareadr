@@ -67,7 +67,7 @@ class ProfileUpdateTest extends TestCase
                 ->where('translations.Profile', 'Profil'));
     }
 
-    public function test_user_can_delete_their_account()
+    public function test_user_can_delete_themselves()
     {
         $user = User::factory()->create();
         $other = User::factory()->create();
@@ -95,7 +95,7 @@ class ProfileUpdateTest extends TestCase
         $this->assertDatabaseHas('password_reset_tokens', ['email' => $other->email]);
     }
 
-    public function test_correct_password_must_be_provided_to_delete_account()
+    public function test_correct_password_must_be_provided_to_delete_user()
     {
         $user = User::factory()->create();
 
