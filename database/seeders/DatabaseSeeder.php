@@ -47,6 +47,7 @@ class DatabaseSeeder extends Seeder
             'title' => 'The Test Manuscript',
             'description' => fake()->paragraphs(2, true),
             'language' => 'en',
+            'genre' => 'other',
         ])->betaReadingListings()->create([
             'reading_brief' => 'Looking for feedback on character motivation and pacing.',
             'word_count' => 80000,
@@ -78,6 +79,7 @@ class DatabaseSeeder extends Seeder
                     'title' => fake()->sentence(3),
                     'description' => fake()->paragraphs(2, true),
                     'language' => 'en',
+                    'genre' => 'other',
                 ]);
 
                 $listing = $book->betaReadingListings()->create([

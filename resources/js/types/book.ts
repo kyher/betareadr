@@ -33,6 +33,6 @@ export type Book = {
     title: string;
     description: string | null;
     language: ContentLanguage;
-    genre: Genre | null;
+    genre: Genre;
     content_warnings: string[];
 };
