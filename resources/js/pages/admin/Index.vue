@@ -17,7 +17,7 @@ type Record = {
     user?: string;
     title?: string;
     language?: string;
-    genre?: string | null;
+    genre?: string;
     warnings?: string[];
     description?: string | null;
     closed_at?: string | null;

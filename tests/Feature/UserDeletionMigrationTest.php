@@ -44,7 +44,7 @@ class UserDeletionMigrationTest extends TestCase
     {
         $author = User::factory()->create();
         $authorProfile = $author->authorProfile()->create(['display_name' => 'Author', 'handle' => 'author'.$suffix]);
-        $book = $authorProfile->books()->create(['title' => 'Book', 'language' => 'en']);
+        $book = $authorProfile->books()->create(['title' => 'Book', 'language' => 'en', 'genre' => 'other']);
         $listing = $book->betaReadingListings()->create(['reading_brief' => 'Draft', 'word_count' => 100]);
         $reader = User::factory()->create();
         $profile = $reader->betaReaderProfile()->create(['display_name' => 'Reader', 'handle' => 'reader'.$suffix, 'reading_languages' => ['*']]);

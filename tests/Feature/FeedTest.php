@@ -271,6 +271,7 @@ class FeedTest extends TestCase
             'title' => $bookTitle,
             'description' => 'A Book description.',
             'language' => $language,
+            'genre' => 'other',
         ]);
 
         return $book->betaReadingListings()->create([

@@ -34,6 +34,7 @@ class AdminTest extends TestCase
             'title' => 'A Book',
             'description' => 'A description',
             'language' => 'en',
+            'genre' => 'other',
         ]);
         $book->betaReadingListings()->create([
             'reading_brief' => 'Please review this book.',
@@ -91,7 +92,7 @@ class AdminTest extends TestCase
             'reading_languages' => ['en'], 'content_boundaries' => ['violence'],
         ]);
         $book = $author->books()->create([
-            'title' => 'Specific Book', 'description' => 'Review this description', 'language' => 'en',
+            'title' => 'Specific Book', 'description' => 'Review this description', 'language' => 'en', 'genre' => 'other',
         ]);
         $listing = $book->betaReadingListings()->create([
             'reading_brief' => 'Review this brief', 'word_count' => 80000,

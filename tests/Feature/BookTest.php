@@ -95,7 +95,7 @@ class BookTest extends TestCase
     {
         $user = $this->author();
 
-        $user->authorProfile->books()->create(['title' => 'Working Title', 'language' => 'en']);
+        $user->authorProfile->books()->create(['title' => 'Working Title', 'language' => 'en', 'genre' => 'other']);
         $this->actingAs($user)->post(route('books.store'), ['title' => 'Working Title', 'language' => 'en', 'genre' => 'other'])
             ->assertSessionHasNoErrors();
 
@@ -123,10 +123,10 @@ class BookTest extends TestCase
     {
         $user = $this->author();
         $other = $this->author('other-author');
-        $older = $user->authorProfile->books()->create(['title' => 'Older', 'language' => 'en']);
-        $newer = $user->authorProfile->books()->create(['title' => 'Newer', 'language' => 'en']);
+        $older = $user->authorProfile->books()->create(['title' => 'Older', 'language' => 'en', 'genre' => 'other']);
+        $newer = $user->authorProfile->books()->create(['title' => 'Newer', 'language' => 'en', 'genre' => 'other']);
         $older->update(['created_at' => now()->subDay()]);
-        $other->authorProfile->books()->create(['title' => 'Private Management Data', 'language' => 'en']);
+        $other->authorProfile->books()->create(['title' => 'Private Management Data', 'language' => 'en', 'genre' => 'other']);
 
         $this->actingAs($user)->get(route('books.index'))
             ->assertOk()
@@ -189,6 +189,7 @@ class BookTest extends TestCase
         $books = collect(range(1, 13))->map(fn (int $number): Book => $user->authorProfile->books()->create([
             'title' => "Book {$number}",
             'language' => 'en',
+            'genre' => 'other',
             'created_at' => $createdAt,
             'updated_at' => $createdAt,
         ]));
@@ -255,6 +256,7 @@ class BookTest extends TestCase
             'title' => $title,
             'description' => $description,
             'language' => 'en',
+            'genre' => 'other',
         ]);
     }
 }

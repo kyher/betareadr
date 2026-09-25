@@ -16,7 +16,7 @@ use Illuminate\Support\Carbon;
  * @property string $title
  * @property string|null $description
  * @property ContentLanguage $language
- * @property Genre|null $genre
+ * @property Genre $genre
  * @property list<string> $content_warnings
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
