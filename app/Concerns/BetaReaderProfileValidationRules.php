@@ -4,6 +4,7 @@ namespace App\Concerns;
 
 use App\Enums\ContentLanguage;
 use App\Enums\ContentTopic;
+use App\Enums\Genre;
 use App\Models\BetaReaderProfile;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -17,6 +18,21 @@ trait BetaReaderProfileValidationRules
             'content_boundaries' => ['sometimes', 'array'],
             'content_boundaries.*' => ['distinct', Rule::enum(ContentTopic::class)],
         ];
+    }
+
+    /** @return array<string, mixed> */
+    protected function preferredGenreRules(): array
+    {
+        return [
+            'preferred_genres' => ['sometimes', 'array'],
+            'preferred_genres.*' => ['distinct', Rule::enum(Genre::class)],
+        ];
+    }
+
+    /** @return list<string> */
+    protected function preferredGenres(): array
+    {
+        return array_values($this->validated('preferred_genres', []));
     }
 
     /** @return list<string> */
