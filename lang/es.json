@@ -198,6 +198,8 @@
     "Book language": "Idioma del libro",
     "Choose a language": "Elige un idioma",
     "Genre": "Género",
+    "Preferred genres": "Géneros preferidos",
+    "Select genres to prioritise in your Feed. Leave empty to see all genres. Only you can see these preferences.": "Selecciona los géneros que quieras priorizar en tu feed. Si no seleccionas ninguno, verás todos los géneros. Solo tú puedes ver estas preferencias.",
     "Choose a genre": "Elige un género",
     "Action & Adventure": "Acción y aventura",
     "Biography": "Biografía",

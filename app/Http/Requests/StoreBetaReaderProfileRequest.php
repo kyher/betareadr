@@ -12,7 +12,7 @@ class StoreBetaReaderProfileRequest extends FormRequest
     use BetaReaderProfileValidationRules;
     use PublicProfileValidationRules;
 
-    /** @return array{display_name: string, handle: string, bio: string|null, reading_languages: list<string>} */
+    /** @return array{display_name: string, handle: string, bio: string|null, reading_languages: list<string>, preferred_genres: list<string>} */
     public function profileAttributes(): array
     {
         $bio = $this->validated('bio');
@@ -22,6 +22,7 @@ class StoreBetaReaderProfileRequest extends FormRequest
             'handle' => $this->string('handle')->toString(),
             'bio' => is_string($bio) ? $bio : null,
             'reading_languages' => $this->readingLanguages(),
+            'preferred_genres' => $this->preferredGenres(),
             'content_boundaries' => $this->contentBoundaries(),
         ];
     }
@@ -29,6 +30,6 @@ class StoreBetaReaderProfileRequest extends FormRequest
     /** @return array<string, ValidationRule|array<mixed>|string> */
     public function rules(): array
     {
-        return [...$this->publicProfileRules('beta_reader_profiles'), ...$this->readingLanguageRules(), ...$this->contentBoundaryRules()];
+        return [...$this->publicProfileRules('beta_reader_profiles'), ...$this->readingLanguageRules(), ...$this->preferredGenreRules(), ...$this->contentBoundaryRules()];
     }
 }

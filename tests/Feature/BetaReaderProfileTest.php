@@ -36,6 +36,43 @@ class BetaReaderProfileTest extends TestCase
         ])->assertSessionHasErrors('content_boundaries.0');
     }
 
+    public function test_preferred_genres_are_private_and_can_be_cleared(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user)->post(route('beta-reader-profile.store'), [
+            'display_name' => 'Genre Reader', 'handle' => 'genre-reader',
+            'reading_languages' => ['en'], 'preferred_genres' => ['fantasy', 'romance'],
+        ])->assertSessionHasNoErrors();
+
+        $profile = $user->betaReaderProfile;
+        $this->assertSame(['fantasy', 'romance'], $profile->preferred_genres);
+        $this->actingAs($user)->get(route('beta-reader-profile.edit'))
+            ->assertInertia(fn (Assert $page) => $page->where('betaReaderProfile.preferred_genres', ['fantasy', 'romance']));
+        $this->get(route('beta-readers.show', $profile))
+            ->assertInertia(fn (Assert $page) => $page->missing('betaReaderProfile.preferred_genres'));
+
+        $this->actingAs($user)->patch(route('beta-reader-profile.update'), [
+            'display_name' => 'Genre Reader', 'reading_languages' => ['en'],
+            'preferred_genres' => [],
+        ])->assertSessionHasNoErrors();
+        $this->assertSame([], $profile->fresh()->preferred_genres);
+    }
+
+    public function test_preferred_genres_must_be_known_and_unique(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->post(route('beta-reader-profile.store'), [
+            'display_name' => 'Genre Reader', 'handle' => 'genre-reader',
+            'reading_languages' => ['en'], 'preferred_genres' => ['unknown'],
+        ])->assertSessionHasErrors('preferred_genres.0');
+
+        $this->actingAs($user)->post(route('beta-reader-profile.store'), [
+            'display_name' => 'Genre Reader', 'handle' => 'genre-reader',
+            'reading_languages' => ['en'], 'preferred_genres' => ['fantasy', 'fantasy'],
+        ])->assertSessionHasErrors('preferred_genres.1');
+    }
+
     public function test_guests_cannot_access_beta_reader_profile_setup(): void
     {
         $this->get(route('beta-reader-profile.create'))->assertRedirect(route('login'));

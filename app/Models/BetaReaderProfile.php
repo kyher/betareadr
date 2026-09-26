@@ -16,16 +16,17 @@ use Illuminate\Support\Carbon;
  * @property string $handle
  * @property string|null $bio
  * @property list<string> $reading_languages
+ * @property list<string> $preferred_genres
  * @property list<string> $content_boundaries
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['display_name', 'handle', 'bio', 'reading_languages', 'content_boundaries'])]
+#[Fillable(['display_name', 'handle', 'bio', 'reading_languages', 'preferred_genres', 'content_boundaries'])]
 class BetaReaderProfile extends Model
 {
     public const ANY_LANGUAGE = '*';
 
-    protected $attributes = ['content_boundaries' => '[]'];
+    protected $attributes = ['content_boundaries' => '[]', 'preferred_genres' => '[]'];
 
     /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
@@ -52,6 +53,6 @@ class BetaReaderProfile extends Model
 
     protected function casts(): array
     {
-        return ['reading_languages' => 'array', 'content_boundaries' => 'array'];
+        return ['reading_languages' => 'array', 'preferred_genres' => 'array', 'content_boundaries' => 'array'];
     }
 }
