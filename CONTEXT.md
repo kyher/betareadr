@@ -60,6 +60,10 @@ _Avoid_: Locale, interface language
 The single primary discovery classification from BetaReadr's controlled list that best describes a Book. It may describe literary genre, audience, or format; every Book has one Genre.
 _Avoid_: Category, tag
 
+**Preferred Genres**:
+The private selection of zero or more Genres a Beta Reader uses to bring matching Books' Listings earlier in their Feed. They do not exclude Listings of other Genres; an empty selection means no genre preference.
+_Avoid_: Genre boundaries, genre filters
+
 **Reading Language**:
 A Content Language in which a Beta Reader can comfortably beta-read a Book. A Beta Reader may accept any language instead of naming individual Reading Languages.
 _Avoid_: Preferred Language, locale, interface language
