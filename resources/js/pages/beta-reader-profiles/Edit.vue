@@ -3,6 +3,7 @@ import { Form, Head, Link } from '@inertiajs/vue3';
 import BetaReaderProfileController from '@/actions/App/Http/Controllers/BetaReaderProfileController';
 import ContentTopicsField from '@/components/ContentTopicsField.vue';
 import InputError from '@/components/InputError.vue';
+import PreferredGenresField from '@/components/PreferredGenresField.vue';
 import ReadingLanguagesField from '@/components/ReadingLanguagesField.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -98,6 +99,10 @@ defineOptions({
                     <ReadingLanguagesField
                         :languages="betaReaderProfile.reading_languages"
                         :error="errors.reading_languages"
+                    />
+                    <PreferredGenresField
+                        :selected="betaReaderProfile.preferred_genres"
+                        :errors="errors"
                     />
                     <ContentTopicsField
                         field="content_boundaries"

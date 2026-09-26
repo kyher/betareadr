@@ -1,4 +1,5 @@
 import type { ReadingLanguage } from './language';
+import type { Genre } from './book';
 
 export type AuthorProfile = {
     display_name: string;
@@ -11,5 +12,6 @@ export type BetaReaderProfile = {
     handle: string;
     bio: string | null;
     reading_languages: ReadingLanguage[];
+    preferred_genres?: Genre[];
     content_boundaries: string[];
 };
