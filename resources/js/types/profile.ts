@@ -1,5 +1,5 @@
-import type { ReadingLanguage } from './language';
 import type { Genre } from './book';
+import type { ReadingLanguage } from './language';
 
 export type AuthorProfile = {
     display_name: string;
