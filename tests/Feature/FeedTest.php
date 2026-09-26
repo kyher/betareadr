@@ -105,6 +105,29 @@ class FeedTest extends TestCase
         $this->assertSame($profile->id, $reader->betaReaderProfile->id);
     }
 
+    public function test_preferred_genres_rank_first_and_empty_preferences_keep_all_genres(): void
+    {
+        [$reader, $profile] = $this->reader();
+        $olderOther = $this->listingFor($this->author('other-author'), bookTitle: 'Older Other');
+        $newerFantasy = $this->listingFor(
+            $this->author('fantasy-author'),
+            bookTitle: 'Newer Fantasy',
+            genre: 'fantasy',
+        );
+        $olderOther->forceFill(['created_at' => now()->subDays(2)])->save();
+        $newerFantasy->forceFill(['created_at' => now()->subDay()])->save();
+        $profile->update(['preferred_genres' => ['fantasy']]);
+
+        $this->actingAs($reader)->get(route('feed.index'))
+            ->assertInertia(fn (Assert $page) => $page->where('listing.id', $newerFantasy->id));
+
+        $this->actingAs($reader)->post(route('feed.pass', $newerFantasy))->assertSessionHasNoErrors();
+        $profile->update(['preferred_genres' => []]);
+        $reader->unsetRelation('betaReaderProfile');
+        $this->actingAs($reader)->get(route('feed.index'))
+            ->assertInertia(fn (Assert $page) => $page->where('listing.id', $olderOther->id));
+    }
+
     public function test_feed_excludes_closed_own_and_previously_decided_listings(): void
     {
         [$reader, $profile] = $this->reader(withAuthorProfile: true);
@@ -266,12 +289,13 @@ class FeedTest extends TestCase
         bool $closed = false,
         string $bookTitle = 'A Book',
         string $language = 'en',
+        string $genre = 'other',
     ): BetaReadingListing {
         $book = $author->authorProfile->books()->create([
             'title' => $bookTitle,
             'description' => 'A Book description.',
             'language' => $language,
-            'genre' => 'other',
+            'genre' => $genre,
         ]);
 
         return $book->betaReadingListings()->create([
