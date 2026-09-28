@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Books\CreateBook;
+use App\Actions\Books\DeleteBook;
 use App\Actions\Books\UpdateBook;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
@@ -74,17 +75,13 @@ class BookController extends AuthenticatedUserController
         return to_route('books.index');
     }
 
-    public function destroy(Book $book): RedirectResponse
+    public function destroy(Book $book, DeleteBook $deleteBook): RedirectResponse
     {
         $this->authorizeOwner($book);
 
-        if ($book->betaReadingListings()
-            ->whereHas('readerDecisions.match', fn ($match) => $match->whereNull('ended_at'))
-            ->exists()) {
+        if (! $deleteBook->handle($book)) {
             return back()->withErrors(['book' => __('End active matches before deleting this book.')]);
         }
-
-        $book->delete();
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Book deleted.')]);
 
