@@ -23,6 +23,7 @@ type Record = {
     closed_at?: string | null;
     word_count?: number;
     reading_brief?: string;
+    has_active_match?: boolean;
     created_at: string;
 };
 
@@ -67,6 +68,24 @@ const removeUser = (record: Record) => {
         router.delete(AdminReviewController.destroyUser(record.id).url, {
             preserveScroll: true,
         });
+    }
+};
+const removeBook = (record: Record) => {
+    if (
+        confirm(
+            `Remove Book #${record.id}, “${record.title}”? Its Listings, Interests, Passes, Matches, and Conversations will be permanently deleted. Books with an active Match cannot be removed.`,
+        )
+    ) {
+        router.delete(`/admin/books/${record.id}`, { preserveScroll: true });
+    }
+};
+const removeListing = (record: Record) => {
+    if (
+        confirm(
+            `Remove Listing #${record.id} for “${record.title}”? Its Interests, Passes, Matches, and Conversations will be permanently deleted. Listings with an active Match cannot be removed.`,
+        )
+    ) {
+        router.delete(`/admin/listings/${record.id}`, { preserveScroll: true });
     }
 };
 </script>
@@ -215,6 +234,19 @@ const removeUser = (record: Record) => {
                 >
                     {{ record.description }}
                 </p>
+                <Button
+                    class="mt-3"
+                    variant="destructive"
+                    size="sm"
+                    :disabled="record.has_active_match"
+                    @click="removeBook(record)"
+                >
+                    {{
+                        record.has_active_match
+                            ? 'Cannot remove: active Match'
+                            : 'Remove Book'
+                    }}
+                </Button>
             </template>
             <template v-else>
                 <p class="text-sm">
@@ -234,6 +266,19 @@ const removeUser = (record: Record) => {
                 <p class="mt-3 text-sm whitespace-pre-wrap">
                     {{ record.reading_brief }}
                 </p>
+                <Button
+                    class="mt-3"
+                    variant="destructive"
+                    size="sm"
+                    :disabled="record.has_active_match"
+                    @click="removeListing(record)"
+                >
+                    {{
+                        record.has_active_match
+                            ? 'Cannot remove: active Match'
+                            : 'Remove Listing'
+                    }}
+                </Button>
             </template>
         </article>
     </div>
