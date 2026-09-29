@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\BetaReadingListings\DeleteBetaReadingListing;
+use App\Actions\Books\DeleteBook;
 use App\Actions\Users\DeleteUser;
 use App\Models\AuthorProfile;
 use App\Models\BetaReaderProfile;
@@ -43,6 +45,28 @@ class AdminReviewController extends Controller
         $deleteUser->handle($user);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('User removed.')]);
+
+        return back();
+    }
+
+    public function destroyBook(Book $book, DeleteBook $deleteBook): RedirectResponse
+    {
+        if (! $deleteBook->handle($book)) {
+            return back()->withErrors(['book' => __('End active matches before deleting this book.')]);
+        }
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Book removed.')]);
+
+        return back();
+    }
+
+    public function destroyListing(BetaReadingListing $listing, DeleteBetaReadingListing $deleteListing): RedirectResponse
+    {
+        if (! $deleteListing->handle($listing)) {
+            return back()->withErrors(['listing' => __('End active matches before deleting this listing.')]);
+        }
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Beta Reading Listing removed.')]);
 
         return back();
     }
@@ -110,6 +134,7 @@ class AdminReviewController extends Controller
                     'warnings' => $book->content_warnings,
                     'description' => $book->description,
                     'created_at' => $book->created_at,
+                    'has_active_match' => $book->hasActiveMatch(),
                 ]),
         ]);
     }
@@ -139,6 +164,7 @@ class AdminReviewController extends Controller
                     'word_count' => $listing->word_count,
                     'reading_brief' => $listing->reading_brief,
                     'created_at' => $listing->created_at,
+                    'has_active_match' => $listing->hasActiveMatch(),
                 ]),
         ]);
     }

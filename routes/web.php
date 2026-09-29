@@ -40,6 +40,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         ]))->name('dashboard');
         Route::get('users', [AdminReviewController::class, 'users'])->name('users.index');
         Route::delete('users/{user}', [AdminReviewController::class, 'destroyUser'])->name('users.destroy');
+        Route::delete('books/{book}', [AdminReviewController::class, 'destroyBook'])->name('books.destroy');
+        Route::delete('listings/{listing}', [AdminReviewController::class, 'destroyListing'])->name('listings.destroy');
         Route::get('author-profiles', [AdminReviewController::class, 'authorProfiles'])->name('author-profiles.index');
         Route::get('beta-reader-profiles', [AdminReviewController::class, 'betaReaderProfiles'])->name('beta-reader-profiles.index');
         Route::get('books', [AdminReviewController::class, 'books'])->name('books.index');

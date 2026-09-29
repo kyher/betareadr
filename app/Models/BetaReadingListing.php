@@ -32,6 +32,11 @@ class BetaReadingListing extends Model
         return $this->hasMany(BetaReadingListingReaderDecision::class);
     }
 
+    public function hasActiveMatch(): bool
+    {
+        return $this->readerDecisions()->whereHas('match', fn ($match) => $match->whereNull('ended_at'))->exists();
+    }
+
     protected function casts(): array
     {
         return [

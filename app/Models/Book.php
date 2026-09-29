@@ -38,6 +38,13 @@ class Book extends Model
         return $this->hasMany(BetaReadingListing::class);
     }
 
+    public function hasActiveMatch(): bool
+    {
+        return $this->betaReadingListings()
+            ->whereHas('readerDecisions.match', fn ($match) => $match->whereNull('ended_at'))
+            ->exists();
+    }
+
     protected function casts(): array
     {
         return ['language' => ContentLanguage::class, 'genre' => Genre::class, 'content_warnings' => 'array'];

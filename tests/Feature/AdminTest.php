@@ -2,6 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Actions\BetaReadingListings\ReviewInterest;
+use App\Enums\BetaReadingListingAuthorDecision;
+use App\Enums\BetaReadingListingReaderDecisionType;
 use App\Models\Administrator;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -146,6 +149,56 @@ class AdminTest extends TestCase
 
         $this->assertModelMissing($user);
         $this->assertAuthenticatedAs($administrator, 'admin');
+    }
+
+    public function test_administrator_can_remove_books_and_listings(): void
+    {
+        $administrator = Administrator::create(['name' => 'Operator', 'email' => 'operator@example.com', 'password' => 'password']);
+        $author = User::factory()->create()->authorProfile()->create(['display_name' => 'Author', 'handle' => 'author']);
+        $book = $author->books()->create(['title' => 'Book to remove', 'language' => 'en', 'genre' => 'other']);
+        $listing = $book->betaReadingListings()->create(['reading_brief' => 'Brief', 'word_count' => 1000]);
+        $interest = User::factory()->create()->betaReaderProfile()->create([
+            'display_name' => 'Reader', 'handle' => 'reader', 'reading_languages' => ['*'],
+        ])->readerDecisions()->create([
+            'beta_reading_listing_id' => $listing->id, 'reader_decision' => BetaReadingListingReaderDecisionType::Interested,
+        ]);
+        app(ReviewInterest::class)->handle($interest, BetaReadingListingAuthorDecision::Approved);
+        $match = $interest->refresh()->match;
+        $match->update(['ended_at' => now()]);
+
+        $this->delete("/admin/books/{$book->id}")->assertRedirect('/admin/login');
+        $this->actingAs($administrator, 'admin')->delete("/admin/listings/{$listing->id}")->assertRedirect();
+        $this->assertModelMissing($listing);
+        $this->assertModelMissing($interest);
+        $this->assertModelMissing($match);
+
+        $secondBook = $author->books()->create(['title' => 'Second book', 'language' => 'en', 'genre' => 'other']);
+        $secondListing = $secondBook->betaReadingListings()->create(['reading_brief' => 'Brief', 'word_count' => 1000]);
+        $this->delete("/admin/books/{$secondBook->id}")->assertRedirect();
+        $this->assertModelMissing($secondBook);
+        $this->assertModelMissing($secondListing);
+    }
+
+    public function test_administrator_cannot_remove_a_book_or_listing_with_an_active_match(): void
+    {
+        $administrator = Administrator::create(['name' => 'Operator', 'email' => 'operator@example.com', 'password' => 'password']);
+        $author = User::factory()->create()->authorProfile()->create(['display_name' => 'Author', 'handle' => 'author']);
+        $book = $author->books()->create(['title' => 'Active book', 'language' => 'en', 'genre' => 'other']);
+        $listing = $book->betaReadingListings()->create(['reading_brief' => 'Brief', 'word_count' => 1000]);
+        $interest = User::factory()->create()->betaReaderProfile()->create([
+            'display_name' => 'Reader', 'handle' => 'reader', 'reading_languages' => ['*'],
+        ])->readerDecisions()->create([
+            'beta_reading_listing_id' => $listing->id, 'reader_decision' => BetaReadingListingReaderDecisionType::Interested,
+        ]);
+        app(ReviewInterest::class)->handle($interest, BetaReadingListingAuthorDecision::Approved);
+
+        $this->delete("/admin/books/{$book->id}")->assertRedirect('/admin/login');
+        $this->actingAs($administrator, 'admin')->delete("/admin/books/{$book->id}")->assertSessionHasErrors('book');
+        $this->actingAs(User::factory()->create())->delete("/admin/listings/{$listing->id}")->assertRedirect();
+        $this->actingAs($administrator, 'admin')->delete("/admin/listings/{$listing->id}")->assertSessionHasErrors('listing');
+        $this->assertModelExists($book);
+        $this->assertModelExists($listing);
+        $this->assertModelExists($interest->match);
     }
 
     public function test_administrator_commands_manage_credentials(): void
