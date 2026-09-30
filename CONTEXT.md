@@ -48,6 +48,10 @@ _Avoid_: Username, profile name, Author Handle
 A publicly visible, enduring written work belonging to an Author Profile, for which beta-reader feedback may be sought through one or more recruitment rounds. A Book is public as soon as it is created.
 _Avoid_: Project, manuscript, listing
 
+**Cover Image**:
+The single optional public image that visually represents a Book wherever that Book appears.
+_Avoid_: Book image, gallery
+
 **Content Language**:
 A supported base language used as either a Book Language or Reading Language.
 _Avoid_: Locale, interface language
