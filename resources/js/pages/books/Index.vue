@@ -4,6 +4,7 @@ import { BookOpen, List, Pencil, Plus, Trash2 } from '@lucide/vue';
 import { computed } from 'vue';
 import BetaReadingListingController from '@/actions/App/Http/Controllers/BetaReadingListingController';
 import BookController from '@/actions/App/Http/Controllers/BookController';
+import BookCover from '@/components/BookCover.vue';
 import BookMetadata from '@/components/BookMetadata.vue';
 import ContentWarnings from '@/components/ContentWarnings.vue';
 import InputError from '@/components/InputError.vue';
@@ -102,6 +103,11 @@ defineOptions({
         <div v-else class="grid gap-4">
             <Card v-for="book in books.data" :key="book.id" class="paper-sheet">
                 <CardHeader class="gap-4 sm:flex-row sm:items-start">
+                    <BookCover
+                        v-if="book.cover_image_url"
+                        :src="book.cover_image_url"
+                        class="w-24"
+                    />
                     <div class="min-w-0 flex-1">
                         <CardTitle>{{ book.title }}</CardTitle>
                         <BookMetadata

@@ -2,9 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Actions\Users\DeleteUser;
 use App\Models\Book;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
@@ -91,6 +94,81 @@ class BookTest extends TestCase
         ]);
     }
 
+    public function test_author_can_add_a_cover_and_it_is_exposed_on_their_public_profile(): void
+    {
+        Storage::fake('r2');
+        $user = $this->author();
+
+        $this->actingAs($user)->post(route('books.store'), [
+            'title' => 'Covered Book',
+            'language' => 'en',
+            'genre' => 'other',
+            'cover_image' => UploadedFile::fake()->create('cover.png', 1, 'image/png'),
+        ])->assertSessionHasNoErrors();
+
+        $book = $user->authorProfile->books()->where('title', 'Covered Book')->firstOrFail();
+        $coverPath = $book->cover_image_path;
+        $this->assertNotNull($coverPath);
+        Storage::disk('r2')->assertExists($coverPath);
+        $coverUrl = Storage::disk('r2')->url($coverPath);
+
+        $this->get(route('authors.show', $user->authorProfile))
+            ->assertInertia(fn (Assert $page) => $page->where('books.data.0.cover_image_url', $coverUrl));
+    }
+
+    public function test_cover_images_are_limited_to_supported_types_and_five_megabytes(): void
+    {
+        Storage::fake('r2');
+        $user = $this->author();
+
+        foreach ([
+            UploadedFile::fake()->create('cover.txt', 1, 'text/plain'),
+            UploadedFile::fake()->create('large.png', 5121, 'image/png'),
+        ] as $cover) {
+            $this->actingAs($user)->post(route('books.store'), [
+                'title' => 'Invalid Cover',
+                'language' => 'en',
+                'genre' => 'other',
+                'cover_image' => $cover,
+            ])->assertSessionHasErrors('cover_image');
+        }
+
+        $this->assertDatabaseMissing('books', ['title' => 'Invalid Cover']);
+    }
+
+    public function test_author_can_replace_and_remove_a_cover_image(): void
+    {
+        Storage::fake('r2');
+        $user = $this->author();
+        $book = $this->bookFor($user);
+        $oldPath = 'book-covers/old-cover.jpg';
+        Storage::disk('r2')->put($oldPath, 'old cover');
+        $book->update(['cover_image_path' => $oldPath]);
+
+        $this->actingAs($user)->patch(route('books.update', $book), [
+            'title' => $book->title,
+            'language' => 'en',
+            'genre' => 'other',
+            'cover_image' => UploadedFile::fake()->create('new-cover.png', 1, 'image/png'),
+        ])->assertSessionHasNoErrors();
+
+        $newPath = $book->fresh()->cover_image_path;
+        $this->assertNotNull($newPath);
+        $this->assertNotSame($oldPath, $newPath);
+        Storage::disk('r2')->assertMissing($oldPath);
+        Storage::disk('r2')->assertExists($newPath);
+
+        $this->actingAs($user)->patch(route('books.update', $book), [
+            'title' => $book->title,
+            'language' => 'en',
+            'genre' => 'other',
+            'remove_cover_image' => '1',
+        ])->assertSessionHasNoErrors();
+
+        $this->assertNull($book->fresh()->cover_image_path);
+        Storage::disk('r2')->assertMissing($newPath);
+    }
+
     public function test_duplicate_titles_are_allowed_for_the_same_author(): void
     {
         $user = $this->author();
@@ -140,8 +218,12 @@ class BookTest extends TestCase
 
     public function test_author_can_edit_and_delete_their_book(): void
     {
+        Storage::fake('r2');
         $user = $this->author();
         $book = $this->bookFor($user);
+        $coverPath = 'book-covers/deleted-cover.jpg';
+        Storage::disk('r2')->put($coverPath, 'cover');
+        $book->update(['cover_image_path' => $coverPath]);
 
         $this->actingAs($user)->patch(route('books.update', $book), [
             'title' => 'Changed Title',
@@ -155,6 +237,22 @@ class BookTest extends TestCase
         $this->actingAs($user)->delete(route('books.destroy', $book))
             ->assertRedirect(route('books.index'));
         $this->assertDatabaseMissing('books', ['id' => $book->id]);
+        Storage::disk('r2')->assertMissing($coverPath);
+    }
+
+    public function test_deleting_an_author_deletes_their_book_cover_objects(): void
+    {
+        Storage::fake('r2');
+        $user = $this->author();
+        $book = $this->bookFor($user);
+        $coverPath = 'book-covers/user-deleted-cover.jpg';
+        Storage::disk('r2')->put($coverPath, 'cover');
+        $book->update(['cover_image_path' => $coverPath]);
+
+        app(DeleteUser::class)->handle($user);
+
+        $this->assertDatabaseMissing('books', ['id' => $book->id]);
+        Storage::disk('r2')->assertMissing($coverPath);
     }
 
     public function test_author_cannot_edit_update_or_delete_another_authors_book(): void

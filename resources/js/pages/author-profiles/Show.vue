@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
+import BookCover from '@/components/BookCover.vue';
 import BookMetadata from '@/components/BookMetadata.vue';
 import ContentWarnings from '@/components/ContentWarnings.vue';
 import PaginationLinks from '@/components/PaginationLinks.vue';
@@ -59,19 +60,28 @@ const { t } = useTranslation();
                         class="paper-sheet"
                     >
                         <CardHeader>
-                            <CardTitle>{{ book.title }}</CardTitle>
-                            <BookMetadata
-                                :language="book.language"
-                                :genre="book.genre"
-                            />
-                            <ContentWarnings
-                                :warnings="book.content_warnings"
-                            />
-                            <CardDescription
-                                v-if="book.description"
-                                class="reading-copy whitespace-pre-line text-foreground"
-                                >{{ book.description }}</CardDescription
-                            >
+                            <div class="flex items-start gap-4">
+                                <BookCover
+                                    v-if="book.cover_image_url"
+                                    :src="book.cover_image_url"
+                                    class="w-24"
+                                />
+                                <div class="min-w-0 flex-1">
+                                    <CardTitle>{{ book.title }}</CardTitle>
+                                    <BookMetadata
+                                        :language="book.language"
+                                        :genre="book.genre"
+                                    />
+                                    <ContentWarnings
+                                        :warnings="book.content_warnings"
+                                    />
+                                    <CardDescription
+                                        v-if="book.description"
+                                        class="reading-copy whitespace-pre-line text-foreground"
+                                        >{{ book.description }}</CardDescription
+                                    >
+                                </div>
+                            </div>
                         </CardHeader>
                     </Card>
                 </div>

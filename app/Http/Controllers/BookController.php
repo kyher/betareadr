@@ -28,7 +28,7 @@ class BookController extends AuthenticatedUserController
                 ->latest()
                 ->latest('id')
                 ->paginate(12)
-                ->through(fn (Book $book): array => $book->only(['id', 'title', 'description', 'language', 'genre', 'content_warnings'])),
+                ->through(fn (Book $book): array => $book->only(['id', 'title', 'description', 'language', 'genre', 'content_warnings']) + ['cover_image_url' => $book->coverImageUrl()]),
         ]);
     }
 
@@ -49,7 +49,7 @@ class BookController extends AuthenticatedUserController
             return to_route('author-profile.create');
         }
 
-        $createBook->handle($profile, $request->bookAttributes());
+        $createBook->handle($profile, $request->bookAttributes(), $request->file('cover_image'));
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Book added.')]);
 
@@ -61,14 +61,14 @@ class BookController extends AuthenticatedUserController
         $this->authorizeOwner($book);
 
         return Inertia::render('books/Edit', [
-            'book' => $book->only(['id', 'title', 'description', 'language', 'genre', 'content_warnings']),
+            'book' => $book->only(['id', 'title', 'description', 'language', 'genre', 'content_warnings']) + ['cover_image_url' => $book->coverImageUrl()],
         ]);
     }
 
     public function update(UpdateBookRequest $request, Book $book, UpdateBook $updateBook): RedirectResponse
     {
         $this->authorizeOwner($book);
-        $updateBook->handle($book, $request->bookAttributes());
+        $updateBook->handle($book, $request->bookAttributes(), $request->file('cover_image'), $request->boolean('remove_cover_image'));
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Book updated.')]);
 

@@ -20,6 +20,8 @@ trait BookValidationRules
             'genre' => ['required', Rule::enum(Genre::class)],
             'content_warnings' => ['sometimes', 'array'],
             'content_warnings.*' => ['distinct', Rule::enum(ContentTopic::class)],
+            'cover_image' => ['nullable', 'image', 'mimes:jpeg,png,webp', 'max:5120'],
+            'remove_cover_image' => ['sometimes', 'boolean'],
         ];
     }
 

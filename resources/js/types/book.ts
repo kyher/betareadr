@@ -35,4 +35,5 @@ export type Book = {
     language: ContentLanguage;
     genre: Genre;
     content_warnings: string[];
+    cover_image_url: string | null;
 };

@@ -3,6 +3,7 @@
 namespace App\Actions\Books;
 
 use App\Models\Book;
+use Illuminate\Support\Facades\Storage;
 
 class DeleteBook
 {
@@ -12,7 +13,12 @@ class DeleteBook
             return false;
         }
 
+        $coverImagePath = $book->cover_image_path;
         $book->delete();
+
+        if ($coverImagePath !== null) {
+            Storage::disk('r2')->delete($coverImagePath);
+        }
 
         return true;
     }

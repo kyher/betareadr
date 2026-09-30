@@ -7,6 +7,7 @@ use App\Actions\AuthorProfiles\UpdateAuthorProfile;
 use App\Http\Requests\StoreAuthorProfileRequest;
 use App\Http\Requests\UpdateAuthorProfileRequest;
 use App\Models\AuthorProfile;
+use App\Models\Book;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\ValidationException;
@@ -87,7 +88,7 @@ class AuthorProfileController extends AuthenticatedUserController
                 ->latest()
                 ->latest('id')
                 ->paginate(12)
-                ->through(fn ($book): array => $book->only(['id', 'title', 'description', 'language', 'genre', 'content_warnings'])),
+                ->through(fn (Book $book): array => $book->only(['id', 'title', 'description', 'language', 'genre', 'content_warnings']) + ['cover_image_url' => $book->coverImageUrl()]),
         ]);
     }
 }

@@ -35,6 +35,7 @@ class FeedController extends AuthenticatedUserController
                     'language' => $listing->book->language->value,
                     'genre' => $listing->book->genre->value,
                     'content_warnings' => $listing->book->content_warnings,
+                    'cover_image_url' => $listing->book->coverImageUrl(),
                 ],
                 'author' => [
                     'display_name' => $listing->book->authorProfile->display_name,

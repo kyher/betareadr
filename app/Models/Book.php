@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @property int $id
@@ -18,10 +19,11 @@ use Illuminate\Support\Carbon;
  * @property ContentLanguage $language
  * @property Genre $genre
  * @property list<string> $content_warnings
+ * @property string|null $cover_image_path
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['title', 'description', 'language', 'genre', 'content_warnings'])]
+#[Fillable(['title', 'description', 'language', 'genre', 'content_warnings', 'cover_image_path'])]
 class Book extends Model
 {
     protected $attributes = ['content_warnings' => '[]'];
@@ -43,6 +45,11 @@ class Book extends Model
         return $this->betaReadingListings()
             ->whereHas('readerDecisions.match', fn ($match) => $match->whereNull('ended_at'))
             ->exists();
+    }
+
+    public function coverImageUrl(): ?string
+    {
+        return $this->cover_image_path === null ? null : Storage::disk('r2')->url($this->cover_image_path);
     }
 
     protected function casts(): array
