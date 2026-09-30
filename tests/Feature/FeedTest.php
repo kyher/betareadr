@@ -7,6 +7,7 @@ use App\Models\BetaReaderProfile;
 use App\Models\BetaReadingListing;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
@@ -81,11 +82,15 @@ class FeedTest extends TestCase
 
     public function test_feed_shows_oldest_eligible_listing_with_book_and_author_details(): void
     {
+        Storage::fake('r2');
         [$reader, $profile] = $this->reader();
         $author = $this->author();
         $newer = $this->listingFor($author, 'Newer brief', bookTitle: 'Newer Book');
         $oldest = $this->listingFor($author, 'Oldest brief', bookTitle: 'Oldest Book');
         $oldest->book->update(['description' => 'An atmospheric mystery.']);
+        $coverPath = 'book-covers/feed-cover.jpg';
+        Storage::disk('r2')->put($coverPath, 'cover');
+        $oldest->book->update(['cover_image_path' => $coverPath]);
         $newer->forceFill(['created_at' => now()->subDay()])->save();
         $oldest->forceFill(['created_at' => now()->subDays(2)])->save();
 
@@ -98,6 +103,7 @@ class FeedTest extends TestCase
                 ->where('listing.word_count', 80000)
                 ->where('listing.book.title', 'Oldest Book')
                 ->where('listing.book.description', 'An atmospheric mystery.')
+                ->where('listing.book.cover_image_url', Storage::disk('r2')->url($coverPath))
                 ->where('listing.author.display_name', 'An Author')
                 ->where('listing.author.handle', $author->authorProfile->handle)
                 ->where('auth.has_beta_reader_profile', true));
