@@ -87,7 +87,7 @@ defineOptions({
                             name="cover_image"
                             type="file"
                             accept="image/jpeg,image/png,image/webp"
-                            class="file:text-foreground block h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                            class="block h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
                         />
                         <p class="text-sm text-muted-foreground">
                             {{ t('JPEG, PNG, or WebP, up to 5 MB.') }}
