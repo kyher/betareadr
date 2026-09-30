@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
 import BookController from '@/actions/App/Http/Controllers/BookController';
+import BookCover from '@/components/BookCover.vue';
 import BookGenreField from '@/components/BookGenreField.vue';
 import BookLanguageField from '@/components/BookLanguageField.vue';
 import ContentTopicsField from '@/components/ContentTopicsField.vue';
@@ -80,6 +81,41 @@ defineOptions({
                             class="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
                         />
                         <InputError :message="errors.description" />
+                    </div>
+                    <div class="grid gap-2">
+                        <Label for="cover_image">
+                            {{ t('Cover image') }}
+                            <span class="text-muted-foreground">{{
+                                t('(optional)')
+                            }}</span>
+                        </Label>
+                        <BookCover
+                            v-if="book.cover_image_url"
+                            :src="book.cover_image_url"
+                            class="w-32"
+                        />
+                        <input
+                            id="cover_image"
+                            name="cover_image"
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp"
+                            class="file:text-foreground block h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                        />
+                        <p class="text-sm text-muted-foreground">
+                            {{ t('JPEG, PNG, or WebP, up to 5 MB.') }}
+                        </p>
+                        <InputError :message="errors.cover_image" />
+                        <label
+                            v-if="book.cover_image_url"
+                            class="flex items-center gap-2 text-sm"
+                        >
+                            <input
+                                type="checkbox"
+                                name="remove_cover_image"
+                                value="1"
+                            />
+                            {{ t('Remove cover image') }}
+                        </label>
                     </div>
                     <BookLanguageField
                         :language="book.language"

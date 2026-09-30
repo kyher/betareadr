@@ -9,6 +9,7 @@ import {
     X,
 } from '@lucide/vue';
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
+import BookCover from '@/components/BookCover.vue';
 import BookMetadata from '@/components/BookMetadata.vue';
 import ContentWarnings from '@/components/ContentWarnings.vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -36,6 +37,7 @@ type FeedListing = {
         language: ContentLanguage;
         genre: Genre;
         content_warnings: string[];
+        cover_image_url: string | null;
     };
     author: {
         display_name: string;
@@ -276,6 +278,11 @@ defineOptions({
                     <CardTitle class="text-2xl sm:text-3xl">
                         {{ displayedListing.book.title }}
                     </CardTitle>
+                    <BookCover
+                        v-if="displayedListing.book.cover_image_url"
+                        :src="displayedListing.book.cover_image_url"
+                        class="mx-auto w-40"
+                    />
                     <BookMetadata
                         :language="displayedListing.book.language"
                         :genre="displayedListing.book.genre"
