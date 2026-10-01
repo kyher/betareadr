@@ -24,7 +24,7 @@ class SaveProfile
         try {
             $oldPath = DB::transaction(function () use ($profile, $attributes, $newPath, $removeAvatar): ?string {
                 if ($profile->exists) {
-                    $lockedProfile = $profile->newQuery()->lockForUpdate()->findOrFail($profile->getKey());
+                    $lockedProfile = $profile->newQuery()->lockForUpdate()->findOrFail($profile->id);
                     $profile->setRawAttributes($lockedProfile->getAttributes(), true);
                 }
 
