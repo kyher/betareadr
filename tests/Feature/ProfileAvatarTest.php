@@ -97,6 +97,33 @@ class ProfileAvatarTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page->where($relation.'.avatar_url', null));
     }
 
+    #[DataProvider('profiles')]
+    public function test_stale_profile_updates_clean_the_current_avatar(string $route, string $relation, string $publicRoute): void
+    {
+        Storage::fake('r2');
+        $user = User::factory()->create();
+        $this->actingAs($user)->post(route($route.'.store'), [
+            'display_name' => 'Public Profile', 'handle' => 'public-profile', 'reading_languages' => ['*'],
+            'avatar' => UploadedFile::fake()->create('original.png', 1, 'image/png'),
+        ])->assertSessionHasNoErrors();
+        $profile = $user->$relation;
+        $staleReplacement = $profile->fresh();
+        $staleRemoval = $profile->fresh();
+        $saveProfile = app(SaveProfile::class);
+
+        $saveProfile->handle($profile, [], UploadedFile::fake()->create('first.png', 1, 'image/png'));
+        $firstPath = $profile->avatar_path;
+        $saveProfile->handle($staleReplacement, [], UploadedFile::fake()->create('second.png', 1, 'image/png'));
+        Storage::disk('r2')->assertMissing($firstPath);
+        Storage::disk('r2')->assertExists($staleReplacement->avatar_path);
+
+        $saveProfile->handle($staleRemoval, [], removeAvatar: true);
+        $this->assertNull($profile->fresh()->avatar_path);
+        $this->assertSame([], Storage::disk('r2')->allFiles());
+        $this->get(route($publicRoute, $profile))
+            ->assertInertia(fn (Assert $page) => $page->where($relation.'.avatar_url', null));
+    }
+
     public function test_failed_database_saves_clean_new_uploads_and_preserve_existing_avatar(): void
     {
         Storage::fake('r2');

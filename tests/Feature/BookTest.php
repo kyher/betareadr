@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Actions\Books\UpdateBook;
 use App\Actions\Users\DeleteUser;
 use App\Models\Book;
 use App\Models\User;
@@ -167,6 +168,28 @@ class BookTest extends TestCase
 
         $this->assertNull($book->fresh()->cover_image_path);
         Storage::disk('r2')->assertMissing($newPath);
+    }
+
+    public function test_stale_book_updates_clean_the_current_cover(): void
+    {
+        Storage::fake('r2');
+        $book = $this->bookFor($this->author());
+        $book->update(['cover_image_path' => 'book-covers/original.jpg']);
+        Storage::disk('r2')->put($book->cover_image_path, 'original cover');
+        $staleReplacement = $book->fresh();
+        $staleRemoval = $book->fresh();
+        $attributes = $book->only(['title', 'description', 'language', 'genre', 'content_warnings']);
+        $updateBook = app(UpdateBook::class);
+
+        $updateBook->handle($book, $attributes, UploadedFile::fake()->create('first.png', 1, 'image/png'));
+        $firstPath = $book->cover_image_path;
+        $updateBook->handle($staleReplacement, $attributes, UploadedFile::fake()->create('second.png', 1, 'image/png'));
+        Storage::disk('r2')->assertMissing($firstPath);
+        Storage::disk('r2')->assertExists($staleReplacement->cover_image_path);
+
+        $updateBook->handle($staleRemoval, $attributes, removeCoverImage: true);
+        $this->assertNull($book->fresh()->cover_image_path);
+        $this->assertSame([], Storage::disk('r2')->allFiles());
     }
 
     public function test_duplicate_titles_are_allowed_for_the_same_author(): void
