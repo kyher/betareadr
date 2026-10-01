@@ -33,7 +33,7 @@ class BetaReaderProfileController extends AuthenticatedUserController
         }
 
         try {
-            $createBetaReaderProfile->handle($this->user(), $request->profileAttributes());
+            $createBetaReaderProfile->handle($this->user(), $request->profileAttributes(), $request->file('avatar'));
         } catch (UniqueConstraintViolationException $exception) {
             if (in_array('user_id', $exception->columns, true)) {
                 return to_route('beta-reader-profile.edit');
@@ -58,7 +58,7 @@ class BetaReaderProfileController extends AuthenticatedUserController
         }
 
         return Inertia::render('beta-reader-profiles/Edit', [
-            'betaReaderProfile' => $profile->only(['display_name', 'handle', 'bio', 'reading_languages', 'preferred_genres', 'content_boundaries']),
+            'betaReaderProfile' => $profile->only(['display_name', 'handle', 'bio', 'reading_languages', 'preferred_genres', 'content_boundaries']) + ['avatar_url' => $profile->avatarUrl()],
         ]);
     }
 
@@ -72,7 +72,7 @@ class BetaReaderProfileController extends AuthenticatedUserController
             return to_route('beta-reader-profile.create');
         }
 
-        $updateBetaReaderProfile->handle($profile, $request->profileAttributes());
+        $updateBetaReaderProfile->handle($profile, $request->profileAttributes(), $request->file('avatar'), $request->boolean('remove_avatar'));
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Beta reader profile updated.')]);
 
@@ -82,7 +82,7 @@ class BetaReaderProfileController extends AuthenticatedUserController
     public function show(BetaReaderProfile $betaReaderProfile): Response
     {
         return Inertia::render('beta-reader-profiles/Show', [
-            'betaReaderProfile' => $betaReaderProfile->only(['display_name', 'handle', 'bio', 'reading_languages']),
+            'betaReaderProfile' => $betaReaderProfile->only(['display_name', 'handle', 'bio', 'reading_languages']) + ['avatar_url' => $betaReaderProfile->avatarUrl()],
         ]);
     }
 }

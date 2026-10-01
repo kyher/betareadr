@@ -30,6 +30,8 @@ trait PublicProfileValidationRules
         return [
             'display_name' => ['required', 'string', 'min:2', 'max:100'],
             'bio' => ['nullable', 'string', 'max:1000'],
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,webp', 'max:5120'],
+            'remove_avatar' => ['sometimes', 'boolean'],
         ];
     }
 

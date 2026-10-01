@@ -2,6 +2,7 @@
 import { Form, Head, Link } from '@inertiajs/vue3';
 import AuthorProfileController from '@/actions/App/Http/Controllers/AuthorProfileController';
 import InputError from '@/components/InputError.vue';
+import ProfileAvatarField from '@/components/ProfileAvatarField.vue';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -114,6 +115,10 @@ defineOptions({
                         />
                         <InputError :message="errors.bio" />
                     </div>
+                    <ProfileAvatarField
+                        :error="errors.avatar"
+                        :removal-error="errors.remove_avatar"
+                    />
                     <div class="flex items-center justify-end gap-3">
                         <Button variant="outline" as-child
                             ><Link :href="dashboard()">{{

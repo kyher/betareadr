@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import { ArrowRight, Eye, Pencil, UserRound } from '@lucide/vue';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import ProfileAvatar from '@/components/ProfileAvatar.vue';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -10,7 +10,6 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { getInitials } from '@/composables/useInitials';
 import { useTranslation } from '@/composables/useTranslation';
 import { dashboard } from '@/routes';
 import {
@@ -62,11 +61,10 @@ defineOptions({
             <CardContent
                 class="flex flex-col gap-6 sm:flex-row sm:items-center"
             >
-                <Avatar class="size-16">
-                    <AvatarFallback class="text-lg font-semibold">
-                        {{ getInitials(authorProfile.display_name) }}
-                    </AvatarFallback>
-                </Avatar>
+                <ProfileAvatar
+                    :profile="authorProfile"
+                    class="size-16 text-lg font-semibold"
+                />
                 <div class="min-w-0 flex-1">
                     <p class="truncate text-lg font-semibold">
                         {{ authorProfile.display_name }}
@@ -131,11 +129,10 @@ defineOptions({
             <CardContent
                 class="flex flex-col gap-6 sm:flex-row sm:items-center"
             >
-                <Avatar class="size-16">
-                    <AvatarFallback class="text-lg font-semibold">
-                        {{ getInitials(betaReaderProfile.display_name) }}
-                    </AvatarFallback>
-                </Avatar>
+                <ProfileAvatar
+                    :profile="betaReaderProfile"
+                    class="size-16 text-lg font-semibold"
+                />
                 <div class="min-w-0 flex-1">
                     <p class="truncate text-lg font-semibold">
                         {{ betaReaderProfile.display_name }}

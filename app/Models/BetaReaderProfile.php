@@ -8,12 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @property int $id
  * @property int $user_id
  * @property string $display_name
  * @property string $handle
+ * @property string|null $avatar_path
  * @property string|null $bio
  * @property list<string> $reading_languages
  * @property list<string> $preferred_genres
@@ -21,7 +23,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['display_name', 'handle', 'bio', 'reading_languages', 'preferred_genres', 'content_boundaries'])]
+#[Fillable(['avatar_path', 'display_name', 'handle', 'bio', 'reading_languages', 'preferred_genres', 'content_boundaries'])]
 class BetaReaderProfile extends Model
 {
     public const ANY_LANGUAGE = '*';
@@ -38,6 +40,11 @@ class BetaReaderProfile extends Model
     public function readerDecisions(): HasMany
     {
         return $this->hasMany(BetaReadingListingReaderDecision::class);
+    }
+
+    public function avatarUrl(): ?string
+    {
+        return $this->avatar_path === null ? null : Storage::disk('r2')->url($this->avatar_path);
     }
 
     public function getRouteKeyName(): string

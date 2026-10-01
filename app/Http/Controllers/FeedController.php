@@ -40,6 +40,7 @@ class FeedController extends AuthenticatedUserController
                 'author' => [
                     'display_name' => $listing->book->authorProfile->display_name,
                     'handle' => $listing->book->authorProfile->handle,
+                    'avatar_url' => $listing->book->authorProfile->avatarUrl(),
                 ],
             ],
         ]);

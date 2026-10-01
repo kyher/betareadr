@@ -85,7 +85,7 @@ class BetaReadingListingReviewController extends Controller
                 'handle',
                 'bio',
                 'reading_languages',
-            ]),
+            ]) + ['avatar_url' => $interest->betaReaderProfile->avatarUrl()],
         ];
     }
 }

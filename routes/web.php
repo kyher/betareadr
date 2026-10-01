@@ -65,8 +65,8 @@ Route::middleware(['auth'])->group(function () {
         $user = request()->user(User::AUTH_GUARD);
 
         return Inertia::render('Dashboard', [
-            'authorProfile' => $user->authorProfile?->only(['display_name', 'handle', 'bio']),
-            'betaReaderProfile' => $user->betaReaderProfile?->only(['display_name', 'handle', 'bio']),
+            'authorProfile' => $user->authorProfile === null ? null : $user->authorProfile->only(['display_name', 'handle', 'bio']) + ['avatar_url' => $user->authorProfile->avatarUrl()],
+            'betaReaderProfile' => $user->betaReaderProfile === null ? null : $user->betaReaderProfile->only(['display_name', 'handle', 'bio']) + ['avatar_url' => $user->betaReaderProfile->avatarUrl()],
         ]);
     })->name('dashboard');
 

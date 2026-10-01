@@ -4,15 +4,14 @@ import BookCover from '@/components/BookCover.vue';
 import BookMetadata from '@/components/BookMetadata.vue';
 import ContentWarnings from '@/components/ContentWarnings.vue';
 import PaginationLinks from '@/components/PaginationLinks.vue';
+import ProfileAvatar from '@/components/ProfileAvatar.vue';
 import PublicProfileHeader from '@/components/PublicProfileHeader.vue';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
     Card,
     CardDescription,
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { getInitials } from '@/composables/useInitials';
 import { useTranslation } from '@/composables/useTranslation';
 import type { AuthorProfile, Book } from '@/types';
 
@@ -31,11 +30,10 @@ const { t } = useTranslation();
         <PublicProfileHeader />
         <main class="mx-auto max-w-3xl px-4 py-16 sm:py-24">
             <div class="flex flex-col items-center text-center">
-                <Avatar class="size-24">
-                    <AvatarFallback class="text-2xl font-semibold">{{
-                        getInitials(authorProfile.display_name)
-                    }}</AvatarFallback>
-                </Avatar>
+                <ProfileAvatar
+                    :profile="authorProfile"
+                    class="size-24 text-2xl font-semibold"
+                />
                 <h1 class="mt-6 text-3xl font-semibold tracking-tight">
                     {{ authorProfile.display_name }}
                 </h1>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import { ExternalLink } from '@lucide/vue';
+import ProfileAvatar from '@/components/ProfileAvatar.vue';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -34,12 +35,15 @@ const formatDate = (date: string) =>
 
 <template>
     <Card class="paper-sheet">
-        <CardHeader>
-            <CardTitle>{{ reader.profile.display_name }}</CardTitle>
-            <CardDescription>
-                @{{ reader.profile.handle }} · {{ t('Interested') }}
-                {{ formatDate(reader.created_at) }}
-            </CardDescription>
+        <CardHeader class="sm:flex-row sm:items-start">
+            <ProfileAvatar :profile="reader.profile" class="size-12" />
+            <div class="min-w-0">
+                <CardTitle>{{ reader.profile.display_name }}</CardTitle>
+                <CardDescription>
+                    @{{ reader.profile.handle }} · {{ t('Interested') }}
+                    {{ formatDate(reader.created_at) }}
+                </CardDescription>
+            </div>
         </CardHeader>
         <CardContent class="grid gap-4">
             <p class="text-sm text-muted-foreground">

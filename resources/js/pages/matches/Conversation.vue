@@ -4,6 +4,7 @@ import type Echo from 'laravel-echo';
 import { onMounted, onUnmounted, ref, watch } from 'vue';
 import BookMetadata from '@/components/BookMetadata.vue';
 import ContentWarnings from '@/components/ContentWarnings.vue';
+import ProfileAvatar from '@/components/ProfileAvatar.vue';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/composables/useTranslation';
 import { createConversationEcho } from '@/lib/conversationEcho';
@@ -26,7 +27,7 @@ const props = defineProps<{
         id: number;
         ended_at: string | null;
         ended_by: 'author' | 'beta_reader' | null;
-        profile: { display_name: string };
+        profile: { display_name: string; avatar_url: string | null };
         book: Pick<Book, 'title' | 'language' | 'genre' | 'content_warnings'>;
     };
     userId: number;
@@ -208,9 +209,12 @@ defineOptions({
         <Link :href="matchesIndex()" class="text-sm underline">{{
             t('Matches')
         }}</Link>
-        <h1 class="text-2xl font-semibold">
-            {{ t('Conversation') }} · {{ match.profile.display_name }}
-        </h1>
+        <div class="flex items-center gap-3">
+            <ProfileAvatar :profile="match.profile" class="size-12" />
+            <h1 class="text-2xl font-semibold">
+                {{ t('Conversation') }} · {{ match.profile.display_name }}
+            </h1>
+        </div>
         <p class="text-sm text-muted-foreground">{{ match.book.title }}</p>
         <BookMetadata
             :language="match.book.language"
