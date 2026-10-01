@@ -44,6 +44,10 @@ _Avoid_: Reader account
 The URL-safe name uniquely identifying a Beta Reader Profile among Beta Reader Profiles, distinct from the Beta Reader's non-unique display name and any Author Handle belonging to the same User. Author and Beta Reader Handles occupy separate namespaces, and handle changes are not currently supported.
 _Avoid_: Username, profile name, Author Handle
 
+**Profile Avatar**:
+The single optional public image representing an Author Profile or Beta Reader Profile, independent of the same User's other Profile. Its owner may add, replace, or remove it.
+_Avoid_: User avatar, account photo
+
 **Book**:
 A publicly visible, enduring written work belonging to an Author Profile, for which beta-reader feedback may be sought through one or more recruitment rounds. A Book is public as soon as it is created.
 _Avoid_: Project, manuscript, listing
