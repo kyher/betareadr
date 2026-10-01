@@ -34,7 +34,7 @@ class AuthorProfileController extends AuthenticatedUserController
         }
 
         try {
-            $createAuthorProfile->handle($this->user(), $request->profileAttributes());
+            $createAuthorProfile->handle($this->user(), $request->profileAttributes(), $request->file('avatar'));
         } catch (UniqueConstraintViolationException $exception) {
             if (in_array('user_id', $exception->columns, true)) {
                 return to_route('author-profile.edit');
@@ -59,7 +59,7 @@ class AuthorProfileController extends AuthenticatedUserController
         }
 
         return Inertia::render('author-profiles/Edit', [
-            'authorProfile' => $profile->only(['display_name', 'handle', 'bio']),
+            'authorProfile' => $profile->only(['display_name', 'handle', 'bio']) + ['avatar_url' => $profile->avatarUrl()],
         ]);
     }
 
@@ -73,7 +73,7 @@ class AuthorProfileController extends AuthenticatedUserController
             return to_route('author-profile.create');
         }
 
-        $updateAuthorProfile->handle($profile, $request->profileAttributes());
+        $updateAuthorProfile->handle($profile, $request->profileAttributes(), $request->file('avatar'), $request->boolean('remove_avatar'));
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Author profile updated.')]);
 
@@ -83,7 +83,7 @@ class AuthorProfileController extends AuthenticatedUserController
     public function show(AuthorProfile $authorProfile): Response
     {
         return Inertia::render('author-profiles/Show', [
-            'authorProfile' => $authorProfile->only(['display_name', 'handle', 'bio']),
+            'authorProfile' => $authorProfile->only(['display_name', 'handle', 'bio']) + ['avatar_url' => $authorProfile->avatarUrl()],
             'books' => $authorProfile->books()
                 ->latest()
                 ->latest('id')
