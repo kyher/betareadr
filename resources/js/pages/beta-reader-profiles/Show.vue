@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { Head, usePage } from '@inertiajs/vue3';
+import ProfileAvatar from '@/components/ProfileAvatar.vue';
 import PublicProfileHeader from '@/components/PublicProfileHeader.vue';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { getInitials } from '@/composables/useInitials';
 import { useTranslation } from '@/composables/useTranslation';
 import type { BetaReaderProfile, ReadingLanguage } from '@/types';
 
@@ -21,11 +20,10 @@ const languageName = (language: ReadingLanguage) =>
         <PublicProfileHeader />
         <main class="mx-auto max-w-3xl px-4 py-16 sm:py-24">
             <div class="flex flex-col items-center text-center">
-                <Avatar class="size-24">
-                    <AvatarFallback class="text-2xl font-semibold">{{
-                        getInitials(betaReaderProfile.display_name)
-                    }}</AvatarFallback>
-                </Avatar>
+                <ProfileAvatar
+                    :profile="betaReaderProfile"
+                    class="size-24 text-2xl font-semibold"
+                />
                 <h1 class="mt-6 text-3xl font-semibold tracking-tight">
                     {{ betaReaderProfile.display_name }}
                 </h1>

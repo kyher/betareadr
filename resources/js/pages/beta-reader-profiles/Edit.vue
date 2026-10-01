@@ -4,6 +4,7 @@ import BetaReaderProfileController from '@/actions/App/Http/Controllers/BetaRead
 import ContentTopicsField from '@/components/ContentTopicsField.vue';
 import InputError from '@/components/InputError.vue';
 import PreferredGenresField from '@/components/PreferredGenresField.vue';
+import ProfileAvatarField from '@/components/ProfileAvatarField.vue';
 import ReadingLanguagesField from '@/components/ReadingLanguagesField.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -108,6 +109,11 @@ defineOptions({
                         field="content_boundaries"
                         :selected="betaReaderProfile.content_boundaries"
                         :errors="errors"
+                    />
+                    <ProfileAvatarField
+                        :avatar-url="betaReaderProfile.avatar_url"
+                        :error="errors.avatar"
+                        :removal-error="errors.remove_avatar"
                     />
                     <div class="flex items-center justify-end gap-3">
                         <Button variant="outline" as-child

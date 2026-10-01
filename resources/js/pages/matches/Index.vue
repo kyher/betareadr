@@ -6,7 +6,7 @@ import { onMounted, onUnmounted } from 'vue';
 import MatchController from '@/actions/App/Http/Controllers/MatchController';
 import BookMetadata from '@/components/BookMetadata.vue';
 import ContentWarnings from '@/components/ContentWarnings.vue';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import ProfileAvatar from '@/components/ProfileAvatar.vue';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -25,7 +25,6 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { getInitials } from '@/composables/useInitials';
 import { useTranslation } from '@/composables/useTranslation';
 import { createConversationEcho } from '@/lib/conversationEcho';
 import { show as showAuthor } from '@/routes/authors';
@@ -36,7 +35,11 @@ import type { Book } from '@/types';
 type Match = {
     id: number;
     role: 'author' | 'beta_reader';
-    profile: { display_name: string; handle: string };
+    profile: {
+        display_name: string;
+        handle: string;
+        avatar_url: string | null;
+    };
     book: Pick<
         Book,
         'id' | 'title' | 'language' | 'genre' | 'content_warnings'
@@ -105,11 +108,7 @@ defineOptions({
         <div v-else class="grid gap-4">
             <Card v-for="match in matches" :key="match.id">
                 <CardHeader class="gap-4 sm:flex-row sm:items-start">
-                    <Avatar class="size-12">
-                        <AvatarFallback>{{
-                            getInitials(match.profile.display_name)
-                        }}</AvatarFallback>
-                    </Avatar>
+                    <ProfileAvatar :profile="match.profile" class="size-12" />
                     <div class="min-w-0 flex-1">
                         <CardTitle>
                             <Link

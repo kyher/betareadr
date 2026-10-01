@@ -1,17 +1,11 @@
 <script setup lang="ts">
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import {
-    BookOpen,
-    Check,
-    CircleCheck,
-    FileText,
-    UserRound,
-    X,
-} from '@lucide/vue';
+import { BookOpen, Check, CircleCheck, FileText, X } from '@lucide/vue';
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import BookCover from '@/components/BookCover.vue';
 import BookMetadata from '@/components/BookMetadata.vue';
 import ContentWarnings from '@/components/ContentWarnings.vue';
+import ProfileAvatar from '@/components/ProfileAvatar.vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -42,6 +36,7 @@ type FeedListing = {
     author: {
         display_name: string;
         handle: string;
+        avatar_url: string | null;
     };
 };
 
@@ -291,7 +286,10 @@ defineOptions({
                         :href="showAuthor(displayedListing.author.handle)"
                         class="flex w-fit items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:underline"
                     >
-                        <UserRound class="size-4" />
+                        <ProfileAvatar
+                            :profile="displayedListing.author"
+                            class="size-8"
+                        />
                         {{ displayedListing.author.display_name }}
                         <span aria-hidden="true">·</span>
                         @{{ displayedListing.author.handle }}
