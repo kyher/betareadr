@@ -55,7 +55,7 @@ class DatabaseSeeder extends Seeder
         ]);
         $matchedUser = BetaReaderProfile::query()
             ->where('handle', 'matched-beta-reader')
-            ->first()?->user ?? User::factory()->create();
+            ->first()->user ?? User::factory()->create();
         $matchedReader = $matchedUser->betaReaderProfile()->updateOrCreate(
             ['user_id' => $matchedUser->id],
             [
