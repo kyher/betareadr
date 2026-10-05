@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Enums\BetaReadingListingAuthorDecision;
 use App\Enums\BetaReadingListingReaderDecisionType;
+use App\Models\BetaReaderProfile;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -52,12 +53,18 @@ class DatabaseSeeder extends Seeder
             'reading_brief' => 'Looking for feedback on character motivation and pacing.',
             'word_count' => 80000,
         ]);
-        $matchedReader = User::factory()->create()->betaReaderProfile()->create([
-            'display_name' => 'Matched Beta Reader',
-            'handle' => 'matched-beta-reader',
-            'bio' => fake()->paragraph(),
-            'reading_languages' => ['*'],
-        ]);
+        $matchedUser = BetaReaderProfile::query()
+            ->where('handle', 'matched-beta-reader')
+            ->first()?->user ?? User::factory()->create();
+        $matchedReader = $matchedUser->betaReaderProfile()->updateOrCreate(
+            ['user_id' => $matchedUser->id],
+            [
+                'display_name' => 'Matched Beta Reader',
+                'handle' => 'matched-beta-reader',
+                'bio' => fake()->paragraph(),
+                'reading_languages' => ['*'],
+            ],
+        );
         $authorInterest = $matchedReader->readerDecisions()->create([
             'beta_reading_listing_id' => $testListing->id,
             'reader_decision' => BetaReadingListingReaderDecisionType::Interested,
@@ -70,7 +77,7 @@ class DatabaseSeeder extends Seeder
             $displayName = fake()->name();
             $author = $user->authorProfile()->create([
                 'display_name' => $displayName,
-                'handle' => "author-{$authorNumber}-".fake()->numerify('####'),
+                'handle' => "author-{$user->id}",
                 'bio' => fake()->paragraph(),
             ]);
 
