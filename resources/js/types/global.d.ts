@@ -17,6 +17,7 @@ declare module '@inertiajs/core' {
     export interface InertiaConfig {
         sharedPageProps: {
             name: string;
+            unreadMessageCount: number;
             locale: Locale;
             locales: Record<Locale, string>;
             contentLanguages: Record<ContentLanguage, string>;

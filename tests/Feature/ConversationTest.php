@@ -3,8 +3,10 @@
 namespace Tests\Feature;
 
 use App\Actions\BetaReadingListings\EndBetaReadingMatch;
+use App\Actions\Conversations\MarkConversationRead;
 use App\Events\BetaReadingMatchEnded;
 use App\Events\ConversationMessageSent;
+use App\Events\UnreadMessagesChanged;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -36,6 +38,8 @@ class ConversationTest extends TestCase
         $this->actingAs($outsider)->get(route('matches.conversation', $match))->assertForbidden();
         $this->actingAs($outsider)->getJson(route('matches.messages.index', $match))->assertForbidden();
         $this->actingAs($outsider)->postJson(route('matches.messages.store', $match), ['body' => 'No'])->assertForbidden();
+        $this->postJson(route('matches.read', $match), ['message_id' => 1])->assertForbidden();
+        $this->postJson('/broadcasting/auth', ['channel_name' => 'private-users.'.$author->id, 'socket_id' => '1.2'])->assertForbidden();
         $this->actingAs($outsider)->postJson('/broadcasting/auth', ['channel_name' => 'private-matches.'.$match->id, 'socket_id' => '1.2'])->assertForbidden();
 
         $this->actingAs($author)->get(route('matches.conversation', $match))
@@ -46,6 +50,7 @@ class ConversationTest extends TestCase
                 ->where('match.book.genre', 'fantasy'));
         $this->actingAs($reader)->get(route('matches.conversation', $match))->assertOk();
         $this->postJson('/broadcasting/auth', ['channel_name' => 'private-matches.'.$match->id, 'socket_id' => '1.2'])->assertOk();
+        $this->postJson('/broadcasting/auth', ['channel_name' => 'private-users.'.$reader->id, 'socket_id' => '1.2'])->assertOk();
     }
 
     public function test_messages_are_plain_text_validated_and_read_only_after_ending(): void
@@ -61,15 +66,16 @@ class ConversationTest extends TestCase
         $this->assertDatabaseHas('conversation_messages', ['beta_reading_match_id' => $match->id, 'sender_id' => $reader->id, 'body' => '<script>alert(1)</script>']);
         $this->assertNotNull($match->messages()->latest('id')->first()->created_at);
 
-        $notification = new ConversationMessageSent($match->id, $match->messages()->max('id'));
+        $notification = new ConversationMessageSent($match->id, $match->messages()->max('id'), $author->id);
         $this->assertSame(['match_id' => $match->id, 'message_id' => $match->messages()->max('id')], $notification->broadcastWith());
+        $this->assertSame(['private-matches.'.$match->id, 'private-users.'.$author->id], array_map(fn ($channel) => (string) $channel, $notification->broadcastOn()));
 
         app(EndBetaReadingMatch::class)->handle($match, $author);
         $this->postJson($send, ['body' => 'Too late'])->assertStatus(409);
         $this->getJson(route('matches.messages.index', $match))->assertOk()->assertJsonCount(2, 'messages');
     }
 
-    public function test_cursor_pages_are_newest_first_and_opening_marks_only_received_messages_read(): void
+    public function test_fetching_does_not_mark_read_and_explicit_read_clears_only_received_messages_through_its_cutoff(): void
     {
         [$match, $author, $reader] = $this->match();
         for ($i = 1; $i <= 52; $i++) {
@@ -82,17 +88,58 @@ class ConversationTest extends TestCase
 
         $this->actingAs($author)->get(route('matches.index'))->assertInertia(fn (Assert $page) => $page->where('matches.0.unread_count', 52));
         $this->get(route('matches.conversation', $match))->assertOk();
-        $this->get(route('matches.index'))->assertInertia(fn (Assert $page) => $page->where('matches.0.unread_count', 0));
+        $this->get(route('matches.index'))->assertInertia(fn (Assert $page) => $page->where('matches.0.unread_count', 52));
         $first = $this->getJson(route('matches.messages.index', $match))->assertOk()->assertJsonCount(50, 'messages')->json();
         $this->assertSame('Mine', $first['messages'][0]['body']);
         $this->assertSame($fourthMessageId, $first['next_cursor']);
+        $this->get(route('dashboard'))->assertInertia(fn (Assert $page) => $page->where('unreadMessageCount', 52));
+        $this->postJson(route('matches.read', $match), ['message_id' => $first['messages'][0]['id']])->assertOk()->assertJsonPath('unreadMessageCount', 0);
         $match->messages()->create(['sender_id' => $reader->id, 'body' => 'New while paging']);
         $second = $this->getJson(route('matches.messages.index', ['match' => $match, 'cursor' => $first['next_cursor']]))->assertOk()->assertJsonCount(3, 'messages')->json();
         $this->assertNull($second['next_cursor']);
         $this->get(route('matches.index'))->assertInertia(fn (Assert $page) => $page->where('matches.0.unread_count', 1));
         $this->getJson(route('matches.messages.index', $match))->assertOk();
+        $this->postJson(route('matches.read', $match), ['message_id' => $first['messages'][0]['id']])->assertOk()->assertJsonPath('unreadMessageCount', 1);
+        $this->postJson(route('matches.read', $match), ['message_id' => $match->messages()->max('id')])->assertOk()->assertJsonPath('unreadMessageCount', 0);
         $this->get(route('matches.index'))->assertInertia(fn (Assert $page) => $page->where('matches.0.unread_count', 0));
         $this->actingAs($reader)->get(route('matches.index'))->assertInertia(fn (Assert $page) => $page->where('matches.0.unread_count', 1));
+    }
+
+    public function test_global_unread_counts_combine_both_profiles_and_ended_matches_and_notify_only_the_affected_user(): void
+    {
+        Event::fake([UnreadMessagesChanged::class, ConversationMessageSent::class, BetaReadingMatchEnded::class]);
+        [$authorMatch, $user, $reader] = $this->match();
+        [$readerMatch, $otherAuthor] = $this->match('-two');
+        [$unrelatedMatch, $outsider] = $this->match('-unrelated');
+        $profile = $user->betaReaderProfile()->create(['display_name' => 'Both', 'handle' => 'both', 'reading_languages' => ['*']]);
+        $readerMatch->readerDecision->forceFill(['beta_reader_profile_id' => $profile->id])->save();
+
+        $this->actingAs($reader)->postJson(route('matches.messages.store', $authorMatch), ['body' => 'One'])->assertCreated();
+        $this->actingAs($otherAuthor)->postJson(route('matches.messages.store', $readerMatch), ['body' => 'Two'])->assertCreated();
+        Event::assertDispatchedTimes(ConversationMessageSent::class, 2);
+        Event::assertDispatched(ConversationMessageSent::class, fn ($event) => $event->matchId === $authorMatch->id && $event->recipientUserId === $user->id);
+        Event::assertDispatched(ConversationMessageSent::class, fn ($event) => $event->matchId === $readerMatch->id && $event->recipientUserId === $user->id);
+        Event::assertNotDispatched(UnreadMessagesChanged::class);
+        $this->actingAs($user)->postJson(route('matches.messages.store', $readerMatch), ['body' => 'Mine'])->assertCreated();
+        Event::assertDispatched(ConversationMessageSent::class, fn ($event) => $event->matchId === $readerMatch->id && $event->recipientUserId === $otherAuthor->id);
+        Event::assertNotDispatched(UnreadMessagesChanged::class);
+        $unrelatedMatch->messages()->create(['sender_id' => $outsider->id, 'body' => 'Unrelated']);
+        app(EndBetaReadingMatch::class)->handle($authorMatch, $reader);
+        $this->get(route('dashboard'))->assertInertia(fn (Assert $page) => $page->where('unreadMessageCount', 2));
+
+        $this->postJson(route('matches.read', $authorMatch), ['message_id' => $readerMatch->messages()->max('id')])->assertUnprocessable();
+        $this->postJson(route('matches.read', $authorMatch), [])->assertUnprocessable();
+        Event::fake([UnreadMessagesChanged::class]);
+        $this->postJson(route('matches.read', $authorMatch), ['message_id' => $authorMatch->messages()->max('id')])->assertOk()->assertJsonPath('unreadMessageCount', 1);
+        Event::assertDispatchedTimes(UnreadMessagesChanged::class, 1);
+        Event::assertDispatched(UnreadMessagesChanged::class, fn ($event) => $event->userId === $user->id);
+        $this->postJson(route('matches.read', $authorMatch), ['message_id' => $authorMatch->messages()->max('id')])->assertOk();
+        Event::assertDispatchedTimes(UnreadMessagesChanged::class, 1);
+        $this->assertSame('private-users.'.$user->id, (string) (new UnreadMessagesChanged($user->id))->broadcastOn()[0]);
+        $this->assertSame([], (new UnreadMessagesChanged($user->id))->broadcastWith());
+
+        $readerMatch->readerDecision->betaReadingListing->book->delete();
+        $this->get(route('dashboard'))->assertInertia(fn (Assert $page) => $page->where('unreadMessageCount', 0));
     }
 
     public function test_persistence_survives_broadcast_failure_and_deletion_cascades(): void
@@ -197,6 +244,25 @@ class ConversationTest extends TestCase
         });
 
         $this->assertTrue($notified);
+    }
+
+    public function test_read_notification_waits_for_the_outer_transaction(): void
+    {
+        config()->set('broadcasting.default', 'null');
+        [$match, $author, $reader] = $this->match();
+        $message = $match->messages()->create(['sender_id' => $reader->id, 'body' => 'Read me']);
+        $notified = false;
+        Event::listen(UnreadMessagesChanged::class, function () use (&$notified): void {
+            $notified = true;
+        });
+
+        DB::transaction(function () use ($match, $author, $message, &$notified): void {
+            app(MarkConversationRead::class)->handle($match, $author, $message->id);
+            $this->assertFalse($notified);
+        });
+
+        $this->assertTrue($notified);
+        $this->assertSame(0, $author->unreadMessageCount());
     }
 
     public function test_one_inbox_shows_both_roles_with_latest_preview_and_ended_by(): void

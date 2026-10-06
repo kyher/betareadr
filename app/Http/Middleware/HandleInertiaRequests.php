@@ -48,6 +48,7 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            'unreadMessageCount' => fn () => $user?->unreadMessageCount() ?? 0,
             'locale' => app()->getLocale(),
             'locales' => config('app.supported_locales'),
             'contentLanguages' => collect(ContentLanguage::cases())
