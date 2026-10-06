@@ -8,7 +8,11 @@ import ProfileAvatar from '@/components/ProfileAvatar.vue';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/composables/useTranslation';
 import { createConversationEcho } from '@/lib/conversationEcho';
-import { index as matchesIndex } from '@/routes/matches';
+import { refreshUnreadMessages } from '@/lib/refreshUnreadMessages';
+import {
+    index as matchesIndex,
+    read as readConversation,
+} from '@/routes/matches';
 import {
     index as messagesIndex,
     store as storeMessage,
@@ -47,6 +51,46 @@ watch(
     },
 );
 let echo: Echo<'reverb'> | undefined;
+let readMessageId = 0;
+let active = false;
+
+async function markRead() {
+    const messageId = messages.value[0]?.id ?? 0;
+
+    if (
+        !active ||
+        document.visibilityState !== 'visible' ||
+        !document.hasFocus() ||
+        messageId <= readMessageId
+    ) {
+        return;
+    }
+
+    const response = await fetch(readConversation.url(props.match.id), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>(
+                'meta[name="csrf-token"]',
+            )!.content,
+        },
+        body: JSON.stringify({ message_id: messageId }),
+    });
+
+    if (!response.ok) {
+        return;
+    }
+
+    readMessageId = Math.max(readMessageId, messageId);
+    refreshUnreadMessages();
+}
+
+function onVisibilityChange() {
+    if (document.visibilityState === 'visible' && document.hasFocus()) {
+        void catchUp();
+    }
+}
 
 async function page(cursor?: number): Promise<Page> {
     const response = await fetch(
@@ -106,6 +150,10 @@ async function catchUp() {
         messages.value.unshift(
             ...incoming.filter((message) => !seen.has(message.id)),
         );
+        messages.value.sort((a, b) => b.id - a.id);
+        await markRead().catch(() => {
+            // Read status retries on the next catch-up without interrupting the Conversation.
+        });
         error.value = '';
     } catch (exception) {
         error.value = String(exception);
@@ -171,7 +219,10 @@ function onKeydown(event: KeyboardEvent) {
 }
 
 onMounted(() => {
+    active = true;
     void catchUp();
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    window.addEventListener('focus', onVisibilityChange);
 
     echo = createConversationEcho();
 
@@ -195,6 +246,9 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+    active = false;
+    document.removeEventListener('visibilitychange', onVisibilityChange);
+    window.removeEventListener('focus', onVisibilityChange);
     echo?.disconnect();
 });
 

@@ -25,7 +25,10 @@ class SendConversationMessage
         });
 
         try {
-            event(new ConversationMessageSent($match->id, $message->id));
+            $decision = $match->readerDecision;
+            $authorId = $decision->betaReadingListing->book->authorProfile->user_id;
+            $readerId = $decision->betaReaderProfile->user_id;
+            event(new ConversationMessageSent($match->id, $message->id, $sender->id === $authorId ? $readerId : $authorId));
         } catch (Throwable $exception) {
             Log::warning('Conversation notification failed', ['match_id' => $match->id, 'message_id' => $message->id, 'exception' => $exception]);
         }

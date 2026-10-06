@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Form, Head, Link, router } from '@inertiajs/vue3';
+import { Form, Head, Link } from '@inertiajs/vue3';
 import { Handshake } from '@lucide/vue';
 import type Echo from 'laravel-echo';
 import { onMounted, onUnmounted } from 'vue';
@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/dialog';
 import { useTranslation } from '@/composables/useTranslation';
 import { createConversationEcho } from '@/lib/conversationEcho';
+import { refreshUnreadMessages as refresh } from '@/lib/refreshUnreadMessages';
 import { show as showAuthor } from '@/routes/authors';
 import { show as showBetaReader } from '@/routes/beta-readers';
 import { conversation, index as matchesIndex } from '@/routes/matches';
@@ -54,7 +55,6 @@ type Match = {
 
 const props = defineProps<{ matches: Match[] }>();
 let echo: Echo<'reverb'> | undefined;
-const refresh = () => router.reload({ only: ['matches'] });
 
 onMounted(() => {
     if (!props.matches.length) {

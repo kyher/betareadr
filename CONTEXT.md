@@ -132,6 +132,10 @@ _Avoid_: Chat room, thread
 An immutable plain-text contribution sent by either participant within an active Match's Conversation.
 _Avoid_: Chat, comment, direct message
 
+**Unread Message Count**:
+The number of received Conversation Messages a User has not yet read, counted within one Conversation or across both Profiles' Conversations, including ended Matches; their own messages and deleted Conversations never contribute. Making a Conversation visible in an active browser tab marks all its existing received messages read, including older messages not displayed; messages arriving while it remains visible are read immediately, background tabs leave them unread, and read status belongs to the User across sessions.
+_Avoid_: Unread Conversation Count, notification count
+
 **Block**:
 A User-level safety action that prevents two Users from discovering or contacting each other through either profile and ends their existing Matches. Related Conversation history is hidden from both participants and retained for moderation, including after Book deletion, but is permanently removed when either User is deleted.
 _Avoid_: Mute, profile block

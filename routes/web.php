@@ -88,6 +88,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('matches/{match}/conversation', [ConversationController::class, 'show'])->name('matches.conversation');
     Route::get('matches/{match}/messages', [ConversationController::class, 'index'])->name('matches.messages.index');
     Route::post('matches/{match}/messages', [ConversationController::class, 'store'])->name('matches.messages.store');
+    Route::post('matches/{match}/read', [ConversationController::class, 'read'])->name('matches.read');
     Route::delete('matches/{match}', [MatchController::class, 'end'])->name('matches.end');
 
     Route::resource('books', BookController::class)->except('show');
